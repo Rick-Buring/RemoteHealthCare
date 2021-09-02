@@ -13,9 +13,17 @@ namespace FietsDemo
     {
         static async Task Main(string[] args)
         {
-            sendMessage(100);
+            //sendMessage(100);
+            byte[] array = sendMessage(100);
+            foreach(byte b in array)
+            {
+                Console.Write(b);
+            }
 
-            return;
+            //return;
+            //669aa501-0c08-969r-r211-86ad5062675f
+
+            //669aac01-0c08-969e-e211-86as5062675f
 
             int errorCode = 0;
             BLE bleBike = new BLE();
@@ -31,7 +39,7 @@ namespace FietsDemo
             }
 
             // Connecting
-            errorCode = errorCode = await bleBike.OpenDevice("Tacx Flux 01249");
+            errorCode = errorCode = await bleBike.OpenDevice("Tacx Flux 00472");
             // __TODO__ Error check
 
             var services = bleBike.GetServices;
@@ -42,13 +50,14 @@ namespace FietsDemo
 
             // Set service
             errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
+            
             // __TODO__ error check
 
-            errorCode = await bleBike.SetService("669aa501-0c08-969e-e211-86ad5062675f");
+            //errorCode = await bleBike.SetService("669aa501-0c08-969e-e211-86ad5062675f");
 
             // Subscribe
-            //bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
-            //errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
+            errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             bool run = true;
 
             while (run)
@@ -60,7 +69,8 @@ namespace FietsDemo
                 }
                 else if (Regex.Match(input, "^[0-9]+$").Success)
                 {
-                    await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
+                    //await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
+                    await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendMessage(float.Parse(input)));
                 }
 
             }
