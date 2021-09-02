@@ -51,6 +51,15 @@ namespace RemoteHealthCare__Framework_4._7._2_
             // Subscribe
             bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
             errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            while (true)
+            {
+                string input = Console.ReadLine();
+               
+                else if (Regex.Match(input, "^[0-9]+$").Success)
+                {
+                    //await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
+                    await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendMessage(float.Parse(input)));
+                }
 
 
             //while (true)
