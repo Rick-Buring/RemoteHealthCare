@@ -46,6 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BikeInfo.cs" />
+    <Compile Include="Data.cs" />
+    <Compile Include="GeneralBikeInfo.cs" />
+    <Compile Include="Heartrate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

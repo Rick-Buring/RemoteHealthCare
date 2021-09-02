@@ -11,11 +11,14 @@ namespace RemoteHealthCare__Framework_4._7._2_
 {
     class Program
     {
+        private static Dictionary<int, Data> dataDict;
+
         static async Task Main(string[] args)
         {
-            //sendMessage(100);
-
-            //return;
+            dataDict = new Dictionary<int, Data>();
+            dataDict.Add(0x19, new BikeInfo());
+            dataDict.Add(0x10, new GeneralBikeInfo());
+            dataDict.Add(0x16, new Heartrate());
 
             int errorCode = 0;
             BLE bleBike = new BLE();
@@ -48,50 +51,38 @@ namespace RemoteHealthCare__Framework_4._7._2_
             // Subscribe
             bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
             errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
-            while (true)
-            {
-                string input = Console.ReadLine();
-               
-                else if (Regex.Match(input, "^[0-9]+$").Success)
-                {
-                    //await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
-                    await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendMessage(float.Parse(input)));
-                }
-
-            }
 
 
-            // Heart rate
-            errorCode = await bleHeart.OpenDevice("Decathlon Dual HR");
+            //while (true)
+            //{
+            //    string input = Console.ReadLine();
 
-            await bleHeart.SetService("HeartRate");
+            //    if (Regex.Match(input, "^[0-9]+$").Success)
+            //    {
+            //        await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
+            //        await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendResistanceMessage(float.Parse(input)));
+            //    }
 
-            bleHeart.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
-            await bleHeart.SubscribeToCharacteristic("HeartRateMeasurement");
-
-            //byte[] test = new byte[] { 0xA4, 0x09, 0x4e, 0x05, 0x10, 0x19, 0x04, 0x00,0x00,0x00, 0xFF, 0x24, 0x30 };
-            //Console.WriteLine(checksum(test));
+            //}
 
             Console.Read();
+           
         }
 
-        private static byte[] sendMessage(float resistance)
+        private static byte[] sendResistanceMessage(float resistance)
         {
             byte[] buff = new byte[13];
+            //head
             buff[0] = 0xa4; //sync byte
-            buff[1] = 0x09; //todo length
+            buff[1] = 0x09; //length data size +1 (broadcast is usualy 9 bytes long)
             buff[2] = 0x4e; // message type
             buff[3] = 0x05; //channel
             buff[4] = 0x30; //page
 
-            //buff[5] = 0xff;
-            //buff[6] = 0xff;
-            //buff[7] = 0xff;
-            //buff[8] = 0xff;
-            //buff[9] = 0xff;
-            //buff[10] = 0xff;
-
+            //data
             buff[11] = (byte)(resistance * 2.0f);
+
+            //checksum
             buff[12] = checksum(buff);
 
             return buff;
@@ -109,13 +100,27 @@ namespace RemoteHealthCare__Framework_4._7._2_
             return output;
         }
 
-
-
         private static void BleBike_SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
             Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 BitConverter.ToString(e.Data).Replace("-", " "),
                 Encoding.UTF8.GetString(e.Data));
+            Data data = null;
+            if (e.ServiceName == "6e40fec2-b5a3-f393-e0a9-e50e24dcca9e")
+            {
+                data = dataDict[e.Data[4]];
+            }
+            else if (e.ServiceName == "HeartRateMeasurement")
+            {
+                data = dataDict[e.Data[0]];
+            }
+
+
+            if (data != null)
+            {
+                data.Update(e.Data);
+            }
+
         }
 
     }
