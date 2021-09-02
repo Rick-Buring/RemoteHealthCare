@@ -6,11 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Avans.TI.BLE;
+using System.IO;
 
 namespace FietsDemo
 {
     class Program
     {
+        private static StreamWriter sr;
+        private static bool open;
         static async Task Main(string[] args)
         {
             //sendMessage(100);
@@ -20,6 +23,8 @@ namespace FietsDemo
                 Console.Write(b);
             }
 
+        
+            
             //return;
             //669aa501-0c08-969r-r211-86ad5062675f
 
@@ -29,7 +34,7 @@ namespace FietsDemo
             BLE bleBike = new BLE();
             BLE bleHeart = new BLE();
             Thread.Sleep(1000); // We need some time to list available devices
-
+            
             // List available devices
             List<String> bleBikeList = bleBike.ListDevices();
             Console.WriteLine("Devices found: ");
@@ -60,18 +65,34 @@ namespace FietsDemo
             errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             bool run = true;
 
+            string path = @"C:\Users\User\Desktop\TI Avans\testData.txt";
+
+            if (!File.Exists(path))
+            {
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.Write("");
+                }
+            }
+            open = false;
+            sr = File.CreateText(path);
+            open = true;
             while (run)
             {
-                string input = Console.ReadLine();
-                if (input == "stop")
-                {
-                    break;
-                }
-                else if (Regex.Match(input, "^[0-9]+$").Success)
-                {
-                    //await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
-                    await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendMessage(float.Parse(input)));
-                }
+                
+                    string input = Console.ReadLine();
+                    if (input == "stop")
+                    {
+                    sr.Close();
+                    open = false;
+                        break;
+                    }
+                    else if (Regex.Match(input, "^[0-9]+$").Success)
+                    {
+                        //await bleBike.WriteCharacteristic("669aa501-0c08-969e-e211-86ad5062675f", sendMessage(float.Parse(input)));
+                        await bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", sendMessage(float.Parse(input)));
+                    }
+                
 
             }
 
@@ -129,6 +150,14 @@ namespace FietsDemo
             Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 BitConverter.ToString(e.Data).Replace("-", " "),
                 Encoding.UTF8.GetString(e.Data));
+            if (open)
+            sr.WriteLine(BitConverter.ToString(e.Data).Replace("-", " "));
+
+        }
+
+        public static void writeTestData ()
+        {
+            
         }
 
     }
