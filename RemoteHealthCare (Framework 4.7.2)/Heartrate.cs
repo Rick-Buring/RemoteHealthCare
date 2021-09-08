@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare__Framework_4._7._2_
 {
-    class Heartrate : Data
+    class Heartrate : IData
     {
         public void Update(byte[] bytes)
         {

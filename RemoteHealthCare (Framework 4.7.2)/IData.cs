@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare__Framework_4._7._2_
 {
-    public interface Data
+    public interface IData
     {
         void Update(byte[] bytes);
     }

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace RemoteHealthCare__Framework_4._7._2_
+namespace RemoteHealthCare
 {
     class GeneralBikeInfo : IData
     {
         public void Update(byte[] bytes)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
