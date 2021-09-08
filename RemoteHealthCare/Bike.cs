@@ -95,9 +95,9 @@ namespace RemoteHealthCare
 
         private void BleBike_SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-                BitConverter.ToString(e.Data).Replace("-", " "),
-                Encoding.UTF8.GetString(e.Data));
+            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
+                //BitConverter.ToString(e.Data).Replace("-", " "),
+                //Encoding.UTF8.GetString(e.Data));
             if (dataDict.ContainsKey(e.Data[4]))
             {
                 IData data = dataDict[e.Data[4]];
