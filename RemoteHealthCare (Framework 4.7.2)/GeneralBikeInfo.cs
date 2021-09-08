@@ -10,7 +10,7 @@ namespace RemoteHealthCare__Framework_4._7._2_
     {
         public void Update(byte[] bytes)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
