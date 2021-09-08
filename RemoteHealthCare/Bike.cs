@@ -12,12 +12,12 @@ namespace RemoteHealthCare
     {
         private BLE bleBike;
         private Dictionary<int, IData> dataDict;
+        private IDataListener listener;
 
-
-        public Bike()
+        public Bike(IDataListener listener)
         {
             this.bleBike = new BLE();
-
+            this.listener = listener;
             dataDict = new Dictionary<int, IData>();
             dataDict.Add(0x19, new BikeInfo());
             dataDict.Add(0x10, new GeneralBikeInfo());
@@ -95,7 +95,7 @@ namespace RemoteHealthCare
 
         private void BleBike_SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
+            //  Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 //BitConverter.ToString(e.Data).Replace("-", " "),
                 //Encoding.UTF8.GetString(e.Data));
             if (dataDict.ContainsKey(e.Data[4]))
@@ -103,6 +103,8 @@ namespace RemoteHealthCare
                 IData data = dataDict[e.Data[4]];
 
                 data.Update(e.Data);
+                BikeInfo bikeInfo = dataDict[0x19] as BikeInfo;
+                this.listener.notify(bikeInfo.getData());
             }
         }
 

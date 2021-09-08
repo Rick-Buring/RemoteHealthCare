@@ -8,14 +8,33 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class Program
+    class Program : IDataListener
     {
+
+        private static string bikeData;
+        private static string heartRateData;
+
+        private static bool receivedBikeData;
+        private static bool receivedHeartRateData;
+
         static async Task Main(string[] args)
         {
-            Bike bike = new Bike();
-            
+            Program program = new Program();
+            await program.start();
+        }
+
+        private async Task  start ()
+        {
+            bikeData = "";
+            heartRateData = "";
+            receivedBikeData = false;
+            receivedHeartRateData = false;
+
+
+            Bike bike = new Bike(this);
+
             await bike.connect("Tacx Flux 01140", true);
-            HeartbeatMonitor hrm = new HeartbeatMonitor();
+            HeartbeatMonitor hrm = new HeartbeatMonitor(this);
             await hrm.connect(true);
 
 
@@ -63,6 +82,12 @@ namespace RemoteHealthCare
             Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 BitConverter.ToString(e.Data).Replace("-", " "),
                 Encoding.UTF8.GetString(e.Data));
+        }
+
+        public void notify(string data)
+        {
+            Console.Clear();
+            Console.WriteLine(data);
         }
     }
 
