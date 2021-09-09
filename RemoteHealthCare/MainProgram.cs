@@ -15,18 +15,15 @@ namespace RemoteHealthCare
 
         private async Task start()
         {
-            Bike bike = new Bike(this);
-            await bike.connect("Tacx Flux 01140", true);
+            Ergometer bike = new Ergometer(this, "Tacx Flux 01140");
+            await bike.Connect();
 
-            HeartbeatMonitor hrm = new HeartbeatMonitor(this);
-            await hrm.connect(true);
+            HeartBeatMonitor hrm = new HeartBeatMonitor(this);
+            await hrm.Connect();
 
 
             Console.Read();
         }
-
-
-
 
         public void notify(string data)
         {

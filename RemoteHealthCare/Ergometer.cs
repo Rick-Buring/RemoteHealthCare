@@ -31,11 +31,6 @@ namespace RemoteHealthCare
             }
         }
 
-        public Ergometer(IDataListener listener)
-        {
-            this.listener = listener;
-        }
-
         public override async Task Connect()
         {
             Console.WriteLine("connecting");
