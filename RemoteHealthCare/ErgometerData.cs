@@ -7,15 +7,15 @@ namespace RemoteHealthCare
     class ErgometerData : IData
     {
         //0x19 data page variables
-        public int ID { get; private set; }
-        public int Cadence { get; private set; }
-        public int AccumulatedPower { get; private set; }
-        public int InstantaneousPower { get; private set; }
+        public int ID { get; set; }
+        public int Cadence { get; set; }
+        public int AccumulatedPower { get; set; }
+        public int InstantaneousPower { get; set; }
 
         //0x10 data page variables
-        public int ElapsedTime { get; private set; }
-        public int DistanceTravelt { get; private set; }
-        public double InstantaneousSpeed { get; private set; }
+        public int ElapsedTime { get; set; }
+        public int DistanceTraveled { get; set; }
+        public double InstantaneousSpeed { get; set; }
 
         public void Update(byte[] bytes)
         {
@@ -56,7 +56,7 @@ namespace RemoteHealthCare
         {
             //this.equipmentType = data[5];
             this.ElapsedTime = data[6];
-            this.DistanceTravelt = data[7];
+            this.DistanceTraveled = data[7];
 
             int speedLSB = data[8];
             int speedMSB = data[9];
@@ -74,7 +74,7 @@ namespace RemoteHealthCare
             builder.Append("\nAcc power: " + AccumulatedPower);
             builder.Append("\nInt power: " + InstantaneousPower);
             builder.Append("\nElapsed time (s): " + this.ElapsedTime / 4);
-            builder.Append("\nDistance traveled: " + this.DistanceTravelt);
+            builder.Append("\nDistance traveled: " + this.DistanceTraveled);
             builder.Append("\nSpeed (m/s): " + this.InstantaneousSpeed);
            
 

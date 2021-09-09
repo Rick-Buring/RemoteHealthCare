@@ -23,11 +23,13 @@ namespace RemoteHealthCare
         {
             dataIO = new DataIO();
             ergometer = new Ergometer("Tacx Flux 01140", this, dataIO);
+            //new ErgoSimulator(this);
             this.gui = new GUI();
             await ergometer.Connect();
-           
+            
 
             HeartBeatMonitor = new HeartBeatMonitor(this, dataIO);
+            //new HBSimulator(this);
             await HeartBeatMonitor.Connect();
 
 
@@ -36,7 +38,11 @@ namespace RemoteHealthCare
 
         public void notify(IData data)
         {
-            gui.write($"{ergometer.GetData()}\n{HeartBeatMonitor.GetData()}");
+            if(HeartBeatMonitor != null)
+            {
+                gui.write($"{ergometer.GetData()}\n{HeartBeatMonitor.GetData()}");
+            }
+           
         }
     }
     

@@ -13,6 +13,8 @@ namespace RemoteHealthCare
 
         private int baseline;
 
+        //HeartBeatData heartBeatData = new HeartBeatData();
+
         public HBSimulator(IDataListener listener) : base(listener)
         {
 
@@ -46,17 +48,23 @@ namespace RemoteHealthCare
 
                 baseline = Math.Clamp(baseline, 60, 180);
 
+
+                setData();
+                listener.notify(base.heartBeatData);
                 Thread.Sleep(1000);
-                sendData();
             }
         }
 
-        public void sendData()
+        public void setData()
         {
             Random random = new Random();
-            listener.notify((baseline + random.Next(baseline / 5)).ToString());
+            base.heartBeatData.HeartRate = baseline + random.Next(baseline / 5);
         }
 
+        public IData GetData()
+        {
+            return base.heartBeatData;
+        }
 
     }
 }

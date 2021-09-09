@@ -6,7 +6,7 @@ namespace RemoteHealthCare
 {
     class HeartBeatData : IData
     {
-        public int HeartRate{ get; private set; }
+        public int HeartRate{ get; set; }
 
         public void Update(byte[] bytes)
         {

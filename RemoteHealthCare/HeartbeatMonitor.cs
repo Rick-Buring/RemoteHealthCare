@@ -9,7 +9,7 @@ namespace RemoteHealthCare
     class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
-        private HeartBeatData heartBeatData;
+        protected HeartBeatData heartBeatData;
         private IDataListener[] listeners;
 
         public HeartBeatMonitor(params IDataListener[] listener)

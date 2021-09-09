@@ -18,14 +18,16 @@ namespace RemoteHealthCare
         private int rpm;
         private int accumulatedTotal;
         private int instantaneousTotal;
-        private int trainerStatus = 1;
-        private int flagsField = 1;
-        private int feStateField = 1;
+        private int id = 0;
+        private int elapsedTime = 0;
+        private int distanceTraveled = 0;
+
+        //ErgometerData ergometerData = new ErgometerData();
 
         public ErgoSimulator(params IDataListener[] listener) : base("Simulation", listener)
         {
 
-            this.listener = listener;
+            this.listener = listener[0];
             this.Name = base.Name;
 
         }
@@ -58,8 +60,10 @@ namespace RemoteHealthCare
 
                 baseline = Math.Clamp(baseline, 40, 120);
 
+
+                setValues();
+                listener.notify(base.ergometerData);
                 Thread.Sleep(1000);
-                sendData();
             }
 
         }
@@ -72,21 +76,23 @@ namespace RemoteHealthCare
             this.accumulatedTotal += (80 + random.Next(baseline / 20));
             this.instantaneousTotal = 100 + random.Next(baseline / 5);
 
+            base.ergometerData.ID = this.id;
+            base.ergometerData.Cadence = baseline + random.Next(baseline / 10);
+            base.ergometerData.AccumulatedPower += (80 + random.Next(baseline / 20));
+            base.ergometerData.InstantaneousPower = 100 + random.Next(baseline / 5);
+
+            base.ergometerData.ElapsedTime = this.elapsedTime;
+            base.ergometerData.DistanceTraveled = this.distanceTraveled;
+            base.ergometerData.InstantaneousSpeed = 20 + random.Next(baseline / 4);
+
+            this.id++;
+            this.elapsedTime++;
+            this.distanceTraveled += 2;
         }
 
-        private void sendData()
+        public IData GetData()
         {
-            setValues();
-
-            StringBuilder builder = new StringBuilder();
-            builder.Append("RPM: " + this.rpm);
-            builder.Append("\nAcc power: " + this.accumulatedTotal);
-            builder.Append("\nInt power: " + this.instantaneousTotal);
-            builder.Append("\nTrainer status: " + this.trainerStatus);
-            builder.Append("\nFlags field: " + this.flagsField);
-            builder.Append("\nFEState: " + this.feStateField);
-
-            listener.notify(builder.ToString());
+            return base.ergometerData;
         }
 
     }
