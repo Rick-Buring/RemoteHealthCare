@@ -84,7 +84,7 @@ namespace RemoteHealthCare
                 Encoding.UTF8.GetString(e.Data));
         }
 
-        public void notify(string data)
+        public void notify(string data, int id)
         {
             Console.Clear();
             Console.WriteLine(data);

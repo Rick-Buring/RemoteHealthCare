@@ -8,6 +8,8 @@ namespace RemoteHealthCare
 {
     abstract class Sensor 
     {
+        private IDataListener listener;
+
         public abstract Task Connect();
 
         public abstract void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e);

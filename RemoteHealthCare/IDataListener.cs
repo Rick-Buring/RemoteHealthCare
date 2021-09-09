@@ -7,7 +7,7 @@ namespace RemoteHealthCare
     interface IDataListener
     {
 
-        public abstract void notify(string data);
+        public abstract void notify(string data, int id);
         
 
     }

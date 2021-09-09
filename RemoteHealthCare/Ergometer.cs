@@ -35,9 +35,12 @@ namespace RemoteHealthCare
         {
             Console.WriteLine("connecting");
 
-            int errorCode;
+            int errorCode = 1;
             // Connecting
-            errorCode = await bleBike.OpenDevice(Name);
+            while (errorCode == 1)
+            {
+                errorCode = await bleBike.OpenDevice(Name);
+            }
             // __TODO__ Error check
 
             var services = bleBike.GetServices;
@@ -47,20 +50,33 @@ namespace RemoteHealthCare
             }
 
             // Set service
-            errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
+            errorCode = 1;
+            while (errorCode == 1)
+            {
+                errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
+            }
             // __TODO__ error check
 
 
             // Subscribe
             bleBike.SubscriptionValueChanged += SubscriptionValueChanged;
-            errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            errorCode = 1;
+            while (errorCode == 1)
+            {
+                errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            }
         }
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName, 
-                BitConverter.ToString(e.Data).Replace("-", " "),
-                Encoding.UTF8.GetString(e.Data));
+            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName, 
+            //    BitConverter.ToString(e.Data).Replace("-", " "),
+            //    Encoding.UTF8.GetString(e.Data));
+
+            this.listener.notify("bike0x10", 0x10);
+            this.listener.notify("bike0x19", 0x19);
+
+
         }
 
         private static byte[] ResistanceMessage(float resistance)

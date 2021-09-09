@@ -104,7 +104,7 @@ namespace RemoteHealthCare
 
                 data.Update(e.Data);
                 BikeInfo bikeInfo = dataDict[0x19] as BikeInfo;
-                this.listener.notify(bikeInfo.getData());
+                this.listener.notify(bikeInfo.getData(), 0x19);
             }
         }
 
