@@ -11,11 +11,13 @@ namespace RemoteHealthCare
     class Program : IDataListener
     {
 
-        private static string bikeData;
-        private static string heartRateData;
+        private string bikeData;
+        private string heartRateData;
+        private string generalBikeData;
 
-        private static bool receivedBikeData;
-        private static bool receivedHeartRateData;
+        private bool receivedBikeData;
+        private bool receivedHeartRateData;
+        private bool receivedGerenalData;
 
         static async Task Main(string[] args)
         {
@@ -76,18 +78,56 @@ namespace RemoteHealthCare
         }
 
 
-
+        /**
         private static void BleBike_SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
             Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 BitConverter.ToString(e.Data).Replace("-", " "),
                 Encoding.UTF8.GetString(e.Data));
         }
+        */
 
-        public void notify(string data)
+        public void notify(string data, int id)
+        {
+            
+            
+            switch(id)
+            {
+                case 0x19:
+                    this.bikeData = data;
+                    this.receivedBikeData = true;
+                    break;
+                case 0x16:
+                    this.heartRateData = data;
+                    this.receivedHeartRateData = true;
+                    break;
+                case 0x10:
+                    this.generalBikeData = data;
+                    this.receivedGerenalData = true;
+                    break;
+            }
+
+            if (this.receivedBikeData && this.receivedHeartRateData && this.receivedGerenalData)
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.Append(this.bikeData);
+                builder.Append("\nHeartrate (BPM): " + this.heartRateData);
+                builder.Append("\n" + this.generalBikeData);
+
+                write(builder.ToString());
+            }
+
+
+            
+        }
+
+        public void write (string text)
         {
             Console.Clear();
-            Console.WriteLine(data);
+            Console.Write(text);
+            this.receivedBikeData = false;
+            this.receivedHeartRateData = false;
+            this.receivedGerenalData = false;
         }
     }
 

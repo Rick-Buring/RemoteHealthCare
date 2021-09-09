@@ -41,25 +41,36 @@ namespace RemoteHealthCare
                 throw new NotImplementedException("No Simulation created");
             }
 
-            int errorCode;
+            int errorCode = 1;
             // Connecting
-            errorCode = await bleBike.OpenDevice(name);
+            while (errorCode == 1)
+            {
+                errorCode = await bleBike.OpenDevice(name);
+            }
             // __TODO__ Error check
 
             var services = bleBike.GetServices;
+           
             foreach (var service in services)
             {
                 Console.WriteLine($"Service: {service.Name}");
             }
 
             // Set service
-            errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
-            // __TODO__ error check
+            errorCode = 1;
+            while (errorCode == 1)
+            {
+                errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
+                // __TODO__ error check
+            }
 
-
-            // Subscribe
-            bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
-            errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            errorCode = 1;
+            while (errorCode == 1)
+            {
+                // Subscribe
+                bleBike.SubscriptionValueChanged += BleBike_SubscriptionValueChanged;
+                errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
+            }
         }
 
         private static byte[] sendResistanceMessage(float resistance)
@@ -101,10 +112,21 @@ namespace RemoteHealthCare
             if (dataDict.ContainsKey(e.Data[4]))
             {
                 IData data = dataDict[e.Data[4]];
-
                 data.Update(e.Data);
-                BikeInfo bikeInfo = dataDict[0x19] as BikeInfo;
-                this.listener.notify(bikeInfo.getData());
+                switch (e.Data[4])
+                {
+                    case 0x10:
+                        GeneralBikeInfo generalBikeInfo = dataDict[0x10] as GeneralBikeInfo;
+                        this.listener.notify(generalBikeInfo.getData(), e.Data[4]);
+                        break;
+                    case 0x19:
+                        BikeInfo bikeInfo = dataDict[0x19] as BikeInfo;
+                        this.listener.notify(bikeInfo.getData(), e.Data[4]);
+                        break;
+                }
+
+                
+                
             }
         }
 

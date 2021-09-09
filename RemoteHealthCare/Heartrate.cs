@@ -6,9 +6,21 @@ namespace RemoteHealthCare
 {
     class Heartrate : IData
     {
+
+        private int heartBeat;
+
+        public Heartrate ()
+        {
+            this.heartBeat = 0;
+        }
         public void Update(byte[] bytes)
         {
-            throw new NotImplementedException();
+            this.heartBeat = bytes[1];
+        }
+
+        public string getData ()
+        {
+            return this.heartBeat.ToString();
         }
     }
 }

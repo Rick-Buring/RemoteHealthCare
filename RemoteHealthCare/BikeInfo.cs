@@ -70,8 +70,8 @@ namespace RemoteHealthCare
             string output = build0x19String(rpm, accumulatedPower, instantaneousPower, trainerStatus, flagsField, feStateField);
             //subscriber.update();
 
-            Console.Clear();
-            Console.WriteLine(output);
+            //Console.Clear();
+           // Console.WriteLine(output);
 
 
         }
