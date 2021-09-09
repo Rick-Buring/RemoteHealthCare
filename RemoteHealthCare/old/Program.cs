@@ -89,6 +89,11 @@ namespace RemoteHealthCare
             Console.Clear();
             Console.WriteLine(data);
         }
+
+        public void notify(IData data)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    }
+}

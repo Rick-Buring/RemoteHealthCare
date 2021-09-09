@@ -7,7 +7,7 @@ namespace RemoteHealthCare
 {
     class ErgoSimulator : Ergometer
     {
-        public ErgoSimulator(IDataListener listener) : base(listener, "Simulation")
+        public ErgoSimulator(params IDataListener[] listener) : base("Simulation", listener)
         {
             throw new NotImplementedException();
         }

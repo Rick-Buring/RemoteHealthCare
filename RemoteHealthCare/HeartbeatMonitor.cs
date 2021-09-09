@@ -9,14 +9,14 @@ namespace RemoteHealthCare
     class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
-        //private Heartrate heartrate;
-        private IDataListener listener;
+        private HeartBeatData heartBeatData;
+        private IDataListener[] listeners;
 
-        public HeartBeatMonitor(IDataListener listener)
+        public HeartBeatMonitor(params IDataListener[] listener)
         {
-            this.listener = listener;
+            this.listeners = listener;
+            this.heartBeatData = new HeartBeatData();
             this.bleHeart = new BLE();
-            //heartrate = new Heartrate();
         }
 
         public override async Task Connect()
@@ -53,10 +53,16 @@ namespace RemoteHealthCare
             //   BitConverter.ToString(e.Data).Replace("-", " "),
             //   Encoding.UTF8.GetString(e.Data));
 
-            //heartrate.Update(e.Data);
+            heartBeatData.Update(e.Data);
+           
+        }
 
-            this.listener.notify(e.Data[1].ToString(), 0x16);
-
+        private void notifyListeners()
+        {
+            for (int i = 0; i < this.listeners.Length; i++)
+            {
+                this.listeners[i].notify(heartBeatData);
+            }
         }
 
     }
