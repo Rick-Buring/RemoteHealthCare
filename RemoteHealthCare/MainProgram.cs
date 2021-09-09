@@ -15,10 +15,12 @@ namespace RemoteHealthCare
 
         private async Task start()
         {
-            Ergometer bike = new Ergometer(this, "Tacx Flux 01140");
+            Ergometer bike = new ErgoSimulator(this);
+            //new Ergometer(this, "Tacx Flux 01140");
             await bike.Connect();
 
-            HeartBeatMonitor hrm = new HeartBeatMonitor(this);
+            HeartBeatMonitor hrm = new HBSimulator(this);
+            //new HeartBeatMonitor(this);
             await hrm.Connect();
 
 
@@ -27,7 +29,7 @@ namespace RemoteHealthCare
 
         public void notify(string data)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(data);
         }
     }
 }
