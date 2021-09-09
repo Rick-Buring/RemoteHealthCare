@@ -12,5 +12,10 @@ namespace RemoteHealthCare
         {
             this.HeartRate = bytes[1];
         }
+
+        internal string GetString()
+        {
+            return $"Heartrate: {HeartRate}";
+        }
     }
 }

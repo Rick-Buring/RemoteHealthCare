@@ -9,7 +9,8 @@ namespace RemoteHealthCare
     {
         private DataIO dataIO;
 
-
+        private Ergometer ergometer;
+        private HeartBeatMonitor HeartBeatMonitor;
         private GUI gui;
 
         static async Task Main(string[] args)
@@ -20,13 +21,14 @@ namespace RemoteHealthCare
 
         private async Task start()
         {
-            Ergometer bike = new ErgoSimulator(this);
-            //new Ergometer(this, "Tacx Flux 01140");
-            await bike.Connect();
+            dataIO = new DataIO();
+            ergometer = new Ergometer("Tacx Flux 01140", this, dataIO);
+            this.gui = new GUI();
+            await ergometer.Connect();
+           
 
-            HeartBeatMonitor hrm = new HBSimulator(this);
-            //new HeartBeatMonitor(this);
-            await hrm.Connect();
+            HeartBeatMonitor = new HeartBeatMonitor(this, dataIO);
+            await HeartBeatMonitor.Connect();
 
 
             Console.Read();
@@ -34,7 +36,7 @@ namespace RemoteHealthCare
 
         public void notify(IData data)
         {
-
+            gui.write($"{ergometer.GetData()}\n{HeartBeatMonitor.GetData()}");
         }
     }
     

@@ -116,5 +116,10 @@ namespace RemoteHealthCare
                 this.listeners[i].notify(ergometerData);
             }
         }
+
+        public override string GetData()
+        {
+            return this.ergometerData.GetString();
+        }
     }
 }
