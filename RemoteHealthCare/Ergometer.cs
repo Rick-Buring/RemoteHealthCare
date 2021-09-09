@@ -11,7 +11,7 @@ namespace RemoteHealthCare
     {
         public string Name { get; }
 
-        private IDataListener listener;
+        protected IDataListener listener;
         private BLE bleBike;
 
         public Ergometer(IDataListener listener, string name)
