@@ -11,11 +11,11 @@ namespace RemoteHealthCare
     class Program : IDataListener
     {
 
-        private static string bikeData;
-        private static string heartRateData;
+        //private static string bikeData;
+        //private static string heartRateData;
 
-        private static bool receivedBikeData;
-        private static bool receivedHeartRateData;
+        //private static bool receivedBikeData;
+        //private static bool receivedHeartRateData;
 
         //static async Task Main(string[] args)
         //{

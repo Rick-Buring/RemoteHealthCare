@@ -8,7 +8,7 @@ namespace RemoteHealthCare
     {
         public void notify(IData data)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

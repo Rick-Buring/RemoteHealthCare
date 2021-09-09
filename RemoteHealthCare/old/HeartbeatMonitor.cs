@@ -15,7 +15,6 @@ namespace RemoteHealthCare
         public HeartbeatMonitor(IDataListener listener)
         {
             this.listener = listener;
-            int errorCode = 0;
             this.bleHeart = new BLE();
             heartrate = new Heartrate();
            

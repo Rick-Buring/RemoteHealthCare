@@ -17,6 +17,7 @@ namespace RemoteHealthCare
 
         public Ergometer(string name, params IDataListener[] listener)
         {
+            this.ergometerData = new ErgometerData();
             this.Name = name;
             this.bleBike = new BLE();
             this.listeners = listener;
@@ -70,9 +71,9 @@ namespace RemoteHealthCare
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-                BitConverter.ToString(e.Data).Replace("-", " "),
-                Encoding.UTF8.GetString(e.Data));
+            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
+            //    BitConverter.ToString(e.Data).Replace("-", " "),
+            //    Encoding.UTF8.GetString(e.Data));
 
             this.ergometerData.Update(e.Data);
             notifyListeners();
