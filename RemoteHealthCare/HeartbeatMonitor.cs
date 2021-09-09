@@ -6,47 +6,68 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class HeartbeatMonitor
+    class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
-        private Heartrate heartrate;
-        private IDataListener listener;
+        protected HeartBeatData heartBeatData;
+        private IDataListener[] listeners;
 
-        public HeartbeatMonitor(IDataListener listener)
+        public HeartBeatMonitor(params IDataListener[] listener)
         {
-            this.listener = listener;
-            int errorCode = 0;
+            this.listeners = listener;
+            this.heartBeatData = new HeartBeatData();
             this.bleHeart = new BLE();
-            heartrate = new Heartrate();
-
-            Console.Read();
         }
 
-        public async Task connect(bool realMonitor)
+        public override async Task Connect()
         {
-            if (!realMonitor)
+            int errorCode = 1;
+            while (errorCode == 1)
             {
-                throw new NotImplementedException("No Simulation created");
+                errorCode = await bleHeart.OpenDevice("Decathlon Dual HR");
+                Console.WriteLine("Opening device HR: " + errorCode);
             }
 
-            int errorCode;
 
-            errorCode = await bleHeart.OpenDevice("Decathlon Dual HR");
+            errorCode = 1;
+            while (errorCode == 1)
+            {
+                errorCode = await bleHeart.SetService("HeartRate");
+                Console.WriteLine("Setting service HR: " + errorCode);
+            }
 
-            await bleHeart.SetService("HeartRate");
 
             bleHeart.SubscriptionValueChanged += SubscriptionValueChanged;
-            await bleHeart.SubscribeToCharacteristic("HeartRateMeasurement");
+            errorCode = 1;
 
+            while (errorCode == 1)
+            {
+                errorCode = await bleHeart.SubscribeToCharacteristic("HeartRateMeasurement");
+                Console.WriteLine("Subscribing to characteristic HR: " + errorCode);
+            }
         }
 
-        private void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
+        public override string GetData()
         {
-            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-                BitConverter.ToString(e.Data).Replace("-", " "),
-                Encoding.UTF8.GetString(e.Data));
+            return this.heartBeatData.GetString();
+        }
 
-            //heartrate.Update(e.Data);
+        public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
+        {
+            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
+            //   BitConverter.ToString(e.Data).Replace("-", " "),
+            //   Encoding.UTF8.GetString(e.Data));
+
+            heartBeatData.Update(e.Data);
+           
+        }
+
+        private void notifyListeners()
+        {
+            for (int i = 0; i < this.listeners.Length; i++)
+            {
+                this.listeners[i].notify(heartBeatData);
+            }
         }
 
     }

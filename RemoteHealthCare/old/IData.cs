@@ -7,5 +7,6 @@ namespace RemoteHealthCare
     public interface IData
     {
         void Update(byte[] bytes);
+
     }
 }

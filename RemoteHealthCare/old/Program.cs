@@ -11,35 +11,35 @@ namespace RemoteHealthCare
     class Program : IDataListener
     {
 
-        private static string bikeData;
-        private static string heartRateData;
+        //private static string bikeData;
+        //private static string heartRateData;
 
-        private static bool receivedBikeData;
-        private static bool receivedHeartRateData;
+        //private static bool receivedBikeData;
+        //private static bool receivedHeartRateData;
 
-        static async Task Main(string[] args)
-        {
-            Program program = new Program();
-            await program.start();
-        }
+        //static async Task Main(string[] args)
+        //{
+        //    Program program = new Program();
+        //    await program.start();
+        //}
 
-        private async Task  start ()
-        {
-            bikeData = "";
-            heartRateData = "";
-            receivedBikeData = false;
-            receivedHeartRateData = false;
-
-
-            Bike bike = new Bike(this);
-
-            await bike.connect("Tacx Flux 01140", true);
-            HeartbeatMonitor hrm = new HeartbeatMonitor(this);
-            await hrm.connect(true);
+        //private async Task  start ()
+        //{
+        //    bikeData = "";
+        //    heartRateData = "";
+        //    receivedBikeData = false;
+        //    receivedHeartRateData = false;
 
 
-            Console.Read();
-        }
+        //    Bike bike = new Bike(this);
+
+        //    await bike.connect("Tacx Flux 01140", true);
+        //    HeartbeatMonitor hrm = new HeartbeatMonitor(this);
+        //    await hrm.connect(true);
+
+
+        //    Console.Read();
+        //}
 
         private static byte[] sendMessage(float resistance)
         {
@@ -84,11 +84,16 @@ namespace RemoteHealthCare
                 Encoding.UTF8.GetString(e.Data));
         }
 
-        public void notify(string data)
+        public void notify(string data, int id)
         {
             Console.Clear();
             Console.WriteLine(data);
         }
+
+        public void notify(IData data)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    }
+}
