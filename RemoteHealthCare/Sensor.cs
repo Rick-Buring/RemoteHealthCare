@@ -11,6 +11,6 @@ namespace RemoteHealthCare
         public abstract Task Connect();
 
         public abstract void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e);
-
+      
     }
 }

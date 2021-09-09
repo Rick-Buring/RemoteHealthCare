@@ -11,14 +11,15 @@ namespace RemoteHealthCare
     {
         public string Name { get; }
 
-        private IDataListener listener;
+        private IDataListener[] listeners;
         private BLE bleBike;
+        private ErgometerData ergometerData;
 
-        public Ergometer(IDataListener listener, string name)
+        public Ergometer(string name, params IDataListener[] listener)
         {
             this.Name = name;
             this.bleBike = new BLE();
-            this.listener = listener;
+            this.listeners = listener;
 
             Thread.Sleep(1000); // We need some time to list available devices
 
@@ -58,9 +59,12 @@ namespace RemoteHealthCare
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName, 
+            Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
                 BitConverter.ToString(e.Data).Replace("-", " "),
                 Encoding.UTF8.GetString(e.Data));
+
+            this.ergometerData.Update(e.Data);
+            notifyListeners();
         }
 
         private static byte[] ResistanceMessage(float resistance)
@@ -92,6 +96,13 @@ namespace RemoteHealthCare
             }
 
             return output;
+        }
+        private void notifyListeners()
+        {
+            for (int i = 0; i < this.listeners.Length; i++)
+            {
+                this.listeners[i].notify(ergometerData);
+            }
         }
     }
 }

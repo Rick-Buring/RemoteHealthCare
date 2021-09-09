@@ -4,8 +4,11 @@ using System.Text;
 
 namespace RemoteHealthCare
 {
-    class DataIO
+    class DataIO : IDataListener
     {
-
+        public void notify(IData data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -7,6 +7,8 @@ namespace RemoteHealthCare
 {
     class MainProgram : IDataListener
     {
+        private DataIO dataIO;
+
         static async Task Main(string[] args)
         {
             MainProgram program = new MainProgram();
@@ -15,19 +17,20 @@ namespace RemoteHealthCare
 
         private async Task start()
         {
-            Ergometer bike = new Ergometer(this, "Tacx Flux 01140");
+            dataIO = new DataIO();
+            Ergometer bike = new Ergometer("Tacx Flux 01140", this, dataIO);
             await bike.Connect();
 
-            HeartBeatMonitor hrm = new HeartBeatMonitor(this);
+            HeartBeatMonitor hrm = new HeartBeatMonitor(this, dataIO);
             await hrm.Connect();
 
 
             Console.Read();
         }
 
-        public void notify(string data)
+        public void notify(IData data)
         {
-            throw new NotImplementedException();
+
         }
     }
 }
