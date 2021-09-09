@@ -17,29 +17,29 @@ namespace RemoteHealthCare
         private static bool receivedBikeData;
         private static bool receivedHeartRateData;
 
-        static async Task Main(string[] args)
-        {
-            Program program = new Program();
-            await program.start();
-        }
+        //static async Task Main(string[] args)
+        //{
+        //    Program program = new Program();
+        //    await program.start();
+        //}
 
-        private async Task  start ()
-        {
-            bikeData = "";
-            heartRateData = "";
-            receivedBikeData = false;
-            receivedHeartRateData = false;
-
-
-            Bike bike = new Bike(this);
-
-            await bike.connect("Tacx Flux 01140", true);
-            HeartbeatMonitor hrm = new HeartbeatMonitor(this);
-            await hrm.connect(true);
+        //private async Task  start ()
+        //{
+        //    bikeData = "";
+        //    heartRateData = "";
+        //    receivedBikeData = false;
+        //    receivedHeartRateData = false;
 
 
-            Console.Read();
-        }
+        //    Bike bike = new Bike(this);
+
+        //    await bike.connect("Tacx Flux 01140", true);
+        //    HeartbeatMonitor hrm = new HeartbeatMonitor(this);
+        //    await hrm.connect(true);
+
+
+        //    Console.Read();
+        //}
 
         private static byte[] sendMessage(float resistance)
         {
