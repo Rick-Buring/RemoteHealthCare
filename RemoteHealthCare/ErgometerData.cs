@@ -72,7 +72,7 @@ namespace RemoteHealthCare
             this.InstantaneousSpeed = (speedMSB << 8 | speedLSB) / 1000.0;
 
             //this.capabilities = data[10] & 0x0f;
-            //this.FEState = data[11];
+            //this.FEState = data[10] >> 4;
         }
 
         internal string GetString()
