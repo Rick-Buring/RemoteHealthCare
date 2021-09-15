@@ -8,36 +8,21 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class HeartbeatMonitor
+    class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
-        private Heartrate heartrate;
-        private IDataListener listener;
+        protected HeartBeatData heartBeatData;
+        private IDataListener[] listeners;
 
-        public HeartbeatMonitor(IDataListener listener)
+        public HeartBeatMonitor(params IDataListener[] listener)
         {
-            this.listener = listener;
-            
+            this.listeners = listener;
+            this.heartBeatData = new HeartBeatData();
             this.bleHeart = new BLE();
-            heartrate = new Heartrate();
-
-            Thread.Sleep(1000); // We need some time to list available devices
-                                // List available devices
-            List<String> bleBikeList = bleHeart.ListDevices();
-            Console.WriteLine("Devices found: ");
-            foreach (var name in bleBikeList)
-            {
-                Console.WriteLine($"Device: {name}");
-            }
         }
 
-        public async Task connect(bool realMonitor)
+        public override async Task Connect()
         {
-            if (!realMonitor)
-            {
-                throw new NotImplementedException("No Simulation created");
-            }
-
             int errorCode = 1;
             while (errorCode == 1)
             {
@@ -53,6 +38,7 @@ namespace RemoteHealthCare
                 Console.WriteLine("Setting service HR: " + errorCode);
             }
 
+
             
             bleHeart.SubscriptionValueChanged += SubscriptionValueChanged;
             errorCode = 1;
@@ -62,22 +48,28 @@ namespace RemoteHealthCare
                 errorCode = await bleHeart.SubscribeToCharacteristic("HeartRateMeasurement");
                 Console.WriteLine("Subscribing to characteristic HR: " + errorCode);
             }
-
         }
 
-        private void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
+        public override string GetData()
         {
-            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-            //BitConverter.ToString(e.Data).Replace("-", " "),
-            //Encoding.UTF8.GetString(e.Data));
+            return this.heartBeatData.GetString();
+        }
 
-            //heartrate.Update(e.Data);
+        public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
+        {
+            heartBeatData.Update(e.Data);
+            notifyListeners();
+        }
 
-            // IData data = dataDict[e.Data[4]];
-
-            heartrate.Update(e.Data);
-            
-            this.listener.notify(heartrate.getData(), 0x16);
+        /// <summary>
+        /// Deze methode wordt gebruikt om alle listeners aan te roepen.
+        /// </summary>
+        private void notifyListeners()
+        {
+            for (int i = 0; i < this.listeners.Length; i++)
+            {
+                this.listeners[i].notify(heartBeatData);
+            }
         }
 
     }
