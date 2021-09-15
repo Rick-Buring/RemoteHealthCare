@@ -22,8 +22,6 @@ namespace RemoteHealthCare
         private int elapsedTime = 0;
         private int distanceTraveled = 0;
 
-        //ErgometerData ergometerData = new ErgometerData();
-
         public ErgoSimulator(params IDataListener[] listener) : base("Simulation", listener)
         {
 
@@ -32,15 +30,18 @@ namespace RemoteHealthCare
 
         }
 
+        //Methode voor het verbinden met de simulator.
         public override async Task Connect()
         {
             Console.WriteLine($"Connecting to {Name}");
 
+            //Start een thread die rollBaseLine uitvoert.
             Thread thread = new Thread(new ThreadStart(rollBaseline));
             thread.Start();
 
         }
 
+        //Rolt elke seconde een random waarde en verandert de baseline gebaseerd op die waarde met +10 of -10.
         private void rollBaseline()
         {
 
@@ -58,9 +59,10 @@ namespace RemoteHealthCare
                     baseline -= 10;
                 }
 
+                //Baseline mag niet lager zijn dan 40 en niet hoger zijn dan 120.
                 baseline = Math.Clamp(baseline, 40, 120);
 
-
+                //Verander de waarden in de data klasse en geef notify de listener.
                 setValues();
                 listener.notify(base.ergometerData);
                 Thread.Sleep(1000);
@@ -68,21 +70,36 @@ namespace RemoteHealthCare
 
         }
 
+        //Verandert de waardes in de data klasse met een random waarde rond de baseline plus een random waarde tussen 0 en een aantal % van de baseline.
         private void setValues()
         {
 
             Random random = new Random();
+
+            //Baseline + (tussen 0 en 10% van de baseline)
             this.rpm = baseline + random.Next(baseline / 10);
+
+            //80 + (tussen 0 en 5% van de baseline)
             this.accumulatedTotal += (80 + random.Next(baseline / 20));
+
+            //100 + (tussen 0 en 20% van de baseline)
             this.instantaneousTotal = 100 + random.Next(baseline / 5);
 
             base.ergometerData.ID = this.id;
+
+            //Baseline + (tussen 0 en 10% van de baseline)
             base.ergometerData.Cadence = baseline + random.Next(baseline / 10);
+
+            //AccumulatedPower += 80 + (tussen 0 en 5% van de baseline)
             base.ergometerData.AccumulatedPower += (80 + random.Next(baseline / 20));
+
+            //InstantaneousPower += 100 + (tussen 0 en 20% van de baseline)
             base.ergometerData.InstantaneousPower = 100 + random.Next(baseline / 5);
 
             base.ergometerData.ElapsedTime = this.elapsedTime;
             base.ergometerData.DistanceTraveled = this.distanceTraveled;
+
+            //20 + (tussen 0 en 25% van de baseline)
             base.ergometerData.InstantaneousSpeed = 20 + random.Next(baseline / 4);
 
             this.id++;
