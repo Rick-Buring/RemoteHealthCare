@@ -70,7 +70,9 @@ namespace VR_Project
             Root root = JsonConvert.DeserializeObject<Root>(test);
 
             //root.data.ElementAt(0).id; is de session id.
-  
+            string id = root.data.ElementAt(0).id;
+
+            string tunnel = @"{""id"" : ""tunnel/create"", ""data""{""""session"" : " + id + @""",""key"" : """"}}";
             
 
         }
