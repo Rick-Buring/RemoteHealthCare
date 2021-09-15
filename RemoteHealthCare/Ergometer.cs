@@ -15,6 +15,11 @@ namespace RemoteHealthCare
         private BLE bleBike;
         protected ErgometerData ergometerData;
 
+        /// <summary>
+        /// constructor voor de fiets
+        /// </summary>
+        /// <param name="name">de naam van de fiets waarmee word verbonden</param>
+        /// <param name="listener"> een lijst met classes die genotificeert willen worden op nieuwe data</param>
         public Ergometer(string name, params IDataListener[] listener)
         {
             this.ergometerData = new ErgometerData();
@@ -38,29 +43,28 @@ namespace RemoteHealthCare
             Console.WriteLine("connecting");
 
             int errorCode = 1;
-            // Connecting
+            // Verbinden met de fiets en check op errors
             while (errorCode == 1)
             {
                 errorCode = await bleBike.OpenDevice(Name);
             }
-            // __TODO__ Error check
 
+            //geef een lijst van beschikbare servies
             var services = bleBike.GetServices;
             foreach (var service in services)
             {
                 Console.WriteLine($"Service: {service.Name}");
             }
 
-            // Set service
+            // start de service die gebruikt gaat worden
             errorCode = 1;
             while (errorCode == 1)
             {
                 errorCode = await bleBike.SetService("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e");
             }
-            // __TODO__ error check
 
 
-            // Subscribe
+            // Subscribe naar de service
             bleBike.SubscriptionValueChanged += SubscriptionValueChanged;
             errorCode = 1;
             while (errorCode == 1)
@@ -69,16 +73,18 @@ namespace RemoteHealthCare
             }
         }
 
+        //event voor binnenkomende data notificeren van de classes
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-            //    BitConverter.ToString(e.Data).Replace("-", " "),
-            //    Encoding.UTF8.GetString(e.Data));
-
             this.ergometerData.Update(e.Data);
             notifyListeners();
         }
 
+        /// <summary>
+        /// methode om weerstant bericht te maken
+        /// </summary>
+        /// <param name="resistance">hoeveel weerstant de fiets moet bieden in hele procenten met een max van 100</param>
+        /// <returns>een bye array die naar de fiets gestuurt kan worden</returns>
         private static byte[] ResistanceMessage(float resistance)
         {
             byte[] buff = new byte[13];
@@ -97,7 +103,11 @@ namespace RemoteHealthCare
 
             return buff;
         }
-
+        /// <summary>
+        /// checksum berekenen
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns> de checksum</returns>
         private static byte checksum(byte[] message)
         {
             byte output = message[0];
@@ -109,6 +119,9 @@ namespace RemoteHealthCare
 
             return output;
         }
+        /// <summary>
+        /// notificeren van luisteraars
+        /// </summary>
         private void notifyListeners()
         {
             for (int i = 0; i < this.listeners.Length; i++)

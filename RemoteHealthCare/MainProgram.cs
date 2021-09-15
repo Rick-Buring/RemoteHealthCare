@@ -18,7 +18,7 @@ namespace RemoteHealthCare
             MainProgram program = new MainProgram();
             await program.start();
         }
-
+        // starts the application
         private async Task start()
         {
             dataIO = new DataIO();
@@ -36,6 +36,10 @@ namespace RemoteHealthCare
             Console.Read();
         }
 
+        /// <summary>
+        /// Deze methode wordt aangeroepen als er een callback is.
+        /// </summary>
+        /// <param name="data">Data in de vorm van IData.</param>
         public void notify(IData data)
         {
             if(HeartBeatMonitor != null)

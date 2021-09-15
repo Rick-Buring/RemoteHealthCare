@@ -13,8 +13,6 @@ namespace RemoteHealthCare
 
         private int baseline;
 
-        //HeartBeatData heartBeatData = new HeartBeatData();
-
         public HBSimulator(IDataListener listener) : base(listener)
         {
 
@@ -22,14 +20,17 @@ namespace RemoteHealthCare
 
         }
 
+        //Methode voor het verbinden met de simulator.
         public async override Task Connect()
         {
             Console.WriteLine($"Connecting to HB Simulator");
 
+            //Start een thread die rollBaseLine uitvoert.
             Thread thread = new Thread(new ThreadStart(rollBaseline));
             thread.Start();
         }
 
+        //Rolt elke seconde een random waarde en verandert de baseline gebaseerd op die waarde met +10 of -10.
         public void rollBaseline()
         {
             bool running = true;
@@ -46,6 +47,7 @@ namespace RemoteHealthCare
                     baseline -= 10;
                 }
 
+                //baseline mag niet lager zijn dan 60 en niet hoger zijn dan 180.
                 baseline = Math.Clamp(baseline, 60, 180);
 
 
@@ -55,9 +57,12 @@ namespace RemoteHealthCare
             }
         }
 
+        //Verandert de data in de data klasse.
         public void setData()
         {
             Random random = new Random();
+
+            //baseline + (tussen 0 en 20% van de baseline)
             base.heartBeatData.HeartRate = baseline + random.Next(baseline / 5);
         }
 

@@ -17,6 +17,7 @@ namespace RemoteHealthCare
         public int DistanceTraveled { get; set; }
         public double InstantaneousSpeed { get; set; }
 
+        //updates de variabelen
         public void Update(byte[] bytes)
         {
           switch( bytes[4]){
@@ -27,6 +28,10 @@ namespace RemoteHealthCare
             }
         }
 
+        /// <summary>
+        /// decoderen van de 0x19 page data
+        /// </summary>
+        /// <param name="data"></param>
         private void decodeSpecificData(byte[] data)
         {
             // is the cadence
@@ -52,6 +57,10 @@ namespace RemoteHealthCare
             //feStateField = data[11] >> 4;
         }
 
+        /// <summary>
+        /// decoderen van de 0x10 data page
+        /// </summary>
+        /// <param name="data"></param>
         private void decodeGeneralData(byte[] data)
         {
             //this.equipmentType = data[5];
