@@ -18,7 +18,7 @@ namespace RemoteHealthCare
             MainProgram program = new MainProgram();
             await program.start();
         }
-
+        // starts the application
         private async Task start()
         {
             dataIO = new DataIO();

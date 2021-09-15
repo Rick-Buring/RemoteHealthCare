@@ -54,10 +54,6 @@ namespace RemoteHealthCare
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            //Console.WriteLine("Received from {0}: {1}, {2}", e.ServiceName,
-            //   BitConverter.ToString(e.Data).Replace("-", " "),
-            //   Encoding.UTF8.GetString(e.Data));
-
             heartBeatData.Update(e.Data);
             notifyListeners();
         }
