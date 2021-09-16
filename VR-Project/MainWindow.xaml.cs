@@ -134,7 +134,17 @@ namespace VR_Project
             receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
 
-          
+            Route r = new Route();
+            r.addPosAndDirection(new float[3] { 4, 3, 2 }, new float[3] { 4, 3, 32 });
+            r.addPosAndDirection(new float[3] { 4, 4, 2 }, new float[3] { 4, 34, 2 });
+            r.addPosAndDirection(new float[3] { 4, 35, 2 }, new float[3] { 46, 3, 2 });
+            r.addPosAndDirection(new float[3] { 4, 38, 2 }, new float[3] { 4, 3, 12 });
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.addRoute())));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            received = ReadMessage(client);
+            receivedMessage = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(receivedMessage);
 
         }
 
