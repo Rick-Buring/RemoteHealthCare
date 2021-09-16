@@ -112,26 +112,29 @@ namespace VR_Project
 
 
 
+            
+            //skybox.id = "scene/skybox/update";
+            //skybox.setType(Skybox.SkyboxType.DYNAMIC);
+            //messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Skybox>(dest, skybox)));
+            //client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            //client.GetStream().Flush();
+            //received = ReadMessage(client);
+            //string receivedMessage = Encoding.ASCII.GetString(received);
+            //Debug.WriteLine(receivedMessage);
             Debug.WriteLine("Creating skybox");
             Skybox skybox = new Skybox();
-            skybox.id = "scene/skybox/update";
-            skybox.setType(Skybox.SkyboxType.DYNAMIC);
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Skybox>(dest, skybox)));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            string receivedMessage = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(receivedMessage);
-
             skybox.id = "scene/skybox/settime";
             skybox.data.time = 24;
 
             SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
 
-            skybox.id = "scene/skybox/update";
- //           skybox.setType(Skybox.SkyboxType.STATIC);
-      
-            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
+            //skybox.id = "scene/skybox/update";
+            //skybox.setType(Skybox.SkyboxType.STATIC);
+
+            //SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
+
+            client.Close();
+            client.Dispose();
 
         }
 
