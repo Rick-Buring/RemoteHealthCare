@@ -1,17 +1,19 @@
 ﻿using System;
 using System.IO;
 
-public class Terrain : VRObject
+public class Terrain 
 {
-	private int[] ?size { get; set; }
-	private float[] ?heights { get; set; }
+    public string id { get; set; }
+    public object data { get; set; }
+    public int[] ?size { get; set; }
+	public float[] ?heights { get; set; }
 
-	private double[] ?position;
-	private double[][] ?positions;
+	public double[] ?position;
+	public double[][] ?positions;
 
 
 
-	private string heightPath;
+	public string heightPath;
 
 	public Terrain(string id, int[] size, string heightPath)
 	{

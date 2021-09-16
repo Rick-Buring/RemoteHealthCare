@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class Road : VRObject
+public class Road 
 {
 	public Road()
 	{

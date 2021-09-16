@@ -11,13 +11,4 @@
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Objects\Node\" />
-    <Folder Include="Objects\Panel\" />
-    <Folder Include="Objects\Road\" />
-    <Folder Include="Objects\Scene\" />
-    <Folder Include="Objects\Skybox\" />
-    <Folder Include="Objects\Terrain\" />
-  </ItemGroup>
-
 </Project>

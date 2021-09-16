@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class Scene : VRObject
+public class Scene 
 {
 	public Scene()
 	{
