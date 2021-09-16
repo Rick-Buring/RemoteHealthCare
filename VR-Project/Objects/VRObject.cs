@@ -5,6 +5,6 @@ public abstract class VRObject
 
 	public string id { get; set; }
 	public Object data { get; set; }
-	public byte[] getByte;
+	public abstract byte[] getByte();
 
 }
