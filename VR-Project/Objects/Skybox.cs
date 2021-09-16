@@ -11,11 +11,6 @@ public class Skybox : VRObject
         this.data = new SkyboxData();
     }
 
-    public override byte[] getByte()
-    {
-        throw new NotImplementedException();
-    }
-
     public void setID (string request)
     {
         this.id = request;
