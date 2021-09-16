@@ -8,8 +8,8 @@ namespace VR_Project.Objects.Route
 {
     class Node
     {
-        private float[] pos;
-        private float[] dir;
+        public float[] pos;
+        public float[] dir;
 
         public Node(float[] pos, float[] dir)
         {

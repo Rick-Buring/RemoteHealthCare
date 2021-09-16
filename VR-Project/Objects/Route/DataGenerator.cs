@@ -9,8 +9,8 @@ namespace VR_Project.Objects.Route
 {
     class DataGenerator
     {
-        private string uuid {get; set;}
-        private List<Node> nodes;
+        public string uuid {get; set;}
+        public List<Node> nodes;
         
         public DataGenerator()
         {
@@ -25,7 +25,7 @@ namespace VR_Project.Objects.Route
         //the dataset for adding a path
         public class addData : Data
         {
-            private Node[] nodes;
+            public Node[] nodes;
 
             public addData(Node[] nodes)
             {

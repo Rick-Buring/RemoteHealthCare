@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VR_Project.Objects.Route
 {
-    interface Data
+    public interface Data
     {
 
     }
