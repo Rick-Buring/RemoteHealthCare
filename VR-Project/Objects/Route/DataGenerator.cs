@@ -9,7 +9,6 @@ namespace VR_Project.Objects.Route
 {
     class DataGenerator
     {
-        public string uuid {get; set;}
         public List<Node> nodes;
         
         public DataGenerator()
@@ -28,16 +27,35 @@ namespace VR_Project.Objects.Route
             public Node[] nodes;
             public bool show;
 
-            public addData(Node[] nodes)
+            public addData(Node[] nodes, bool show)
             {
                 this.nodes = nodes;
-                this.show = true;
+                this.show = show;
             }
         }
-        public Data getDataAdd()
+        
+        public Data getDataAdd(bool show)
         {
-            Data addData = new addData(nodes.ToArray());
-            return addData;
+            return new addData(nodes.ToArray(), show);
+        }
+
+        public class UpdateData : Data
+        {
+            public string uuid;
+            public Node[] nodes;
+            public bool show;
+
+            public UpdateData(Node[] nodes, bool show, string uuid)
+            {
+                this.nodes = nodes;
+                this.show = show;
+                this.uuid = uuid;
+            }
+        }
+
+        public Data getDataUpdate(bool show, string uuid)
+        {
+            return new UpdateData(nodes.ToArray(), show, uuid);
         }
     }
 }

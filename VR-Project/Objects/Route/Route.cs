@@ -22,18 +22,23 @@ public class Route
     }
 
     //sets the id to add route, and sets data
-    public RouteObject addRoute()
+    public RouteObject addRoute(bool show)
     {
-        return new RouteObject("route/add", dataGen.getDataAdd());
+        return new RouteObject("route/add", dataGen.getDataAdd(show));
     }
 
-    /*
+    
     //sets the id to update the route, and sets data
-    public void updateRoute(string uuid)
+    public RouteObject updateRoute(string uuid, bool show)
     {
-        //add to data
+        return new RouteObject("route/update", dataGen.getDataUpdate(show, uuid));
     }
-    */
+
+
+    public RouteObject followRoute(string routeid, string nodeid, float speed)
+    {
+        return new RouteObject("route/follow", new FollowData(routeid, nodeid, speed));
+    }
 
     public class RouteObject
     {
@@ -47,6 +52,4 @@ public class Route
             this.data = data;
         }
     }
-
-
 }
