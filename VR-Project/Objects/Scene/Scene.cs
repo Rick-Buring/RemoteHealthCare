@@ -12,9 +12,9 @@ public class Scene
 	}
 
 	public void setFileName(string fileName)
-    {
+	{
 		this.data.filename = fileName;
-    }
+	}
 
 	public void setOverwrite(bool overwrite)
 	{
@@ -23,7 +23,8 @@ public class Scene
 
 	public class SceneData
 	{
-		#nullable enable
+#nullable enable
 		public string? filename { get; set; }
 		public bool? overwrite { get; set; }
 	}
+}

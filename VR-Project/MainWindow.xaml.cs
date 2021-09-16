@@ -145,7 +145,6 @@ namespace VR_Project
             received = ReadMessage(client);
             receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
-
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)

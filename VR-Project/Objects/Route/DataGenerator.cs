@@ -26,10 +26,12 @@ namespace VR_Project.Objects.Route
         public class addData : Data
         {
             public Node[] nodes;
+            public bool show;
 
             public addData(Node[] nodes)
             {
                 this.nodes = nodes;
+                this.show = true;
             }
         }
         public Data getDataAdd()
