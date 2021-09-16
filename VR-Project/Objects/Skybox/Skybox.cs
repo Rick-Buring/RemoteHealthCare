@@ -9,20 +9,16 @@ public class Skybox
 
     public string id;
 	public SkyboxData data { get; set; }
-    [JsonIgnore]
-    private string type { get; set; }
-    [JsonIgnore]
-    private Files files { get; set; }
 	
 	public Skybox ()
     {
         this.data = new SkyboxData();
-        this.files = new Files();
+        this.data.files = new Files();
     }
 
     public void setType (SkyboxType type)
     {
-        this.type = type.ToString().ToLower();
+        this.data.type = type.ToString().ToLower();
     }
 
     public void setID (string request)
@@ -38,7 +34,8 @@ public class Skybox
     public class SkyboxData
     {
         public double time { get; set; }
-
+        public string type { get; set; }
+        public Files files { get; set; }
     }
 
     public enum SkyboxType{

@@ -120,23 +120,25 @@ namespace VR_Project
             string updateTime = JsonConvert.SerializeObject(skybox);
 
             string sendChangeTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + changeTime + "}}";
-            string sendUpdateTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : {""id"" : ""scene/skybox/update"", ""data"" : {""type"" : ""dynamic""}} }}";
+            string sendUpdateTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + updateTime + "}}";
             Debug.WriteLine(sendChangeTime);
             Debug.WriteLine(sendUpdateTime);
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendUpdateTime));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-
-            received = ReadMessage(client);
-            string receivedMessage = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(receivedMessage);
 
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendChangeTime));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             received = ReadMessage(client);
+            string receivedMessage = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(receivedMessage);
+
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendUpdateTime));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            received = ReadMessage(client);
             receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
+
+          
 
         }
 
