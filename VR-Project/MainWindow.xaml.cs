@@ -30,7 +30,7 @@ namespace VR_Project
             InitializeComponent();
             TcpClient client = new TcpClient("145.48.6.10", 6666);
 
-          
+
             Root t = new Root();
             t.id = "session/list";
             //string message = @"{""id"" : ""session/list""}";
@@ -44,10 +44,10 @@ namespace VR_Project
             //writer.Flush();
             //Console.WriteLine(reader.ReadToEnd());
             byte[] array = new byte[4];
-            
-            
+
+
             client.GetStream().Read(array, 0, 4);
-            
+
             //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
             byte[] received = new byte[size];
@@ -86,15 +86,15 @@ namespace VR_Project
         public static byte[] WrapMessage(byte[] message)
         {
             // Get the length prefix for the message
-            byte [] lengthPrefix = BitConverter.GetBytes(message.Length);
+            byte[] lengthPrefix = BitConverter.GetBytes(message.Length);
             // Concatenate the length prefix and the message
-            byte [] ret = new byte [lengthPrefix.Length + message.Length];
+            byte[] ret = new byte[lengthPrefix.Length + message.Length];
             lengthPrefix.CopyTo(ret, 0);
             message.CopyTo(ret, lengthPrefix.Length);
             return ret;
         }
 
-        public static string getCorrectID (Root root)
+        public static string getCorrectID(Root root)
         {
             foreach (Data d in root.data)
             {
@@ -130,11 +130,8 @@ namespace VR_Project
             return received;
 
         }
-        class Test
-        {
-            public string ?id { get; set; }
 
-        }
+
         public class Fp
         {
             public double ?time { get; set; }
