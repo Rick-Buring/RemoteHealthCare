@@ -109,29 +109,25 @@ namespace VR_Project
             //client.Close();
             //client.Dispose();
 
+           
+
+       
+
             Skybox skybox = new Skybox();
             skybox.id = "scene/skybox/settime";
             skybox.data.time = 24;
 
-            string changeTime = JsonConvert.SerializeObject(skybox);
-            Debug.WriteLine(changeTime);
-            skybox.id = "scene/skybox/update";
-            skybox.setType(Skybox.SkyboxType.STATIC);
-            string updateTime = JsonConvert.SerializeObject(skybox);
-
-            string sendChangeTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + changeTime + "}}";
-            string sendUpdateTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + updateTime + "}}";
-            Debug.WriteLine(sendChangeTime);
-            Debug.WriteLine(sendUpdateTime);
-
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendChangeTime));
+            string message = WrapJsonMessage<Skybox>(dest, skybox);
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             received = ReadMessage(client);
             string receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
 
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendUpdateTime));
+            skybox.id = "scene/skybox/update";
+            skybox.setType(Skybox.SkyboxType.STATIC);
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Skybox>(dest, skybox)));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             received = ReadMessage(client);
@@ -140,6 +136,15 @@ namespace VR_Project
 
           
 
+        }
+
+        public static string WrapJsonMessage<T> (string dest, T t)
+        {
+            string objectToJson = JsonConvert.SerializeObject(t);
+
+            string message = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + objectToJson + "}}";
+
+            return message;
         }
 
         public static byte[] WrapMessage(byte[] message)
@@ -152,6 +157,8 @@ namespace VR_Project
             message.CopyTo(ret, lengthPrefix.Length);
             return ret;
         }
+        
+
 
         //public static string getCorrectID(Root root)
         //{
