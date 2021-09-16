@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class Panel
 {
+	}
 
     public string id { get; set; }
 

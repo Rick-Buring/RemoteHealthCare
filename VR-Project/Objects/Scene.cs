@@ -5,4 +5,5 @@ public class Scene : VRObject
 	public Scene()
 	{
 	}
+
 }
