@@ -30,19 +30,18 @@ namespace VR_Project
             InitializeComponent();
             TcpClient client = new TcpClient("145.48.6.10", 6666);
 
-            StreamWriter writer = new StreamWriter(client.GetStream());
-            StreamReader reader = new StreamReader(client.GetStream());
           
             Root t = new Root();
             t.id = "session/list";
             //string message = @"{""id"" : ""session/list""}";
             string message = JsonConvert.SerializeObject(t);
-            Debug.WriteLine(message);
+            //Debug.WriteLine(message);
             byte[] messageArray = Encoding.ASCII.GetBytes(message);
             var messageToSend = WrapMessage(messageArray);
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
             //writer.Write(, 0);
-            writer.Flush();
+            //writer.Flush();
             //Console.WriteLine(reader.ReadToEnd());
             byte[] array = new byte[4];
             
@@ -70,11 +69,18 @@ namespace VR_Project
             Root root = JsonConvert.DeserializeObject<Root>(test);
 
             //root.data.ElementAt(0).id; is de session id.
-            string id = root.data.ElementAt(0).id;
+            string tunnelID = getCorrectID(root);
 
-            string tunnel = @"{""id"" : ""tunnel/create"", ""data""{""""session"" : " + id + @""",""key"" : """"}}";
-            
+            string tunnel = @"{""id"" : ""tunnel/create"", ""data"" :{""session"" : """ + tunnelID + @"""}}";
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(tunnel));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
 
+            received = ReadMessage(client);
+            string tunnelOpen = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(tunnelOpen);
+            //client.Close();
+            //client.Dispose();
         }
 
         public static byte[] WrapMessage(byte[] message)
@@ -86,6 +92,43 @@ namespace VR_Project
             lengthPrefix.CopyTo(ret, 0);
             message.CopyTo(ret, lengthPrefix.Length);
             return ret;
+        }
+
+        public static string getCorrectID (Root root)
+        {
+            foreach (Data d in root.data)
+            {
+                if (d.clientinfo.host.Equals(Environment.MachineName))
+                {
+                    return d.id;
+                }
+            }
+            Debug.WriteLine("Could not find desktop");
+            return "0XFF";
+        }
+
+        public static byte[] ReadMessage(TcpClient client)
+        {
+            //Console.WriteLine(reader.ReadToEnd());
+            byte[] array = new byte[4];
+
+            client.GetStream().Read(array, 0, 4);
+
+            //int line = reader.Read();
+            int size = BitConverter.ToInt32(array);
+            byte[] received = new byte[size];
+
+
+            int bytesRead = 0;
+            while (bytesRead < size)
+            {
+                int read = client.GetStream().Read(received, bytesRead, received.Length - bytesRead);
+                bytesRead += read;
+                Console.WriteLine("ReadMessage: " + read);
+            }
+
+            return received;
+
         }
         class Test
         {
