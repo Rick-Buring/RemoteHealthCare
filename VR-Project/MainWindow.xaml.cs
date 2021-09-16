@@ -106,36 +106,31 @@ namespace VR_Project
 
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             string dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
-            //client.Close();
-            //client.Dispose();
 
 
-
-
-            
-            //skybox.id = "scene/skybox/update";
-            //skybox.setType(Skybox.SkyboxType.DYNAMIC);
-            //messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Skybox>(dest, skybox)));
-            //client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            //client.GetStream().Flush();
-            //received = ReadMessage(client);
-            //string receivedMessage = Encoding.ASCII.GetString(received);
-            //Debug.WriteLine(receivedMessage);
-            Debug.WriteLine("Creating skybox");
             Skybox skybox = new Skybox();
             skybox.id = "scene/skybox/settime";
             skybox.data.time = 24;
 
             SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
 
-            //skybox.id = "scene/skybox/update";
-            //skybox.setType(Skybox.SkyboxType.STATIC);
+            skybox.id = "scene/skybox/update";
+ //           skybox.setType(Skybox.SkyboxType.STATIC);
+      
+            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
 
-            //SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
+            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
+
+            SendMessage(client, WrapJsonMessage<Terrain>(dest, terrain));
+
+           
+
+            Node node = new Node("scene/node/add", "TerrainNode", true);
+
+            SendMessage(client, WrapJsonMessage<Node>(dest, node));
 
             client.Close();
             client.Dispose();
-
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)

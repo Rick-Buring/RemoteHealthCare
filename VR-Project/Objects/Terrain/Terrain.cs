@@ -4,8 +4,8 @@ using System.IO;
 public class Terrain 
 {
     public string id { get; set; }
-    public object data { get; set; }
-    public int[] ?size { get; set; }
+    public TerrainData data { get; set; }
+    public int[] size { get; set; }
 	public float[] ?heights { get; set; }
 
 	public double[] ?position;
@@ -20,14 +20,28 @@ public class Terrain
 		this.id = id;
 		this.size = size;
         this.heightPath = heightPath;
-		this.data = new object[] { this.size, setHeights() };
+		this.data = new TerrainData(this.size, setHeights());
     }
+
+	public class TerrainData
+	{
+        public TerrainData(int[] size, float[] heightPath)
+        {
+            this.size = size;
+            this.heightPath = heightPath;
+        }
+
+        public int[] size { get; set; }
+		public float[] heightPath { get; set; }
+	}
+
 
 	private float[] setHeights()
     {
 		string fileText = File.ReadAllText(this.heightPath);
 
 		string[] values = fileText.Split(", ");
+		this.heights = new float[values.Length];
 
 
 		for (int i = 0; i < values.Length; i++)
