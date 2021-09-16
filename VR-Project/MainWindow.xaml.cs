@@ -117,24 +117,12 @@ namespace VR_Project
             skybox.id = "scene/skybox/settime";
             skybox.data.time = 24;
 
-            string message = WrapJsonMessage<Skybox>(dest, skybox);
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            string receivedMessage = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(receivedMessage);
+            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
 
             skybox.id = "scene/skybox/update";
-            skybox.setType(Skybox.SkyboxType.STATIC);
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Skybox>(dest, skybox)));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            receivedMessage = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(receivedMessage);
-
-          
+ //           skybox.setType(Skybox.SkyboxType.STATIC);
+      
+            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
 
         }
 
@@ -172,6 +160,14 @@ namespace VR_Project
         //    Debug.WriteLine("Could not find desktop");
         //    return "0XFF";
         //}
+
+        public static void SendMessage(TcpClient client, string message)
+        {
+            byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            Debug.WriteLine(Encoding.ASCII.GetString(ReadMessage(client)));
+        }
 
         public static byte[] ReadMessage(TcpClient client)
         {
