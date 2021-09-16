@@ -202,7 +202,7 @@ namespace VR_Project
             public string ?file { get; set; }
             public string ?renderer { get; set; }
         }
-
+        
         public class Data
         {
             public string ?id { get; set; }
@@ -221,7 +221,6 @@ namespace VR_Project
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Test");
             if (SelectedMilight == null)
                 return;
             this.tunnelID = SelectedMilight.id;

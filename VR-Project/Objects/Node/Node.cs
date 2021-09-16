@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class Nodes : VRObject
+public class Nodes 
 {
 	public Nodes()
 	{
