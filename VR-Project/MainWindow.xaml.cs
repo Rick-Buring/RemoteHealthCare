@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -25,12 +26,10 @@ namespace VR_Project
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TcpClient client = new TcpClient("145.48.6.10", 6666);
+
         public MainWindow()
         {
-            InitializeComponent();
-            TcpClient client = new TcpClient("145.48.6.10", 6666);
-
-
             Root t = new Root();
             t.id = "session/list";
             //string message = @"{""id"" : ""session/list""}";
@@ -66,17 +65,42 @@ namespace VR_Project
 
             string test = Encoding.ASCII.GetString(received);
             //Debug.WriteLine(test);
-            Root root = JsonConvert.DeserializeObject<Root>(test);
+            root = JsonConvert.DeserializeObject<Root>(test);
 
-            //root.data.ElementAt(0).id; is de session id.
-            string tunnelID = getCorrectID(root);
+            ob = new ObservableCollection<Data>();
+            InitializeComponent();
+            
+            DataContext = this;
+            foreach (Data d in root.data)
+                ob.Add(d);
 
+           
+
+        }
+        private Root root;
+        public ObservableCollection<Data> ob { get; set; }
+
+        private string tunnelID;
+        private Data _selectedMilight;
+
+        public Data SelectedMilight
+        {
+            get { return _selectedMilight; }
+            set
+            {
+                _selectedMilight = value;
+            }
+        }
+
+
+        private void connectToTunnel()
+        {
             string tunnel = @"{""id"" : ""tunnel/create"", ""data"" :{""session"" : """ + tunnelID + @"""}}";
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(tunnel));
+            byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(tunnel));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
 
-            received = ReadMessage(client);
+            byte[] received = ReadMessage(client);
             string tunnelOpen = Encoding.ASCII.GetString(received);
             Debug.WriteLine(tunnelOpen);
 
@@ -91,7 +115,7 @@ namespace VR_Project
 
             string changeTime = JsonConvert.SerializeObject(skybox);
             Debug.WriteLine(changeTime);
-            
+
             string sendChangeTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + changeTime + "}}";
             string sendUpdateTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : {""id"" : ""scene/skybox/update"", ""data"" : {""type"" : ""dynamic""}} }}";
             Debug.WriteLine(sendChangeTime);
@@ -110,7 +134,6 @@ namespace VR_Project
             received = ReadMessage(client);
             receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
-
         }
 
         public static byte[] WrapMessage(byte[] message)
@@ -124,18 +147,18 @@ namespace VR_Project
             return ret;
         }
 
-        public static string getCorrectID(Root root)
-        {
-            foreach (Data d in root.data)
-            {
-                if (d.clientinfo.host.Equals(Environment.MachineName))
-                {
-                    return d.id;
-                }
-            }
-            Debug.WriteLine("Could not find desktop");
-            return "0XFF";
-        }
+        //public static string getCorrectID(Root root)
+        //{
+        //    foreach (Data d in root.data)
+        //    {
+        //        if (d.clientinfo.host.Equals(Environment.MachineName))
+        //        {
+        //            return d.id;
+        //        }
+        //    }
+        //    Debug.WriteLine("Could not find desktop");
+        //    return "0XFF";
+        //}
 
         public static byte[] ReadMessage(TcpClient client)
         {
@@ -190,6 +213,16 @@ namespace VR_Project
         {
             public string ?id { get; set; }
             public List<Data> ?data { get; set; }
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Test");
+            if (SelectedMilight == null)
+                return;
+            this.tunnelID = SelectedMilight.id;
+            connectToTunnel();
+            Debug.WriteLine(SelectedMilight.id);
         }
     }
 }
