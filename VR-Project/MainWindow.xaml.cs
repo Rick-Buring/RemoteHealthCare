@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -115,6 +115,9 @@ namespace VR_Project
 
             string changeTime = JsonConvert.SerializeObject(skybox);
             Debug.WriteLine(changeTime);
+            skybox.id = "scene/skybox/update";
+            skybox.setType(Skybox.SkyboxType.STATIC);
+            string updateTime = JsonConvert.SerializeObject(skybox);
 
             string sendChangeTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + changeTime + "}}";
             string sendUpdateTime = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : {""id"" : ""scene/skybox/update"", ""data"" : {""type"" : ""dynamic""}} }}";
@@ -123,17 +126,18 @@ namespace VR_Project
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendUpdateTime));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendChangeTime));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
 
             received = ReadMessage(client);
             string receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
 
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(sendChangeTime));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
             received = ReadMessage(client);
             receivedMessage = Encoding.ASCII.GetString(received);
             Debug.WriteLine(receivedMessage);
+
         }
 
         public static byte[] WrapMessage(byte[] message)
