@@ -123,9 +123,7 @@ namespace VR_Project
 
             SendMessage(client, WrapJsonMessage<Terrain>(dest, terrain));
 
-           
-
-            Node node = new Node("scene/node/add", "TerrainNode", true);
+            Node node = new Node("scene/node/add", "terrain", false);
 
             SendMessage(client, WrapJsonMessage<Node>(dest, node));
 
@@ -170,6 +168,7 @@ namespace VR_Project
 
         public static void SendMessage(TcpClient client, string message)
         {
+            Debug.WriteLine(message);
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();

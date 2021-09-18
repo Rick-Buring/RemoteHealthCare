@@ -5,26 +5,34 @@ public class Node
 {
 
     public string id { get; set; }
-    public NodeData data { get; set; }
+    public Data data { get; set; }
 
+    
     public Node(string id, String name, bool smoothNormals)
     {
         this.id = id;
-        NodeData nodeData = new NodeData();
+        Data nodeData = new Data();
         nodeData.components = new Components();
+        nodeData.name = name;
+
+        nodeData.components.transform = new Transform();
+        nodeData.components.transform.position = new int[3] { 0, 0, 0 };
+        nodeData.components.transform.scale = 1;
+        nodeData.components.transform.rotation = new int[3] { 0, 0, 0 };
+
         nodeData.components.terrain = new Terrain();
-        nodeData.components.terrain.smoothnormals = smoothNormals;
+       // nodeData.components.terrain.smoothnormals = smoothNormals;
         this.data = nodeData;
     }
-
+    
 
 
 
     public class Transform
     {
-        public List<int>? position { get; set; }
+        public int[]? position { get; set; }
         public int? scale { get; set; }
-        public List<int>? rotation { get; set; }
+        public int[]? rotation { get; set; }
     }
 
     public class Model
@@ -42,15 +50,15 @@ public class Node
 
     public class Panel
     {
-        public List<int>? size { get; set; }
-        public List<int>? resolution { get; set; }
-        public List<int>? background { get; set; }
+        public int[]? size { get; set; }
+        public int[]? resolution { get; set; }
+        public int[]? background { get; set; }
         public bool? castShadow { get; set; }
     }
 
     public class Water
     {
-        public List<int>? size { get; set; }
+        public int[]? size { get; set; }
         public double? resolution { get; set; }
     }
 
@@ -63,7 +71,7 @@ public class Node
         public Water? water { get; set; }
     }
 
-    public class NodeData
+    public class Data
     {
         public string name { get; set; }
         public string? parent { get; set; }

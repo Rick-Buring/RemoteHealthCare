@@ -5,73 +5,49 @@ public class Terrain
 {
     public string id { get; set; }
     public TerrainData data { get; set; }
-    public int[] size { get; set; }
-	public float[] ?heights { get; set; }
-
-	public double[] ?position;
-	public double[][] ?positions;
-
-
-
-	public string heightPath;
 
 	public Terrain(string id, int[] size, string heightPath)
 	{
 		this.id = id;
-		this.size = size;
-        this.heightPath = heightPath;
-		this.data = new TerrainData(this.size, setHeights());
+
+		float[] localHeigths = new float[65536];
+		for (int i = 0; i < 65536; i++)
+        {
+			localHeigths[i] = 0f;
+        }
+		this.data = new TerrainData(size, localHeigths);
     }
 
 	public class TerrainData
 	{
-        public TerrainData(int[] size, float[] heightPath)
+
+		public TerrainData(int[] size, float[] heights)
         {
             this.size = size;
-            this.heightPath = heightPath;
+            this.heights = heights;
         }
 
         public int[] size { get; set; }
-		public float[] heightPath { get; set; }
+		public float[] heights { get; set; }
+		public float[]? position { get; set; }
+		public float[][]? positions { get; set; }
 	}
 
 
-	private float[] setHeights()
+	private float[] setHeights(String heightPath)
     {
-		string fileText = File.ReadAllText(this.heightPath);
+		string fileText = File.ReadAllText(heightPath);
 
 		string[] values = fileText.Split(", ");
-		this.heights = new float[values.Length];
+		this.data.heights = new float[values.Length];
 
 
 		for (int i = 0; i < values.Length; i++)
         {
-			this.heights[i] = float.Parse(values[i]);
+			this.data.heights[i] = int.Parse(values[i]);
         }
 
-		return this.heights;
+		return this.data.heights;
 	}
-
-	//__TODO__ Verstuur: scene/terrain/update
-	public void update()
-    {
-
-    }
-
-	//__TODO__ Verstuur: scene/terrain/delete 
-	public void delete()
-    {
-
-    }
-
-
-	//__TODO__ Verstuur: scene/terrain/getheight
-	public void getHeight(double[] ?position, double[][] ?positions)
-    {
-
-		this.position = position;
-		this.positions = positions;
-
-    }
 
 }
