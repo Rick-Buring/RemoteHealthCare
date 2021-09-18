@@ -123,9 +123,37 @@ namespace VR_Project
 
             SendMessage(client, WrapJsonMessage<Terrain>(dest, terrain));
 
+
+          
+
+
+
+            Node node2 = new Node("scene/node/find");
+            node2.data.name = "GroundPlane";
+
+            JObject jObject;
+            SendMessageJsonArray(client, WrapJsonMessage<Node>(dest, node2), out jObject);
+
+
+            Debug.WriteLine(jObject.Value<JObject>("data").ToString());
+            Debug.WriteLine(jObject.Value<JObject>("data").Value<JObject>("data").ToString());
+            Debug.WriteLine(jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid"));
+
+
+            string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
+
+            Node node3 = new Node("scene/node/delete");
+            node3.data.id = uuid;
+
+            SendMessage(client, WrapJsonMessage<Node>(dest, node3));
+
+
             Node node = new Node("scene/node/add", "terrain", false);
 
             SendMessage(client, WrapJsonMessage<Node>(dest, node));
+
+
+  
 
             client.Close();
             client.Dispose();
@@ -173,6 +201,15 @@ namespace VR_Project
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             Debug.WriteLine(Encoding.ASCII.GetString(ReadMessage(client)));
+        }
+
+        public static void SendMessageJsonArray(TcpClient client, string message, out JObject jObject)
+        {
+            Debug.WriteLine(message);
+            byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            jObject = (JObject)JsonConvert.DeserializeObject(Encoding.ASCII.GetString(ReadMessage(client)));
         }
 
         public static byte[] ReadMessage(TcpClient client)

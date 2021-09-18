@@ -24,7 +24,29 @@ public class Node
        // nodeData.components.terrain.smoothnormals = smoothNormals;
         this.data = nodeData;
     }
-    
+
+    public Node(string id)
+    {
+        this.id = id;
+        this.data = new Data();
+    }
+
+    public class Data
+    {
+        public string name { get; set; }
+        public string? parent { get; set; }
+        public string? id { get; set; }
+        public Components? components { get; set; }
+    }
+
+    public class Components
+    {
+        public Transform? transform { get; set; }
+        public Model? model { get; set; }
+        public Terrain? terrain { get; set; }
+        public Panel? panel { get; set; }
+        public Water? water { get; set; }
+    }
 
 
 
@@ -62,20 +84,8 @@ public class Node
         public double? resolution { get; set; }
     }
 
-    public class Components
-    {
-        public Transform? transform { get; set; }
-        public Model? model { get; set; }
-        public Terrain? terrain { get; set; }
-        public Panel? panel { get; set; }
-        public Water? water { get; set; }
-    }
 
-    public class Data
-    {
-        public string name { get; set; }
-        public string? parent { get; set; }
-        public Components? components { get; set; }
-    }
+
+
 
 }
