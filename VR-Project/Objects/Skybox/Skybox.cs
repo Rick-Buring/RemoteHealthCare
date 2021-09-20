@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 public class Skybox 
 {
-    [JsonIgnore]
+    
     private const string path = "data/NetworkEngine/textures/SkyBoxes";
 
     public string id;
