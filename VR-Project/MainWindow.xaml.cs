@@ -143,11 +143,14 @@ namespace VR_Project
             Debug.WriteLine(routeAddResponse);
 
             //string uuid = JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("uuid").ToString();
-            string uuid = JObject.FromObject(JObject.FromObject((JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data"))).GetValue("data")).GetValue("uuid").ToString();
+            string routeID = JObject.FromObject(JObject.FromObject((JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data"))).GetValue("data")).GetValue("uuid").ToString();
             
-            Debug.WriteLine("uuid: " + uuid);
+            Debug.WriteLine("uuid: " + routeID);
 
-            Road road = new Road("scene/road/add", uuid);
+            
+            string bikeNodeID = "";
+
+            Road road = new Road("scene/road/add", routeID);
             Debug.WriteLine(WrapJsonMessage<Road>(dest, road));
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Road>(dest, road)));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
@@ -155,6 +158,15 @@ namespace VR_Project
             received = ReadMessage(client);
             string roadAddResponse = Encoding.ASCII.GetString(received);
             Debug.WriteLine(roadAddResponse);
+
+
+
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, bikeNodeID, 2))));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            received = ReadMessage(client);
+            string status = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(status);
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)

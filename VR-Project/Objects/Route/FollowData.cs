@@ -24,7 +24,7 @@ namespace VR_Project.Objects.Route
             this.nodeid = nodeid;
             this.speed = speed;
             this.offset = 0.0f;
-            this.rotate = "xyz";
+            this.rotate = "XZ";
             this.smoothing = 1.0f;
             this.followHeight = false;
             this.rotateOffset = new float[3] { 0, 0, 0 };
