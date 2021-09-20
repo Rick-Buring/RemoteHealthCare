@@ -9,7 +9,7 @@ namespace VR_Project.Objects.Route
     class FollowData : Data
     {
         public string route { get; set; }
-        public string nodeid { get; set; }
+        public string node { get; set; }
         public float speed { get; set; }
         public float offset { get; set; }
         public string rotate { get; set; }
@@ -21,7 +21,7 @@ namespace VR_Project.Objects.Route
         public FollowData(string routeid, string nodeid, float speed)
         {
             this.route = routeid;
-            this.nodeid = nodeid;
+            this.node = nodeid;
             this.speed = speed;
             this.offset = 0.0f;
             this.rotate = "XZ";

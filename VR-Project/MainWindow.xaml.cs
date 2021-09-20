@@ -112,26 +112,9 @@ namespace VR_Project
 
             deleteGroundPlane();
 
-            addTerrain();
+           // addTerrain();
 
             add3dObjects();
-
-            Route r = Route.getRoute();
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.addRoute(true))));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            string routeAddResponse = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(routeAddResponse);
-
-            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
-
-            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
-
-            TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
-
-            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
-
 
             //ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] {1,2,1});
 
@@ -145,37 +128,25 @@ namespace VR_Project
 
             JObject tree;
 
-            SendMessageJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3), out tree);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3), out tree);
 
-
-
-            string bikeNodeID = JObject.FromObject(JObject.FromObject(JObject.FromObject(JObject.FromObject(tree).GetValue("data")).GetValue("data")).GetValue("data")).GetValue("uuid").ToString();
+            string bikeNodeID = tree.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
             //string uuid = JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("uuid").ToString();
-            
-            string routeID = JObject.FromObject(JObject.FromObject(JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data")).GetValue("data")).GetValue("uuid").ToString();
-            
-            Debug.WriteLine("uuid: " + routeID);
 
-         
+            MakeAndFollowRoute(bikeNodeID);
+        }
 
+        public void MakeAndFollowRoute(string nodeID)
+        {
+            JObject routeResponse;
+            Route r = Route.getRoute();
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)), out routeResponse);
+            string routeID = routeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
             Road road = new Road("scene/road/add", routeID);
-            Debug.WriteLine(WrapJsonMessage<Road>(dest, road));
 
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Road>(dest, road)));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            string roadAddResponse = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(roadAddResponse);
+            SendMessage(client, WrapJsonMessage<Road>(dest, road));
 
-
-
-            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, bikeNodeID, 2))));
-            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
-            client.GetStream().Flush();
-            received = ReadMessage(client);
-            string status = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(status);
+            SendMessage(client, WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, nodeID, 2)));
         }
 
         public void changeSkyBoxTime(int time)
@@ -198,7 +169,7 @@ namespace VR_Project
             findNode.data.name = "GroundPlane";
 
             JObject jObject;
-            SendMessageJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
 
  
             string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
@@ -280,7 +251,7 @@ namespace VR_Project
             Debug.WriteLine(Encoding.ASCII.GetString(ReadMessage(client)));
         }
 
-        public static void SendMessageJsonArray(TcpClient client, string message, out JObject jObject)
+        public static void SendMessageResponseToJsonArray(TcpClient client, string message, out JObject jObject)
         {
             Debug.WriteLine(message);
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
