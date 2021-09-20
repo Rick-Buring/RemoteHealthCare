@@ -108,17 +108,13 @@ namespace VR_Project
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
+            changeSkyBoxTime(24);
 
-            Skybox skybox = new Skybox();
-            skybox.id = "scene/skybox/settime";
-            skybox.data.time = 24;
+            deleteGroundPlane();
 
-            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+            addTerrain();
 
-            skybox.id = "scene/skybox/update";
- //           skybox.setType(Skybox.SkyboxType.STATIC);
-      
-            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+            add3dObjects();
 
             Route r = Route.getRoute();
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.addRoute(true))));
@@ -127,32 +123,7 @@ namespace VR_Project
             received = ReadMessage(client);
             string routeAddResponse = Encoding.ASCII.GetString(received);
             Debug.WriteLine(routeAddResponse);
-            deleteGroundPlane();
 
-            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
-
-            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
-
-            TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
-
-            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
-
-
-            ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] {1,2,1});
-
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
-
-            ObjectNode ObjectNode2 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 3, 1 });
-
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
-
-            ObjectNode ObjectNode3 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 0, 0 });
-
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
-
-
-            client.Close();
-            client.Dispose();
             //string uuid = JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("uuid").ToString();
             string routeID = JObject.FromObject(JObject.FromObject((JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data"))).GetValue("data")).GetValue("uuid").ToString();
             
@@ -163,6 +134,7 @@ namespace VR_Project
 
             Road road = new Road("scene/road/add", routeID);
             Debug.WriteLine(WrapJsonMessage<Road>(dest, road));
+
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Road>(dest, road)));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
@@ -180,6 +152,20 @@ namespace VR_Project
             Debug.WriteLine(status);
         }
 
+        public void changeSkyBoxTime(int time)
+        {
+            Skybox skybox = new Skybox();
+            skybox.id = "scene/skybox/settime";
+            skybox.data.time = time;
+
+            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+
+            skybox.id = "scene/skybox/update";
+ 
+
+            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+        }
+
         public void deleteGroundPlane()
         {
             Node findNode = new Node("scene/node/find");
@@ -195,6 +181,33 @@ namespace VR_Project
             deleteNode.data.id = uuid;
 
             SendMessage(client, WrapJsonMessage<Node>(this.dest, deleteNode));
+        }
+
+        public void add3dObjects()
+        {
+            ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 1, 2, 1 });
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
+
+            ObjectNode ObjectNode2 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 3, 1 });
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
+
+            ObjectNode ObjectNode3 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 0, 0 });
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
+        }
+
+        public void addTerrain()
+        {
+
+            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
+
+            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
+
+            TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
+
+            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)
