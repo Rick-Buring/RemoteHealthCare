@@ -7,20 +7,20 @@ public class Node
     public string id { get; set; }
     public Data data { get; set; }
 
-    
+
     public Node(string id, String name, bool smoothNormals)
     {
         this.id = id;
-        
+
         Data nodeData = new Data();
-        
+
         nodeData.components = new Data.Components();
         nodeData.name = name;
-        
-        nodeData.components.transform = new Data.Transform(new int[3] { 0, 0, 0 }, 1, new int[3] { 0, 0, 0 });
-        
 
-         nodeData.components.terrain = new Data.Terrain();
+        nodeData.components.transform = new Data.Transform(new int[3] { 0, 0, 0 }, 1, new int[3] { 0, 0, 0 });
+
+
+        nodeData.components.terrain = new Data.Terrain();
         // nodeData.components.terrain.smoothnormals = smoothNormals;
         /*
         nodeData.components.model = new Data.Model();
@@ -36,7 +36,7 @@ public class Node
         nodeData.components.panel.background = new int[4] { 1, 1, 1, 1 };
         nodeData.components.panel.castShadow = true;
         */
-        this.data = nodeData; 
+        this.data = nodeData;
     }
 
     public Node(string id)
@@ -45,8 +45,15 @@ public class Node
         this.data = new Data();
     }
 
+    public Node(string id, string name, string file, int[] position)
+    {
+        this.id = id;
+        this.data = new Data(name, file, position);
+    }
+
     public class Data
     {
+      
         public string name { get; set; }
         public string? id { get; set; }
         public string? parent { get; set; }
@@ -62,7 +69,19 @@ public class Node
         public int? minHeight { get; set; }
         public int? maxheight { get; set; }
         public int? fadeDist { get; set; }
-        
+
+        public Data()
+        {  }
+
+            public Data(string name, string file, int[] position)
+        { 
+            this.name = name;
+
+            this.components = new Components();
+            this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
+            this.components.model = new Model(file);
+        }
+
         public Components? components { get; set; }
 
         public class Components
@@ -72,11 +91,12 @@ public class Node
             public Terrain? terrain { get; set; }
             public Panel? panel { get; set; }
             public Water? water { get; set; }
+
         }
 
         public class Transform
         {
-            public Transform(int[] position, int? scale, int[] rotation)
+            public Transform(int[] position, int? scale, int[]? rotation)
             {
                 this.position = position;
                 this.scale = scale;
@@ -95,6 +115,13 @@ public class Node
             public bool? cullbackfaces { get; set; }
             public bool? animated { get; set; }
             public string? animation { get; set; }
+
+            public Model (string file)
+            {
+                this.file = file;
+                this.cullbackfaces = true;
+                this.animated = false;
+            }
         }
 
         public class Terrain
@@ -118,6 +145,7 @@ public class Node
             public double? resolution { get; set; }
         }
     }
+
 
 
 }

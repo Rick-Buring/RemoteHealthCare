@@ -131,7 +131,18 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
 
 
-  
+            ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] {1,2,1});
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
+
+            ObjectNode ObjectNode2 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 3, 1 });
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
+
+            ObjectNode ObjectNode3 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 0, 0 });
+
+            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
+
 
             client.Close();
             client.Dispose();
@@ -146,8 +157,6 @@ namespace VR_Project
             SendMessageJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
 
  
-
-
             string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
 
             Node deleteNode = new Node("scene/node/delete");
