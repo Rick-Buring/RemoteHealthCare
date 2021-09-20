@@ -5,6 +5,13 @@ public class Road
     public string id { get; set; }
     public RoadData data { get; set; }
 
+	public Road(string id, string route)
+	{
+		this.id = id;
+		this.data = new RoadData(route);
+	}
+
+
 	public void SetDiffuse(string diffuse)
 	{
 		this.data.diffuse = diffuse;
