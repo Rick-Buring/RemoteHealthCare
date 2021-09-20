@@ -24,7 +24,7 @@ namespace VR_Project{
                 this.name = name;
 
                 this.components = new Components();
-                this.components.transform = new Transform(position, 10, new int[3] { 0, 0, 0 });
+                this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
                 this.components.model = new Model(file);
             }
 

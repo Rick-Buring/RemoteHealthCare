@@ -124,13 +124,39 @@ namespace VR_Project
             string routeAddResponse = Encoding.ASCII.GetString(received);
             Debug.WriteLine(routeAddResponse);
 
+            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
+
+            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
+
+            TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
+
+            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
+
+
+            //ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] {1,2,1});
+
+            //SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
+
+            //ObjectNode ObjectNode2 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 3, 1 });
+
+            //SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
+
+            ObjectNode ObjectNode3 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 0, 0 });
+
+            JObject tree;
+
+            SendMessageJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3), out tree);
+
+
+
+            string bikeNodeID = JObject.FromObject(JObject.FromObject(JObject.FromObject(JObject.FromObject(tree).GetValue("data")).GetValue("data")).GetValue("data")).GetValue("uuid").ToString();
             //string uuid = JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("uuid").ToString();
-            string routeID = JObject.FromObject(JObject.FromObject((JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data"))).GetValue("data")).GetValue("uuid").ToString();
+            
+            string routeID = JObject.FromObject(JObject.FromObject(JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data")).GetValue("data")).GetValue("uuid").ToString();
             
             Debug.WriteLine("uuid: " + routeID);
 
-            
-            string bikeNodeID = "";
+         
 
             Road road = new Road("scene/road/add", routeID);
             Debug.WriteLine(WrapJsonMessage<Road>(dest, road));
