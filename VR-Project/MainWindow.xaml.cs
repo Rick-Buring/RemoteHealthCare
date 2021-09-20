@@ -27,6 +27,7 @@ namespace VR_Project
     public partial class MainWindow : Window
     {
         private TcpClient client = new TcpClient("145.48.6.10", 6666);
+        private string dest;
 
         public MainWindow()
         {
@@ -105,58 +106,54 @@ namespace VR_Project
             Debug.WriteLine(tunnelOpen);
 
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
-            string dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
+            this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
 
             Skybox skybox = new Skybox();
             skybox.id = "scene/skybox/settime";
             skybox.data.time = 24;
 
-            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
+            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
 
             skybox.id = "scene/skybox/update";
  //           skybox.setType(Skybox.SkyboxType.STATIC);
       
-            SendMessage(client, WrapJsonMessage<Skybox>(dest, skybox));
+            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+
+            deleteGroundPlane();
 
             Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
 
-            SendMessage(client, WrapJsonMessage<Terrain>(dest, terrain));
+            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
 
+            TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
 
-          
-
-
-
-            Node node2 = new Node("scene/node/find");
-            node2.data.name = "GroundPlane";
-
-            JObject jObject;
-            SendMessageJsonArray(client, WrapJsonMessage<Node>(dest, node2), out jObject);
-
-
-            Debug.WriteLine(jObject.Value<JObject>("data").ToString());
-            Debug.WriteLine(jObject.Value<JObject>("data").Value<JObject>("data").ToString());
-            Debug.WriteLine(jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid"));
-
-
-            string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
-
-            Node node3 = new Node("scene/node/delete");
-            node3.data.id = uuid;
-
-            SendMessage(client, WrapJsonMessage<Node>(dest, node3));
-
-
-            Node node = new Node("scene/node/add", "terrain", false);
-
-            SendMessage(client, WrapJsonMessage<Node>(dest, node));
+            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
 
 
   
 
             client.Close();
             client.Dispose();
+        }
+
+        public void deleteGroundPlane()
+        {
+            Node findNode = new Node("scene/node/find");
+            findNode.data.name = "GroundPlane";
+
+            JObject jObject;
+            SendMessageJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
+
+ 
+
+
+            string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
+
+            Node deleteNode = new Node("scene/node/delete");
+            deleteNode.data.id = uuid;
+
+            SendMessage(client, WrapJsonMessage<Node>(this.dest, deleteNode));
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)
