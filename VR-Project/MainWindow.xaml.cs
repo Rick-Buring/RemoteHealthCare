@@ -135,18 +135,26 @@ namespace VR_Project
             Debug.WriteLine(receivedMessage);
 
             Route r = Route.getRoute();
-
-            //Route r = new Route();
-            //r.addPosAndDirection(new float[3] { 4, 3, 2 }, new float[3] { 4, 3, 32 });
-            //r.addPosAndDirection(new float[3] { 4, 4, 2 }, new float[3] { 4, 34, 2 });
-            //r.addPosAndDirection(new float[3] { 4, 35, 2 }, new float[3] { 46, 3, 2 });
-            //r.addPosAndDirection(new float[3] { 4, 38, 2 }, new float[3] { 4, 3, 12 });
             messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Route.RouteObject>(dest, r.addRoute(true))));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             received = ReadMessage(client);
-            receivedMessage = Encoding.ASCII.GetString(received);
-            Debug.WriteLine(receivedMessage);
+            string routeAddResponse = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(routeAddResponse);
+
+            //string uuid = JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("uuid").ToString();
+            string uuid = JObject.FromObject(JObject.FromObject((JObject.FromObject(JObject.Parse(routeAddResponse).GetValue("data")).GetValue("data"))).GetValue("data")).GetValue("uuid").ToString();
+            
+            Debug.WriteLine("uuid: " + uuid);
+
+            Road road = new Road("scene/road/add", uuid);
+            Debug.WriteLine(WrapJsonMessage<Road>(dest, road));
+            messageToSend = WrapMessage(Encoding.ASCII.GetBytes(WrapJsonMessage<Road>(dest, road)));
+            client.GetStream().Write(messageToSend, 0, messageToSend.Length);
+            client.GetStream().Flush();
+            received = ReadMessage(client);
+            string roadAddResponse = Encoding.ASCII.GetString(received);
+            Debug.WriteLine(roadAddResponse);
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)
@@ -245,7 +253,7 @@ namespace VR_Project
                 return;
             this.tunnelID = SelectedMilight.id;
             connectToTunnel();
-            Debug.WriteLine(SelectedMilight.id);
+            
         }
     }
 }

@@ -3,7 +3,7 @@
 public class Road 
 {
 	public string id;
-	public RoadData data;
+	public RoadData data { get; }
 
 	public Road(string id, string route)
 	{
@@ -41,15 +41,20 @@ public class Road
 		public RoadData(string route)
         {
 			this.route = route;
-        }
+			this.diffuse = "data/NetworkEngine/textures/tarmac_diffuse.png";
+			this.normal = "data/NetworkEngine/textures/normale.png";
+			this.specular = "data/NetworkEngine/textures/specular.png";
+			this.heightoffset = 0.01;
+
+		}
 
 		public string route { get; set; }
 
-		#nullable enable
-		public string? diffuse { get; set; }
-		public string? normal { get; set; }
-		public string? specular { get; set; }
-		public double? heightoffset { get; set; }
+		
+		public string diffuse { get; set; }
+		public string normal { get; set; }
+		public string specular { get; set; }
+		public double heightoffset { get; set; }
 	}
 
 }
