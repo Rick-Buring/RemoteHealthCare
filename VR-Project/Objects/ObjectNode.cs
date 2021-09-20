@@ -15,7 +15,13 @@ namespace VR_Project{
             this.data = new Data(name, file, position);
         }
 
-         public class Data
+        public ObjectNode(string id, string name, string file, int[] position, string animationFile)
+        {
+            this.id = id;
+            this.data = new Data(name, file, position);
+        }
+
+        public class Data
         {
             public string name { get; set; }
             public Components? components { get; set; }
@@ -26,6 +32,15 @@ namespace VR_Project{
                 this.components = new Components();
                 this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
                 this.components.model = new Model(file);
+            }
+
+            public Data(string name, string file, int[] position, string animationFile)
+            {
+                this.name = name;
+
+                this.components = new Components();
+                this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
+                this.components.model = new Model(file, animationFile);
             }
 
             public class Components
@@ -61,6 +76,14 @@ namespace VR_Project{
                     this.file = file;
                     this.cullbackfaces = true;
                     this.animated = false;
+                }
+
+                public Model(string file, string animationFile)
+                {
+                    this.file = file;
+                    this.cullbackfaces = true;
+                    this.animated = true;
+                    this.animation = animationFile;
                 }
             }
         }
