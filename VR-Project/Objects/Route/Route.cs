@@ -52,4 +52,21 @@ public class Route
             this.data = data;
         }
     }
+
+    public static Route getRoute ()
+    {
+        Route r = new Route();
+
+        r.addPosAndDirection(new float[3] { 0, 0, 0 }, new float[3] { 0, 0, 10 });
+        r.addPosAndDirection(new float[3] { 0, 0, 10 }, new float[3] { 0, 0, 20 });
+        r.addPosAndDirection(new float[3] { 0, 0, 20 }, new float[3] { 10, 0, 20 });
+        r.addPosAndDirection(new float[3] { 10, 0, 20 }, new float[3] { 20, 0, 20 });
+        r.addPosAndDirection(new float[3] { 20, 0, 20 }, new float[3] { 20, 0, 10 });
+        r.addPosAndDirection(new float[3] { 20, 0, 10 }, new float[3] { 30, 0, 10 });
+        r.addPosAndDirection(new float[3] { 30, 0, 10 }, new float[3] { 20, 0, 0 });
+        r.addPosAndDirection(new float[3] { 20, 0, 0 }, new float[3] { 10, 0, 0 });
+        r.addPosAndDirection(new float[3] { 10, 0, 0 }, new float[3] { 0, 0, 0 });
+
+        return r;
+    }
 }
