@@ -16,6 +16,16 @@ namespace VR_Project
     {
 
         private VrManager vrManager;
+        private EquipmentManager equipment;
+
+        
+
+
+        public ViewModel()
+        {
+            this.vrManager = new VrManager(this);
+            this.equipment = new EquipmentManager();
+        }
 
         private ICommand _selectEngine;
 
@@ -33,14 +43,6 @@ namespace VR_Project
                 return _selectEngine;
             }
         }
-
-
-        public ViewModel()
-        {
-            this.vrManager = new VrManager(this);
-        }
-
-
 
 
         private VrManager.Data _selectedMilight;
@@ -61,6 +63,7 @@ namespace VR_Project
             if (SelectedMilight == null)
                 return;
             this.vrManager.connectToTunnel(SelectedMilight.id);
+            this.equipment.startEquipment();
             //connectToTunnel();
 
         }
