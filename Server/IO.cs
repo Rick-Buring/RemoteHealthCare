@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.DataObjects;
+using System;
 using System.IO;
 
 namespace Server
@@ -12,8 +13,7 @@ namespace Server
 
         internal void writeToFile(string client, HealthData data)
         {
-            File.WriteAllText(Environment.CurrentDirectory + "/" + client, "a");
-
+            File.WriteAllText($"{Environment.CurrentDirectory}/{client}", data.ToString());
         }
     }
 }

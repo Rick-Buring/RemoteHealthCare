@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.DataObjects;
+using System;
 namespace Server
 {
     public class DataManager

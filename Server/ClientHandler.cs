@@ -5,49 +5,80 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Server.DataObjects;
 
 namespace Server
 {
     public class ClientHandler
     {
+        public string Name { get; }
+
         private TcpClient tcpClient;
         private NetworkStream stream;
         private Server server;
-        public string name { private set; get; }
 
+        /// <summary>
+        /// Handles connecting clients
+        /// </summary>
+        /// <param name="tcpClient">The connecting client</param>
+        /// <param name="server">The server the client is connecting too</param>
         public ClientHandler(TcpClient tcpClient, Server server)
         {
             this.tcpClient = tcpClient;
             this.stream = this.tcpClient.GetStream();
             this.server = server;
+            this.Name = Read();
 
-            new Thread(Read).Start();
+            new Thread(Run).Start();
         }
 
-        private void Read()
+        /// <summary>
+        /// function to handle incoming messages
+        /// </summary>
+        private void Run()
         {
-            for(;;)
+            while (true)
+            {
+                try
                 {
-                byte[] length = new byte[4];
-                this.stream.Read(length, 0, 4);
-
-                int size = BitConverter.ToInt32(length);
-
-                byte[] received = new byte[size];
-
-                int bytesRead = 0;
-                while (bytesRead < size)
+                    string result = Read();
+                    Parse(result);
+                }catch(Exception e)
                 {
-                    int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
-                    bytesRead += read;
-                    Console.WriteLine("ReadMessage: " + read);
+                    Console.WriteLine(e);
+                    //todo disconnect client
                 }
-
-                string result = Encoding.ASCII.GetString(received);
-                Parse(result);
             }
         }
 
+        /// <summary>
+        /// Reads incomming messages
+        /// </summary>
+        /// <returns>message in form of a string</returns>
+        private string Read()
+        {
+            byte[] length = new byte[4];
+            this.stream.Read(length, 0, 4);
+
+            int size = BitConverter.ToInt32(length);
+
+            byte[] received = new byte[size];
+
+            int bytesRead = 0;
+            while (bytesRead < size)
+            {
+                int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
+                bytesRead += read;
+                Console.WriteLine("ReadMessage: " + read);
+            }
+
+            return Encoding.ASCII.GetString(received);
+        }
+
+        /// <summary>
+        /// methot used to parse and react on messages
+        /// </summary>
+        /// <param name="toParse">message to be parsed must be of a json object type from the Root object</param>
         private void Parse(string toParse)
         {
             Root jsonObject = JsonConvert.DeserializeObject<Root>(toParse);
@@ -57,7 +88,7 @@ namespace Server
             switch (type)
             {
                 case "Server.HealthData":
-                    HealthData data = ((JObject)jsonObject.data).ToObject<HealthData>();
+                    HealthData data = (jsonObject.data as JObject).ToObject<HealthData>();
                     this.server.manager.write(jsonObject.sender, data);
                     break;
                 case "Server.Selection":
@@ -68,6 +99,10 @@ namespace Server
             this.server.send(jsonObject);
         }
 
+        /// <summary>
+        /// send messages to the client
+        /// </summary>
+        /// <param name="message">message to be sent to the client</param>
         internal void send(byte[] message)
         {
             stream.Write(message);
@@ -75,50 +110,4 @@ namespace Server
         }
     }
 
-    public class Test
-    {
-        private string test = "{   \"Type\":\"Server.Chat\",   \"sender\":\"doc\",   \"data\":{      \"message\":\"hallo\"   },   \"target\":\"henk\"}";
-
-        public Test()
-        {
-            Root oobject = JsonConvert.DeserializeObject<Root>(test);
-
-            //Type ts = Type.GetType(oobject.GetValue("Type").ToString());
-            //Chat o = oobject.data.ToObject<Chat>();
-
-            //Console.WriteLine(o.message);
-        }
-    }
-
-    public class Root
-    {
-        public string Type { get; set; }
-        public string sender { get; set; }
-        public string target { get; set; }
-        public Object data { get; set; }
-    }
-
-    public class Chat
-    {
-        public string message { get; set; }
-    }
-
-    public class HealthData
-    {
-        public int heartbeat { get; set; }
-        public int rpm { get; set; }
-        public double speed { get; set; }
-        public int acc_watt { get; set; }
-        public int tot_watt { get; set; }
-    }
-
-    public class Setting
-    {
-        public int res { get; set; }
-    }
-
-    public class Selection
-    {
-        public List<string> selection { get; set; }
-    }
 }

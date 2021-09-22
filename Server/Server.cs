@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
+using Server.DataObjects;
 
 namespace Server
 {
@@ -14,7 +15,7 @@ namespace Server
 
         static void Main(string[] args)
         {
-            //new Server();
+            new Server();
             new Test();
         }
 
@@ -50,7 +51,7 @@ namespace Server
             }
             foreach (ClientHandler client in clients)
             {
-                if (target == client.name)
+                if (target == client.Name)
                 client.send(toSend);
             }
 
@@ -61,7 +62,7 @@ namespace Server
             List<string> clients = new List<string>();
             foreach(ClientHandler client in this.clients)
             {
-                clients.Add(client.name);
+                clients.Add(client.Name);
             }
             root.data = new Selection() {selection = clients};
         }
