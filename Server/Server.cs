@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Server
 {
-    class Server
+    public class Server
     {
         private TcpListener listener;
         private List<ClientHandler> clients;
+        public DataManager manager { private set; get; }
 
         static void Main(string[] args)
         {
-            new Server();
+            //new Server();
+            new Test();
         }
 
         public Server()
@@ -20,14 +23,58 @@ namespace Server
             this.listener = new TcpListener(System.Net.IPAddress.Any, 5005);
             listener.Start();
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
+            this.manager = new DataManager();
         }
 
         private void OnConnect(IAsyncResult ar)
         {
             var tcpClient = listener.EndAcceptTcpClient(ar);
             Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
-            clients.Add(new ClientHandler(tcpClient));
+            clients.Add(new ClientHandler(tcpClient, this));
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
+        }
+
+        public void send(Root message)
+        {
+            byte[] toSend = WrapMessage(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message)));
+            string target = message.target;
+
+            if (target == "all")
+            {
+                foreach(ClientHandler client in clients)
+                {
+                    if (target != message.sender)
+                    client.send(toSend);
+                }
+                return;
+            }
+            foreach (ClientHandler client in clients)
+            {
+                if (target == client.name)
+                client.send(toSend);
+            }
+
+        }
+
+        public void recieveClients(ref Root root)
+        {
+            List<string> clients = new List<string>();
+            foreach(ClientHandler client in this.clients)
+            {
+                clients.Add(client.name);
+            }
+            root.data = new Selection() {selection = clients};
+        }
+
+        private static byte[] WrapMessage(byte[] message)
+        {
+            // Get the length prefix for the message
+            byte[] lengthPrefix = BitConverter.GetBytes(message.Length);
+            // Concatenate the length prefix and the message
+            byte[] ret = new byte[lengthPrefix.Length + message.Length];
+            lengthPrefix.CopyTo(ret, 0);
+            message.CopyTo(ret, lengthPrefix.Length);
+            return ret;
         }
     }
 }
