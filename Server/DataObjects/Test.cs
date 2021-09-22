@@ -10,15 +10,21 @@ namespace Server.DataObjects
 {
     public class Test
     {
-        private string test = "{\"Type\":\"Server.Chat\",\"sender\":\"doc\",\"data\":{\"message\":\"hallo\"},\"target\":\"henk\"}";
+        //private string test = "{\"Type\":\"Server.Chat\",\"sender\":\"doc\",\"data\":{\"message\":\"hallo\"},\"target\":\"henk\"}";
 
         public Test()
         {
-            Root root = JsonConvert.DeserializeObject<Root>(test);
+            Object obj = new Chat { message = "Hi" };
 
-            Chat o = (root.data as JObject).ToObject<Chat>();
+            Root root = new Root() {Type = obj.GetType().FullName, sender = "me", data = obj, target = "you" };
 
-            Console.WriteLine(o.message);
+            string test = JsonConvert.SerializeObject(root);
+
+            Root serializedRoot = JsonConvert.DeserializeObject<Root>(test);
+
+            Chat serializedChat = (serializedRoot.data as JObject).ToObject<Chat>();
+
+            Console.WriteLine(serializedChat.message);
         }
     }
 }

@@ -11,20 +11,22 @@ namespace Server
     {
         private TcpListener listener;
         private List<ClientHandler> clients;
-        public DataManager manager { private set; get; }
+        public DataManager manager { get; private set; }
 
         static void Main(string[] args)
         {
-            new Server();
             new Test();
+            new Server();
         }
 
         public Server()
         {
+            this.clients = new List<ClientHandler>();
             this.listener = new TcpListener(System.Net.IPAddress.Any, 5005);
+            this.manager = new DataManager();
+
             listener.Start();
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
-            this.manager = new DataManager();
         }
 
         private void OnConnect(IAsyncResult ar)

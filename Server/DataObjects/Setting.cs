@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Server.DataObjects
 {
-
     public class Setting
     {
         public int res { get; set; }
