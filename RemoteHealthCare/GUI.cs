@@ -18,8 +18,8 @@ namespace RemoteHealthCare
         /// <param name="text">De tekst die moet worden opgeschreven.</param>
         public void write (string text)
         {
-            Console.Clear();
-            Console.Write(text);
+            //Console.Clear();
+            Console.Write(text + "__________________\n");
         }
     }
 }
