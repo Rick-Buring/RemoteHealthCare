@@ -64,7 +64,6 @@ namespace VR_Project
 
             //client.GetStream().Read(received, 0, size);
 
-
             string test = Encoding.ASCII.GetString(received);
             //Debug.WriteLine(test);
             root = JsonConvert.DeserializeObject<Root>(test);
@@ -118,24 +117,25 @@ namespace VR_Project
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
-            changeSkyBoxTime(24);
+            changeSkyBoxTime(15);
 
             deleteGroundPlane();
 
-            // addTerrain();
+            //addTerrain();
 
-            // E:\download\NetworkEngine\data\NetworkEngine\models\cars\generic
+            MakeAndFollowRoute(makeBikeObject());
+        }
 
+        public string makeBikeObject()
+        {
+       
             ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\blue.obj", new int[3] { 0, 0, 0 });
 
             JObject BikeResponse;
 
             SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode), out BikeResponse);
 
-            string bikeNodeID = BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
-            
-
-            MakeAndFollowRoute(bikeNodeID);
+            return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
         }
 
         public void MakeAndFollowRoute(string nodeID)
