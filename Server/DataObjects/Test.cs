@@ -22,9 +22,9 @@ namespace Server.DataObjects
 
             Root serializedRoot = JsonConvert.DeserializeObject<Root>(test);
 
-            Chat serializedChat = (serializedRoot.data as JObject).ToObject<Chat>();
+            object serializedChat = (serializedRoot.data as JObject).ToObject(Type.GetType(serializedRoot.Type));
 
-            Console.WriteLine(serializedChat.message);
+            Console.WriteLine((serializedChat as Chat).message);
         }
     }
 }
