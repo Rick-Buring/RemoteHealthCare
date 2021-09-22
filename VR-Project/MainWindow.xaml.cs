@@ -121,7 +121,7 @@ namespace VR_Project
 
             deleteGroundPlane();
 
-            //addTerrain();
+            addTerrain();
 
             MakeAndFollowRoute(makeBikeObject());
         }
@@ -200,7 +200,7 @@ namespace VR_Project
         public void addTerrain()
         {
 
-            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
+            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/HeightmapSmol.bmp");
 
             SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
 

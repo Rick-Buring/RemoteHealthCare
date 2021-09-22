@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 public class Terrain 
@@ -10,29 +12,7 @@ public class Terrain
 	{
 		this.id = id;
 
-		float baseline = 0;
-		float[] localHeigths = new float[65536];
-		for (int i = 0; i < 65536; i++)
-        {
-			Random random = new Random();
-			Double number = random.NextDouble();
-
-			
-			if (random.Next(100) >= 50)
-			{
-				baseline += (float)number;
-			}
-			else
-			{
-				baseline -= (float)number;
-			}
-
-			//baseline mag niet lager zijn dan 60 en niet hoger zijn dan 180.
-			baseline = Math.Clamp(baseline, 0, 3);
-
-			localHeigths[i] = baseline;
-			//localHeigths[i] = 0f;
-        }
+		float[] localHeigths = readHeight(heightPath);
 		this.data = new TerrainData(size, localHeigths);
     }
 
@@ -64,20 +44,26 @@ public class Terrain
 	}
 
 
-	private float[] setHeights(String heightPath)
-    {
-		string fileText = File.ReadAllText(heightPath);
+	public float[] readHeight(string filePath)
+	{
 
-		string[] values = fileText.Split(", ");
-		this.data.heights = new float[values.Length];
+		List<float> list = new List<float>();
+		int number = 0;
 
+		Bitmap img = new Bitmap(filePath);
+		for (int i = 0; i < img.Width; i++)
+		{
+			for (int j = 0; j < img.Height; j++)
+			{
+				Color pixel = img.GetPixel(i, j);
+				list.Add(pixel.GetBrightness() * 10f);
+				//Console.WriteLine("Adding : " + number + " : " + pixel.GetBrightness());
+				number++;
+			}
+		}
 
-		for (int i = 0; i < values.Length; i++)
-        {
-			this.data.heights[i] = int.Parse(values[i]);
-        }
+		return list.ToArray();
 
-		return this.data.heights;
 	}
 
 }
