@@ -13,7 +13,7 @@ namespace VR_Project
         public string id;
         public TerrainNodeData data;
 
-        public TerrainNode(string id, String name, bool smoothNormals)
+        public TerrainNode(string id, string name, bool smoothNormals)
         {
             this.id = id;
             this.data = new TerrainNodeData(name, smoothNormals);
@@ -35,7 +35,6 @@ namespace VR_Project
             {
                 public Transform? transform { get; set; }
                 public Terrain? terrain { get; set; }
-
                 public Components(bool smoothNormals)
                 {
                     this.transform = new Transform(new int[3] { 0, 0, 0 }, 1, new int[3] { 0, 0, 0 });
@@ -61,6 +60,7 @@ namespace VR_Project
                     public int? scale { get; set; }
                     public int[]? rotation { get; set; }
                 }
+                
             }
         }
     }

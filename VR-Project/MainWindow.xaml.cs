@@ -123,13 +123,13 @@ namespace VR_Project
 
             addTerrain();
 
-            MakeAndFollowRoute(makeBikeObject());
+            //MakeAndFollowRoute(makeBikeObject());
         }
 
         public string makeBikeObject()
         {
        
-            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\blue.obj", new int[3] { 0, 0, 0 });
+            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\bikes\bike.obj", new int[3] { 0, 0, 0 }, @"data\NetworkEngine\models\bikes\bike_anim.obj");
 
             JObject BikeResponse;
 
@@ -170,11 +170,11 @@ namespace VR_Project
             Node findNode = new Node("scene/node/find");
             findNode.data.name = "GroundPlane";
 
-            JObject jObject;
-            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
+            JObject response;
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out response);
 
  
-            string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
+            string uuid = response.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
 
             Node deleteNode = new Node("scene/node/delete");
             deleteNode.data.id = uuid;
@@ -206,7 +206,15 @@ namespace VR_Project
 
             TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
 
-            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
+            JObject response;
+
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<TerrainNode>(this.dest, node), out response);
+
+            string uuid = response.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
+
+            AddLayerNode layerNode = new AddLayerNode("scene/node/addlayer", uuid, @"data\NetworkEngine\textures\terrain\adesert_mntn2_d.jpg");
+
+            SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
         }
 
         public static string WrapJsonMessage<T> (string dest, T t)
