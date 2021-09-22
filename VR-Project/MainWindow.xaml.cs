@@ -31,6 +31,7 @@ namespace VR_Project
 
         public MainWindow()
         {
+            this.Closed += MainWindow_Closed;
             Root t = new Root();
             t.id = "session/list";
             //string message = @"{""id"" : ""session/list""}";
@@ -78,6 +79,15 @@ namespace VR_Project
            
 
         }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Closing and disposing client");
+            this.client.Close();
+            this.client.Dispose();
+            Debug.WriteLine("Closed and disposed client");
+        }
+
         private Root root;
         public ObservableCollection<Data> ob { get; set; }
 
