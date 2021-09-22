@@ -117,7 +117,7 @@ namespace VR_Project
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
-            changeSkyBoxTime(15);
+            //changeSkyBoxTime(15);
 
             deleteGroundPlane();
 
@@ -129,7 +129,7 @@ namespace VR_Project
         public string makeBikeObject()
         {
        
-            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\bikes\bike.obj", new int[3] { 0, 0, 0 }, @"data\NetworkEngine\models\bikes\bike_anim.obj");
+            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Perseverance.obj", new int[3] { 0, 0, 0 });
 
             JObject BikeResponse;
 
