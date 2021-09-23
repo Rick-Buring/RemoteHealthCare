@@ -39,7 +39,7 @@ namespace Server
 
         public void send(Root message)
         {
-            byte[] toSend = WrapMessage(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message)));
+            byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
             string target = message.target;
 
             if (target == "all")
@@ -47,14 +47,14 @@ namespace Server
                 foreach(ClientHandler client in clients)
                 {
                     if (target != message.sender)
-                    client.send(toSend);
+                    client.Client.send(toSend);
                 }
                 return;
             }
             foreach (ClientHandler client in clients)
             {
                 if (target == client.Name)
-                client.send(toSend);
+                client.Client.send(toSend);
             }
 
         }
@@ -69,15 +69,6 @@ namespace Server
             root.data = new Selection() {selection = clients};
         }
 
-        private static byte[] WrapMessage(byte[] message)
-        {
-            // Get the length prefix for the message
-            byte[] lengthPrefix = BitConverter.GetBytes(message.Length);
-            // Concatenate the length prefix and the message
-            byte[] ret = new byte[lengthPrefix.Length + message.Length];
-            lengthPrefix.CopyTo(ret, 0);
-            message.CopyTo(ret, lengthPrefix.Length);
-            return ret;
-        }
+
     }
 }

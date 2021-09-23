@@ -6,15 +6,15 @@ using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommunicationObjects.DataObjects;
+using CommunicationObjects;
 
 namespace Server
 {
     public class ClientHandler
     {
         public string Name { get; }
+        public Client Client { get; private set; }
 
-        private TcpClient tcpClient;
-        private NetworkStream stream;
         private Server server;
 
         /// <summary>
@@ -24,12 +24,30 @@ namespace Server
         /// <param name="server">The server the client is connecting too</param>
         public ClientHandler(TcpClient tcpClient, Server server)
         {
-            this.tcpClient = tcpClient;
-            this.stream = this.tcpClient.GetStream();
+            this.Client = new Client(tcpClient);
             this.server = server;
-            this.Name = Read();
+
+            this.Name = getName();
 
             new Thread(Run).Start();
+        }
+
+        private string getName()
+        {
+            string message = Client.Read();
+            string name = "";
+            Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
+            object connection = (jsonObject.data as JObject).ToObject(Type.GetType(jsonObject.Type));
+            if (jsonObject.Type == typeof(Connection).FullName && (connection as Connection).connect)
+            {
+                name = jsonObject.sender;
+            }
+            else
+            {
+                //todo terminate connection if not connect and connect is true
+                throw new NotImplementedException();
+            }
+            return name;
         }
 
         /// <summary>
@@ -41,7 +59,7 @@ namespace Server
             {
                 try
                 {
-                    string result = Read();
+                    string result = Client.Read();
                     Parse(result);
                 }catch(Exception e)
                 {
@@ -49,30 +67,6 @@ namespace Server
                     //todo disconnect client
                 }
             }
-        }
-
-        /// <summary>
-        /// Reads incomming messages
-        /// </summary>
-        /// <returns>message in form of a string</returns>
-        private string Read()
-        {
-            byte[] length = new byte[4];
-            this.stream.Read(length, 0, 4);
-
-            int size = BitConverter.ToInt32(length);
-
-            byte[] received = new byte[size];
-
-            int bytesRead = 0;
-            while (bytesRead < size)
-            {
-                int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
-                bytesRead += read;
-                Console.WriteLine("ReadMessage: " + read);
-            }
-
-            return Encoding.ASCII.GetString(received);
         }
 
         /// <summary>
@@ -99,15 +93,7 @@ namespace Server
             this.server.send(jsonObject);
         }
 
-        /// <summary>
-        /// send messages to the client
-        /// </summary>
-        /// <param name="message">message to be sent to the client</param>
-        internal void send(byte[] message)
-        {
-            stream.Write(message);
-            stream.Flush();
-        }
+     
     }
 
 }
