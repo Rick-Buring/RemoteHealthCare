@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VR_Project
 {
-    interface EngineCallback
+    public interface EngineCallback
     {
 
         public abstract void notify(ObservableCollection<VrManager.Data> ob);

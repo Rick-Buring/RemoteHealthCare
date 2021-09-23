@@ -1,28 +1,30 @@
 ﻿
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
+using Vr_Project.RemoteHealthcare;
 using VR_Project.Util;
 
 
 namespace VR_Project
 {
-    class ViewModel : ObservableObject, EngineCallback
+    public class ViewModel : ObservableObject, EngineCallback
     {
 
-        //public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
-        //public Update update;
+        public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
+        public Update updater;
         private VrManager vrManager;
         private EquipmentManager equipment;
 
-        
+
 
 
         public ViewModel()
         {
             this.vrManager = new VrManager(this);
 
-            //his.update = NotifyData;
-            this.equipment = new EquipmentManager();
+            updater = NotifyData;
+            this.equipment = new EquipmentManager(updater);
         }
 
         private ICommand _selectEngine;
@@ -41,14 +43,14 @@ namespace VR_Project
         }
 
 
-        private VrManager.Data _selectedMilight;
+        private VrManager.Data selectClient;
 
-        public VrManager.Data SelectedMilight
+        public VrManager.Data SelectClient
         {
-            get { return _selectedMilight; }
+            get { return selectClient; }
             set
             {
-                _selectedMilight = value;
+                selectClient = value;
             }
         }
         private void button_Click()
@@ -56,9 +58,9 @@ namespace VR_Project
             //if (SelectedMilight == null)
             //    return;
             //this.tunnelID = SelectedMilight.id;
-            if (SelectedMilight == null)
+            if (SelectClient == null)
                 return;
-            this.vrManager.connectToTunnel(SelectedMilight.id);
+            this.vrManager.connectToTunnel(SelectClient.id);
             this.equipment.startEquipment();
             //connectToTunnel();
 
@@ -69,9 +71,10 @@ namespace VR_Project
             this.ob = ob;
         }
 
-        //public void NotifyData (Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        //{
-
-        //}
+        public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        {
+            Debug.WriteLine("From: ViewModel");
+            Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
+        }
     }
 }

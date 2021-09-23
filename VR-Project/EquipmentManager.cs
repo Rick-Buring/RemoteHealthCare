@@ -13,9 +13,9 @@ namespace VR_Project
     {
         public EquipmentMain equipment;
 
-        public EquipmentManager ()
+        public EquipmentManager (ViewModel.Update updater)
         {
-            this.equipment = new EquipmentMain();
+            this.equipment = new EquipmentMain(updater);
             
         }
 

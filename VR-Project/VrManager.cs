@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace VR_Project
 {
-    class VrManager
+    public class VrManager
     {
 
         private TcpClient client = new TcpClient("145.48.6.10", 6666);
