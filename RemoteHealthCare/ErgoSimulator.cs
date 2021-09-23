@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RemoteHealthCare
 {
 
-    class ErgoSimulator : Ergometer
+    public class ErgoSimulator : Ergometer
     {
 
         private string Name;

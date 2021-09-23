@@ -6,7 +6,7 @@ namespace RemoteHealthCare
 {
 
     //class om data naar de database te versturen
-    class DataIO : IDataListener
+    public class DataIO : IDataListener
     {
         //incomende data wordt hier afgelevert
         public void notify(IData data)

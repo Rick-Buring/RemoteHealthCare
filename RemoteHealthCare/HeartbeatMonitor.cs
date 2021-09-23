@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class HeartBeatMonitor : Sensor
+    public class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
         protected HeartBeatData heartBeatData;

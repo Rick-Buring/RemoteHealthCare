@@ -12,7 +12,7 @@ namespace VR_Project
     {
         public RemoteHealthCare.EquipmentMain equipment;
 
-        public EquipmentManager ()
+        public EquipmentManager (ViewModel.Update updater)
         {
             this.equipment = new EquipmentMain();
             

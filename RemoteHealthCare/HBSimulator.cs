@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class HBSimulator : HeartBeatMonitor
+    public class HBSimulator : HeartBeatMonitor
     {
 
         private IDataListener listener;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RemoteHealthCare
 {
-    class HeartBeatData : IData
+    public class HeartBeatData : IData
     {
         public int HeartRate{ get; set; }
 

@@ -9,12 +9,15 @@ using System.Text;
 using System.Windows.Input;
 
 using VR_Project.Util;
+using RemoteHealthCare;
 
 namespace VR_Project
 {
     class ViewModel : ObservableObject, EngineCallback
     {
 
+        public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
+        public Update update;
         private VrManager vrManager;
         private EquipmentManager equipment;
 
@@ -24,12 +27,12 @@ namespace VR_Project
         public ViewModel()
         {
             this.vrManager = new VrManager(this);
-            this.equipment = new EquipmentManager();
+
+            this.update = NotifyData;
+            this.equipment = new EquipmentManager(this.update);
         }
 
         private ICommand _selectEngine;
-
-
         public ICommand SelectEngine
         {
             get
@@ -71,6 +74,11 @@ namespace VR_Project
         public void notify(ObservableCollection<VrManager.Data> ob)
         {
             this.ob = ob;
+        }
+
+        public void NotifyData (Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        {
+
         }
     }
 }

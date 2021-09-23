@@ -9,7 +9,7 @@ namespace RemoteHealthCare
     public class EquipmentMain : IDataListener
     {
         private DataIO dataIO;
-
+        
         private Ergometer ergometer;
         private HeartBeatMonitor HeartBeatMonitor;
         private GUI gui;
