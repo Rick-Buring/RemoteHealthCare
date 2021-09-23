@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
     public class HBSimulator : HeartBeatMonitor
     {

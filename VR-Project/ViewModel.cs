@@ -1,23 +1,16 @@
 ﻿
 using System.Collections.ObjectModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Windows.Input;
-
 using VR_Project.Util;
-using RemoteHealthCare;
+
 
 namespace VR_Project
 {
     class ViewModel : ObservableObject, EngineCallback
     {
 
-        public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
-        public Update update;
+        //public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
+        //public Update update;
         private VrManager vrManager;
         private EquipmentManager equipment;
 
@@ -28,8 +21,8 @@ namespace VR_Project
         {
             this.vrManager = new VrManager(this);
 
-            this.update = NotifyData;
-            this.equipment = new EquipmentManager(this.update);
+            //his.update = NotifyData;
+            this.equipment = new EquipmentManager();
         }
 
         private ICommand _selectEngine;
@@ -76,9 +69,9 @@ namespace VR_Project
             this.ob = ob;
         }
 
-        public void NotifyData (Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        {
+        //public void NotifyData (Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        //{
 
-        }
+        //}
     }
 }

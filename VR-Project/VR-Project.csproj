@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RemoteHealthCare\RemoteHealthCare.csproj" />
+    <Reference Include="BLELibrary">
+      <HintPath>..\RemoteHealthCare\lib\BLELibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

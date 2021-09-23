@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
     public interface IDataListener
     {

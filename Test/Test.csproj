@@ -9,4 +9,10 @@
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="BLELibrary">
+      <HintPath>..\RemoteHealthCare\lib\BLELibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

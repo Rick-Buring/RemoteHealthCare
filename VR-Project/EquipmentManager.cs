@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using RemoteHealthCare;
+
+using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
     class EquipmentManager
     {
-        public RemoteHealthCare.EquipmentMain equipment;
+        public EquipmentMain equipment;
 
-        public EquipmentManager (ViewModel.Update updater)
+        public EquipmentManager ()
         {
             this.equipment = new EquipmentMain();
             

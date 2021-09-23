@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+
+namespace Vr_Project.RemoteHealthcare
 {
     public class EquipmentMain : IDataListener
     {
@@ -14,7 +15,7 @@ namespace RemoteHealthCare
         private HeartBeatMonitor HeartBeatMonitor;
         private GUI gui;
 
-       public static void Main(string[] args)
+        public EquipmentMain ()
         {
 
         }
