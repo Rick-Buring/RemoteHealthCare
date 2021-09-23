@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 
@@ -30,10 +31,16 @@ namespace CommunicationObjects
         /// send messages to the client
         /// </summary>
         /// <param name="message">message to be sent to the client</param>
-        public void send(byte[] message)
+        public void Write(byte[] message)
         {
-            stream.Write(WrapMessage(message));
-            stream.Flush();
+            try
+            {
+                stream.Write(WrapMessage(message));
+                stream.Flush();
+            } catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
         }
 
         public void terminate()

@@ -17,10 +17,13 @@ namespace VR_Project
 
         public ClientHandler ()
         {
-            
-            
+
+            this.running = true;
+            this.stopped = false;
         }
 
+        private bool running;
+        private bool stopped;
         public void StartConnection()
         {
             
@@ -29,14 +32,29 @@ namespace VR_Project
             Root dataRoot = new Root() { Type = typeof(HealthData).FullName, data = data, sender = "Henk", target = "Hank" };
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
 
-            this.server.send(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
 
-            while (true)
+            while (this.running)
             {
-                this.server.send(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(dataRoot)));
+                this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(dataRoot)));
                 
             }
 
+            this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root() 
+            { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
+            this.server.terminate();
+            this.stopped = true;
+
+        }
+
+        public void stop ()
+        {
+            this.running = false;
+        }
+
+        public bool isStopped ()
+        {
+            return this.stopped;
         }
 
     }

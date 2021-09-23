@@ -22,12 +22,12 @@ namespace VR_Project.Objects.Route
         {
             this.route = routeid;
             this.node = nodeid;
-            this.speed = speed;
-            this.offset = 0.0f;
+            this.speed = 1f;
+            this.offset = 0;
             this.rotate = "XZ";
             this.smoothing = 1.0f;
             this.followHeight = true;
-            this.rotateOffset = new float[3] { 0, 0, 0 };
+            this.rotateOffset = new float[3] { 0, 0, 1.5707963f };
             this.positionOffset = new float[3] { 0, 0, 0 };
         }
     }
