@@ -11,12 +11,12 @@ namespace Server.DataObjects
         public int Heartbeat { get; set; }
         public int RPM { get; set; }
         public double Speed { get; set; }
+        public int CurWatt { get; set; }
         public int AccWatt { get; set; }
-        public int TotWatt { get; set; }
 
         public override string ToString()
         {
-            return $"{Heartbeat}\n{RPM}\n{Speed}\n{AccWatt}\n{TotWatt}";
+            return $"{Heartbeat}\n{RPM}\n{Speed}\n{CurWatt}\n{AccWatt}";
         }
     }
 }
