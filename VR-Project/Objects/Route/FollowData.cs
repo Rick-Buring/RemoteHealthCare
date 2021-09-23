@@ -26,7 +26,7 @@ namespace VR_Project.Objects.Route
             this.offset = 0.0f;
             this.rotate = "XZ";
             this.smoothing = 1.0f;
-            this.followHeight = false;
+            this.followHeight = true;
             this.rotateOffset = new float[3] { 0, 0, 0 };
             this.positionOffset = new float[3] { 0, 0, 0 };
         }

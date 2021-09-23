@@ -22,8 +22,8 @@ namespace RemoteHealthCare
         private async Task start()
         {
             dataIO = new DataIO();
-            //ergometer = new Ergometer("Tacx Flux 00438", this, dataIO);
-            ergometer = new ErgoSimulator(this);
+            ergometer = new Ergometer("Tacx Flux 01249", this, dataIO);
+            //ergometer = new ErgoSimulator(this);
             this.gui = new GUI();
             await ergometer.Connect();
             

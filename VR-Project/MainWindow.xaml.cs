@@ -117,19 +117,19 @@ namespace VR_Project
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
-            //changeSkyBoxTime(15);
+            changeSkyBoxTime(15);
 
             deleteGroundPlane();
 
             addTerrain();
 
-            //MakeAndFollowRoute(makeBikeObject());
+            MakeAndFollowRoute(makeBikeObject());
         }
 
         public string makeBikeObject()
         {
        
-            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Perseverance.obj", new int[3] { 0, 0, 0 });
+            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\blue.obj", new int[3] { 0, 0, 0 });
 
             JObject BikeResponse;
 
