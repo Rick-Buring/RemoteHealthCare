@@ -15,15 +15,22 @@ namespace Vr_Project.RemoteHealthcare
 
         private int baseline;
 
-        private int rpm;
-        private int accumulatedTotal;
-        private int instantaneousTotal;
-        private int id = 0;
-        private int elapsedTime = 0;
-        private int distanceTraveled = 0;
+        public int rpm { get; set; }
+        public int accumulatedTotal { get; set; }
+        public int instantaneousTotal { get; set; }
+        public int id { get; set; }
+        public int elapsedTime { get; set; }
+        public int distanceTraveled { get; set; }
 
         public ErgoSimulator(params IDataListener[] listener) : base("Simulation", listener)
         {
+
+            this.rpm = 0;
+            this.accumulatedTotal = 0;
+            this.instantaneousTotal = 0;
+            this.id = 0;
+            this.elapsedTime = 0;
+            this.distanceTraveled = 0;
 
             this.listener = listener[0];
             this.Name = base.Name;

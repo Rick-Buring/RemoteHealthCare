@@ -17,5 +17,10 @@ namespace Vr_Project.RemoteHealthcare
         {
             return $"Heartrate: {HeartRate}";
         }
+
+        internal int GetHeartRate ()
+        {
+            return this.HeartRate;
+        }
     }
 }

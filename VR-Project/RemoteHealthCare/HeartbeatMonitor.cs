@@ -50,9 +50,9 @@ namespace Vr_Project.RemoteHealthcare
             }
         }
 
-        public override string GetData()
+        public override int GetHeartBeat()
         {
-            return this.heartBeatData.GetString();
+            return this.heartBeatData.HeartRate;
         }
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
@@ -72,5 +72,9 @@ namespace Vr_Project.RemoteHealthcare
             }
         }
 
+        public override ErgometerData GetErgometerData()
+        {
+            return null;
+        }
     }
 }

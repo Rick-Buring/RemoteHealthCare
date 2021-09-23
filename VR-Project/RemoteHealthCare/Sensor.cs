@@ -25,7 +25,9 @@ namespace Vr_Project.RemoteHealthcare
         /// Deze methode zal worden gebruikt om de data van een sensor geven. 
         /// </summary>
         /// <returns>String</returns>
-        public abstract string GetData();
+        public abstract int GetHeartBeat();
+
+        public abstract ErgometerData GetErgometerData();
       
     }
 }

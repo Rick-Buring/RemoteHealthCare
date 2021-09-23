@@ -98,21 +98,14 @@ namespace VR_Project
         public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
             Debug.WriteLine("From: ViewModel");
-            Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
-        }
-
-
-        public void handleClose()
-        {
-            client.stop();
-            serverConnectionThread.Abort();
-
+            Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
+            this.client.Update(ergometer, heartBeatMonitor);
         }
 
         public void Window_Closed(object sender, EventArgs e)
         {
 
-            client.stop();
+            client.Stop();
             
             serverConnectionThread.Join();
             Debug.WriteLine("Closing and disposing client.");

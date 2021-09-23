@@ -132,9 +132,14 @@ namespace Vr_Project.RemoteHealthcare
             }
         }
 
-        public override string GetData()
+        public override int GetHeartBeat()
         {
-            return this.ergometerData.GetString();
+            return 0;
+        }
+
+        public override ErgometerData GetErgometerData()
+        {
+            return this.ergometerData;
         }
     }
 }

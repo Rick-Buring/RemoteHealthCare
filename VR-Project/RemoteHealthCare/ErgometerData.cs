@@ -89,5 +89,10 @@ namespace Vr_Project.RemoteHealthcare
 
             return builder.ToString();
         }
+
+        internal ErgometerData getData ()
+        {
+            return this;
+        }
     }
 }
