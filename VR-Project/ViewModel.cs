@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
@@ -98,6 +99,24 @@ namespace VR_Project
         {
             Debug.WriteLine("From: ViewModel");
             Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
+        }
+
+
+        public void handleClose()
+        {
+            client.stop();
+            serverConnectionThread.Abort();
+
+        }
+
+        public void Window_Closed(object sender, EventArgs e)
+        {
+
+            client.stop();
+            
+            serverConnectionThread.Join();
+            Debug.WriteLine("Closing and disposing client.");
+            this.vrManager.CloseConnection();
         }
     }
 }

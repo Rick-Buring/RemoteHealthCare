@@ -61,7 +61,7 @@ namespace Server
         internal void send(Root message)
         {
             byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
-            Client.send(toSend);
+            Client.Write(toSend);
         }
 
         /// <summary>

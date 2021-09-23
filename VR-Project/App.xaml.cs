@@ -20,6 +20,7 @@ namespace VR_Project
             ViewModel VM = new ViewModel();
             window.DataContext = VM;
             window.Show();
+            window.Closed += VM.Window_Closed;
         }
     }
 }

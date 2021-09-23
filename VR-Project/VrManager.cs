@@ -279,6 +279,12 @@ namespace VR_Project
 
         }
 
+        public void CloseConnection ()
+        {
+            this.client.Close();
+            this.client.Dispose();
+        }
+
 
         public class Fp
         {
