@@ -107,7 +107,7 @@ namespace VR_Project
 
             deleteGroundPlane();
 
-            //addTerrain();
+            addTerrain();
 
             MakeAndFollowRoute(makeBikeObject());
         }
@@ -115,7 +115,7 @@ namespace VR_Project
         public string makeBikeObject()
         {
 
-            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\blue.obj", new int[3] { 0, 0, 0 });
+            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Carpet.obj", new int[3] { 0, 0, 0 });
 
             JObject BikeResponse;
 
@@ -146,7 +146,6 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
 
             skybox.id = "scene/skybox/update";
-
 
             SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
         }
@@ -186,13 +185,21 @@ namespace VR_Project
         public void addTerrain()
         {
 
-            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/Heightmap.txt");
+            Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/HeightmapSmol.bmp");
 
             SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
 
             TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
 
-            SendMessage(client, WrapJsonMessage<TerrainNode>(this.dest, node));
+            JObject response;
+
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<TerrainNode>(this.dest, node), out response);
+
+            string uuid = response.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
+
+            AddLayerNode layerNode = new AddLayerNode("scene/node/addlayer", uuid, @"data\NetworkEngine\textures\terrain\adesert_mntn2_d.jpg");
+
+            SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
         }
 
         public static string WrapJsonMessage<T>(string dest, T t)
