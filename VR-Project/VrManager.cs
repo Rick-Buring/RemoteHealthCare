@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
+using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
@@ -77,6 +78,7 @@ namespace VR_Project
         //public ObservableCollection<Data> ob { get; set; }
 
         private string tunnelID;
+        private string panelID;
         private Data _selectedMilight;
 
         public Data SelectedMilight
@@ -122,6 +124,11 @@ namespace VR_Project
             SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode), out BikeResponse);
 
             return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
+        }
+
+        public void MakePanel (string parentID)
+        {
+
         }
 
         public void MakeAndFollowRoute(string nodeID)
@@ -276,6 +283,11 @@ namespace VR_Project
             }
 
             return received;
+
+        }
+
+        public void UpdatePanel (Ergometer ergometer)
+        {
 
         }
 

@@ -100,6 +100,7 @@ namespace VR_Project
             Debug.WriteLine("From: ViewModel");
             Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
             this.client.Update(ergometer, heartBeatMonitor);
+            //Send data to the vr engine here
         }
 
         public void Window_Closed(object sender, EventArgs e)

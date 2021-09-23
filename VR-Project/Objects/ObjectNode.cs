@@ -25,6 +25,7 @@ namespace VR_Project{
         {
             public string name { get; set; }
             public Components? components { get; set; }
+           
             public Data(string name, string file, int[] position)
             {
                 this.name = name;
@@ -47,6 +48,7 @@ namespace VR_Project{
             {
                 public Transform? transform { get; set; }
                 public Model? model { get; set; }
+                public Panel? panel { get; set; }
 
             }
 
@@ -85,6 +87,14 @@ namespace VR_Project{
                     this.animated = true;
                     this.animation = animationFile;
                 }
+            }
+
+            public class Panel
+            {
+                public int[] size = new int[2] { 1, 1 };
+                public int[] resolution = new int[2] { 512, 512 };
+                public int[] background = new int[4] { 1, 1, 1, 1 };
+                public bool castShadow = false;
             }
         }
 
