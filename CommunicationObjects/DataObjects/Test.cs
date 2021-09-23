@@ -17,7 +17,7 @@ namespace CommunicationObjects.DataObjects
             object[] obj = new object[] { 
                 new Chat { message = "Hi" }, 
                 new Connection() { connect = true }, 
-                new HealthData() { AccWatt = 100, Heartbeat = 90, RPM = 40, Speed = 15, TotWatt = 500 }, 
+                new HealthData() { AccWatt = 100, Heartbeat = 90, RPM = 40, Speed = 15, CurWatt = 500 }, 
                 new Setting() { res = 80 }
                 };
             Root[] root =new Root[obj.Length];
