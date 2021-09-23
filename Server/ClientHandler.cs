@@ -37,8 +37,9 @@ namespace Server
             string message = Client.Read();
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
-            object connection = (jsonObject.data as JObject).ToObject(Type.GetType(jsonObject.Type));
-            if (jsonObject.Type == typeof(Connection).FullName && (connection as Connection).connect)
+
+            if (jsonObject.Type == typeof(Connection).FullName &&
+                (jsonObject.data as JObject).ToObject<Connection>().connect)
             {
                 name = jsonObject.sender;
             }
@@ -61,7 +62,8 @@ namespace Server
                 {
                     string result = Client.Read();
                     Parse(result);
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                     //todo disconnect client
@@ -93,7 +95,7 @@ namespace Server
             this.server.send(jsonObject);
         }
 
-     
+
     }
 
 }
