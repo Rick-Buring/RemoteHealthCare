@@ -1,4 +1,4 @@
-﻿using Server.DataObjects;
+﻿using CommunicationObjects.DataObjects;
 using System;
 namespace Server
 {

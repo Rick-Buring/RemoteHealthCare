@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Server.DataObjects;
+using CommunicationObjects.DataObjects;
 
 namespace Server
 {

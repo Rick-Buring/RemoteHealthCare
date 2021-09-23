@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
-using Server.DataObjects;
+using CommunicationObjects.DataObjects;
 
 namespace Server
 {
@@ -16,7 +16,7 @@ namespace Server
         static void Main(string[] args)
         {
             new Test();
-            new Server();
+            //new Server();
         }
 
         public Server()

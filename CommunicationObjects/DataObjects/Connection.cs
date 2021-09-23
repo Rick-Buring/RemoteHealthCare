@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Server.DataObjects
+namespace CommunicationObjects.DataObjects
 {
-    public class Chat
+    class Connection
     {
-        public string message { get; set; }
+        public bool connect { get; set; }
     }
 }

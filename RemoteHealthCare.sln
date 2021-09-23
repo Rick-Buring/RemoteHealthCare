@@ -7,9 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteHealthCare", "RemoteH
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VR-Project", "VR-Project\VR-Project.csproj", "{8EF3F2B6-F14D-42F2-AC72-79CFED410C9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{7745AF08-F623-47D7-9FAD-99DA95D59C84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{7745AF08-F623-47D7-9FAD-99DA95D59C84}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommunicationObjects", "CommunicationObjects\CommunicationObjects.shproj", "{8F1B13F2-FB29-4486-BAA9-8E1EA1636D6A}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CommunicationObjects\CommunicationObjects.projitems*{7745af08-f623-47d7-9fad-99da95d59c84}*SharedItemsImports = 5
+		CommunicationObjects\CommunicationObjects.projitems*{8f1b13f2-fb29-4486-baa9-8e1ea1636d6a}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
