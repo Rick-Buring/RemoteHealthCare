@@ -16,7 +16,7 @@ namespace CommunicationObjects.DataObjects
 
         public override string ToString()
         {
-            return $"{Heartbeat}\n{RPM}\n{Speed}\n{CurWatt}\n{AccWatt}";
+            return $"Heartbeat: {Heartbeat}\nRPM: {RPM}\nSpeed: {Speed}\nCurWatt: {CurWatt}\nAccWatt: {AccWatt}";
         }
     }
 }
