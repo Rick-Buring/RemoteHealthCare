@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    class MainProgram : IDataListener
+    public class EquipmentMain : IDataListener
     {
         private DataIO dataIO;
 
@@ -13,18 +14,17 @@ namespace RemoteHealthCare
         private HeartBeatMonitor HeartBeatMonitor;
         private GUI gui;
 
-        static async Task Main(string[] args)
+       public static void Main(string[] args)
         {
-            MainProgram program = new MainProgram();
-            await program.start();
+
         }
         // starts the application
-        private async Task start()
+        public async Task start()
         {
             dataIO = new DataIO();
             //ergometer = new Ergometer("Tacx Flux 00438", this, dataIO);
             ergometer = new ErgoSimulator(this);
-            this.gui = new GUI();
+            //this.gui = new GUI();
             await ergometer.Connect();
             
 
@@ -44,7 +44,7 @@ namespace RemoteHealthCare
         {
             if(HeartBeatMonitor != null)
             {
-                gui.write($"{ergometer.GetData()}\n{HeartBeatMonitor.GetData()}");
+                Debug.WriteLine($"{ergometer.GetData()}\n{HeartBeatMonitor.GetData()}");
             }
            
         }
