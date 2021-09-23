@@ -37,6 +37,15 @@ namespace Server
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
         }
 
+        public void OnDisconnect(ClientHandler client)
+        {
+            if (this.clients.Contains(client))
+            {
+                this.clients.Remove(client);
+            }
+            
+        }
+
         public void send(Root message)
         {
             byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
