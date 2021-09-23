@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommunicationObjects", "CommunicationObjects\CommunicationObjects.shproj", "{8F1B13F2-FB29-4486-BAA9-8E1EA1636D6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{3364B525-B0D6-43EB-85FE-4299C663CF4B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CommunicationObjects\CommunicationObjects.projitems*{7745af08-f623-47d7-9fad-99da95d59c84}*SharedItemsImports = 5
@@ -29,6 +31,10 @@ Global
 		{8EF3F2B6-F14D-42F2-AC72-79CFED410C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EF3F2B6-F14D-42F2-AC72-79CFED410C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EF3F2B6-F14D-42F2-AC72-79CFED410C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3364B525-B0D6-43EB-85FE-4299C663CF4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3364B525-B0D6-43EB-85FE-4299C663CF4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3364B525-B0D6-43EB-85FE-4299C663CF4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3364B525-B0D6-43EB-85FE-4299C663CF4B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7745AF08-F623-47D7-9FAD-99DA95D59C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7745AF08-F623-47D7-9FAD-99DA95D59C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7745AF08-F623-47D7-9FAD-99DA95D59C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
