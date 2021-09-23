@@ -61,7 +61,7 @@ namespace CommunicationObjects
             {
                 int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
                 bytesRead += read;
-                Console.WriteLine("ReadMessage: " + read);
+                //Console.WriteLine("ReadMessage: " + read);
             }
 
             return Encoding.ASCII.GetString(received);

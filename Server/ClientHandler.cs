@@ -75,6 +75,7 @@ namespace Server
                 try
                 {
                     string result = Client.Read();
+                    Console.WriteLine(result);
                     Parse(result);
                 }
                 catch (Exception e)

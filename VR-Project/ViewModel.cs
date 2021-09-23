@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Input;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Util;
@@ -13,8 +14,11 @@ namespace VR_Project
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public Update updater;
+
         private VrManager vrManager;
         private EquipmentManager equipment;
+        private ClientHandler client;
+        private Thread serverConnectionThread;
 
 
 
@@ -25,6 +29,8 @@ namespace VR_Project
 
             updater = NotifyData;
             this.equipment = new EquipmentManager(updater);
+            this.client = new ClientHandler();
+            
         }
 
         private ICommand _selectEngine;
@@ -35,11 +41,32 @@ namespace VR_Project
 
                 if (_selectEngine == null)
                 {
-                    _selectEngine = new RelayCommand(param => this.button_Click());
+                    _selectEngine = new RelayCommand(param => this.engageEngine());
                 }
 
                 return _selectEngine;
             }
+        }
+
+        private ICommand connectToServer;
+        public ICommand ConnectToServer
+        {
+            get
+            {
+
+                if (connectToServer == null)
+                {
+                    connectToServer = new RelayCommand(param => this.EngageConnection());
+                }
+
+                return connectToServer;
+            }
+        }
+
+        private void EngageConnection()
+        {
+            this.serverConnectionThread = new Thread(client.StartConnection);
+            this.serverConnectionThread.Start();
         }
 
 
@@ -53,16 +80,12 @@ namespace VR_Project
                 selectClient = value;
             }
         }
-        private void button_Click()
+        private void engageEngine()
         {
-            //if (SelectedMilight == null)
-            //    return;
-            //this.tunnelID = SelectedMilight.id;
             if (SelectClient == null)
                 return;
             this.vrManager.connectToTunnel(SelectClient.id);
             this.equipment.startEquipment();
-            //connectToTunnel();
 
         }
         public ObservableCollection<VrManager.Data> ob { get; set; }
