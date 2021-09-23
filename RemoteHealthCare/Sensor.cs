@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RemoteHealthCare
 {
-    abstract class Sensor 
+    public abstract class Sensor 
     {
         /// <summary>
         /// Deze methode zal worden gebruikt om te verbinden met een sensor.

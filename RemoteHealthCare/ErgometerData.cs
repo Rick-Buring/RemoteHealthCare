@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RemoteHealthCare
 {
-    class ErgometerData : IData
+    public class ErgometerData : IData
     {
         //0x19 data page variables
         public int ID { get; set; }

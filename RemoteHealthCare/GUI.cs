@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RemoteHealthCare
 {
-    class GUI
+    public class GUI
     {
 
         public GUI ()

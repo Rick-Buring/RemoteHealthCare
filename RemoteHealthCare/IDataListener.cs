@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RemoteHealthCare
 {
-    interface IDataListener
+    public interface IDataListener
     {
         /// <summary>
         /// Deze methode wordt gebruikt om een subscriber te notifyen.
