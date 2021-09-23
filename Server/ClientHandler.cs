@@ -16,6 +16,7 @@ namespace Server
         public Client Client { get; private set; }
 
         private Server server;
+        private bool active;
 
         /// <summary>
         /// Handles connecting clients
@@ -45,8 +46,8 @@ namespace Server
             }
             else
             {
-                //todo terminate connection if not connect and connect is true
-                throw new NotImplementedException();
+                this.server.OnDisconnect(this);
+                this.active = false;
             }
             return name;
         }
@@ -56,7 +57,8 @@ namespace Server
         /// </summary>
         private void Run()
         {
-            while (true)
+            this.active = true;
+            while (active)
             {
                 try
                 {
