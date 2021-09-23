@@ -13,7 +13,9 @@ namespace Server
 
         internal void writeToFile(string client, HealthData data)
         {
-            File.WriteAllText($"{Environment.CurrentDirectory}/{client}", data.ToString());
+            StreamWriter writer = File.AppendText($"{Environment.CurrentDirectory}/{client}");
+            writer.WriteLine(data.ToString());
+            writer.Close();
         }
     }
 }
