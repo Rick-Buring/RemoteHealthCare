@@ -36,6 +36,13 @@ namespace CommunicationObjects
             stream.Flush();
         }
 
+        public void terminate()
+        {
+            this.stream = null;
+            this.tcpClient.Close();
+            this.tcpClient.Dispose();
+        }
+
         /// <summary>
         /// Reads incomming messages
         /// </summary>

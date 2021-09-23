@@ -48,7 +48,6 @@ namespace Server
 
         public void send(Root message)
         {
-            byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
             string target = message.target;
 
             if (target == "all")
@@ -56,14 +55,14 @@ namespace Server
                 foreach(ClientHandler client in clients)
                 {
                     if (target != message.sender)
-                    client.Client.send(toSend);
+                    client.send(message);
                 }
                 return;
             }
             foreach (ClientHandler client in clients)
             {
                 if (target == client.Name)
-                client.Client.send(toSend);
+                client.send(message);
             }
 
         }

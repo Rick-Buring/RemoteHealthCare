@@ -13,7 +13,7 @@ namespace Server
     public class ClientHandler
     {
         public string Name { get; }
-        public Client Client { get; private set; }
+        private Client Client { get; }
 
         private Server server;
         private bool active;
@@ -46,10 +46,22 @@ namespace Server
             }
             else
             {
-                this.server.OnDisconnect(this);
-                this.active = false;
+                disconnect();
             }
             return name;
+        }
+
+        private void disconnect()
+        {
+            this.server.OnDisconnect(this);
+            this.active = false;
+            this.Client.terminate();
+        }
+
+        internal void send(Root message)
+        {
+            byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
+            Client.send(toSend);
         }
 
         /// <summary>
@@ -79,22 +91,34 @@ namespace Server
         /// <param name="toParse">message to be parsed must be of a json object type from the Root object</param>
         private void Parse(string toParse)
         {
-            Root jsonObject = JsonConvert.DeserializeObject<Root>(toParse);
+            Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-            string type = jsonObject.Type;
+            Type type = Type.GetType(root.Type);
 
-            switch (type)
+            if (type == typeof(HealthData))
             {
-                case "Server.HealthData":
-                    HealthData data = (jsonObject.data as JObject).ToObject<HealthData>();
-                    this.server.manager.write(jsonObject.sender, data);
-                    break;
-                case "Server.Selection":
-                    this.server.recieveClients(ref jsonObject);
-                    break;
+                HealthData data = (root.data as JObject).ToObject<HealthData>();
+                this.server.manager.write(root.sender, data);
+            }
+            else if (type == typeof(Selection))
+            {
+                this.server.recieveClients(ref root);
+            }
+            else if (type == typeof(Connection))
+            {
+                if (!(root.data as JObject).ToObject<Connection>().connect)
+                {
+                    string sender = root.sender;
+                    root.target = root.sender;
+                    root.sender = sender;
+
+                    send(root);
+
+                    this.disconnect();
+                }
             }
 
-            this.server.send(jsonObject);
+            this.server.send(root);
         }
 
 
