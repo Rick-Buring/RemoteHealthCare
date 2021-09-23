@@ -33,10 +33,10 @@ namespace Server
 
         private void OnConnect(IAsyncResult ar)
         {
+            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
             var tcpClient = listener.EndAcceptTcpClient(ar);
             Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
             clients.Add(new ClientHandler(tcpClient, this));
-            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
         }
 
         public void OnDisconnect(ClientHandler client)
