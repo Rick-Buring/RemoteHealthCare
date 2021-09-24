@@ -1,21 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CommunicationObjects
 {
     public class Client
     {
-        private TcpClient tcpClient;
-        private NetworkStream stream;
+        private const string certificateName = "testCertificaat";
 
-        public Client(TcpClient tcpClient)
+        private TcpClient client;
+        private SslStream stream;
+        public Client(TcpClient client)
         {
-            this.tcpClient = tcpClient;
-            this.stream = tcpClient.GetStream();
+            this.client = client;
+            this.stream = new SslStream(
+                this.client.GetStream(),
+                false,
+                new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                null
+            );
+            stream.AuthenticateAsClient(certificateName);
         }
+
+        public Client(TcpClient client, X509Certificate certificate)
+        {
+            this.client = client;
+            this.stream = new SslStream(client.GetStream(), false);
+            stream.AuthenticateAsServer(certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+        }
+
+        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            Debug.WriteLine("Certificate error: {0}", sslPolicyErrors);
+
+            // Do not allow this client to communicate with unauthenticated servers.
+            return false;
+        }
+
         private static byte[] WrapMessage(byte[] message)
         {
             // Get the length prefix for the message
@@ -43,13 +71,6 @@ namespace CommunicationObjects
             }
         }
 
-        public void terminate()
-        {
-            this.stream = null;
-            this.tcpClient.Close();
-            this.tcpClient.Dispose();
-        }
-
         /// <summary>
         /// Reads incomming messages
         /// </summary>
@@ -73,5 +94,15 @@ namespace CommunicationObjects
 
             return Encoding.ASCII.GetString(received);
         }
+
+        public void terminate()
+        {
+            this.stream.Close();
+            this.stream.Dispose();
+            this.client.Close();
+            this.client.Dispose();
+        }
+
+       
     }
 }
