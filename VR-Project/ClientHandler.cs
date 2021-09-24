@@ -14,45 +14,23 @@ namespace VR_Project
 {
     class ClientHandler
     {
+        private Client client;
 
-        private Client server;
-        
-
-        public ClientHandler ()
-        {
-
-            this.running = true;
-            this.connected = false;
-        }
-
-        private bool running;
-        private bool connected;
         public void StartConnection()
         {
-            
-            this.server = new Client(new TcpClient("localhost", 5005));
+
+            this.client = new Client(new TcpClient("localhost", 5005));
             HealthData data = new HealthData() { AccWatt = 100, CurWatt = 50, Heartbeat = 120, RPM = 95, Speed = 5.02 };
-            Root dataRoot = new Root() { Type = typeof(HealthData).FullName, data = data, sender = "Henk", target = "Hank" };
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
 
-            this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-            this.connected = true;
-            while (this.running)
-            {
-                Thread.Sleep(500);
-            }
-
-            this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root() 
-            { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
-            this.server.terminate();
-           
-
+            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+      
         }
 
-        public void Update (Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
 
-            if (this.server != null)
+            if (this.client != null)
             {
 
                 Root healthData = new Root()
@@ -70,14 +48,16 @@ namespace VR_Project
                     target = "Hank"
                 };
 
-                this.server.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
             }
 
         }
 
-        public void Stop ()
+        public void Stop()
         {
-            this.running = false;
+            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
+            { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
+            this.client.terminate();
         }
 
     }

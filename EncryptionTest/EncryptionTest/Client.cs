@@ -13,7 +13,6 @@ namespace EncryptionTest
 {
     class Client
     {
-        private static Hashtable certificateErrors = new Hashtable();
         private static SslStream stream;
         private static TcpClient client;
 

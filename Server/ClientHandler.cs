@@ -25,7 +25,7 @@ namespace Server
         /// <param name="server">The server the client is connecting too</param>
         public ClientHandler(TcpClient tcpClient, Server server)
         {
-            this.Client = new Client(tcpClient);
+            this.Client = new Client(tcpClient, server.Certificate);
             this.server = server;
 
             this.Name = getName();

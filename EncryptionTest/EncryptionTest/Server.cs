@@ -35,8 +35,7 @@ namespace EncryptionTest
         {
             // A client has connected. Create the
             // SslStream using the client's network stream.
-            SslStream sslStream = new SslStream(
-                client.GetStream(), false);
+            SslStream sslStream = new SslStream(client.GetStream(), false);
             // Authenticate the server but don't require the client to authenticate.
             try
             {
