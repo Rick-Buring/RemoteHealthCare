@@ -69,19 +69,11 @@ namespace VR_Project
 
         }
 
-        //private void MainWindow_Closed(object sender, EventArgs e)
-        //{
-        //    Debug.WriteLine("Closing and disposing client");
-        //    this.client.Close();
-        //    this.client.Dispose();
-        //    Debug.WriteLine("Closed and disposed client");
-        //}
+ 
 
         private Root root;
-        //public ObservableCollection<Data> ob { get; set; }
 
         private string tunnelID;
-        private string panelID;
         private Data _selectedMilight;
 
         public Data SelectedMilight
@@ -114,7 +106,7 @@ namespace VR_Project
 
             addTerrain();
             this.bikeUuid = makeBikeObject();
-            //MakePanel(this.bikeUuid);
+            MakePanel(this.bikeUuid);
             MakeAndFollowRoute(this.bikeUuid);
         }
 
