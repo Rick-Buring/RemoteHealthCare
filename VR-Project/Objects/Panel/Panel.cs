@@ -51,7 +51,7 @@ public class Panel
     public void drawText(string id, string text, double[] position, double size, int[] color, string font)
     {
         this.id = "scene/panel/drawtext";
-        this.data = new Data() { id = id, text = text, position = position, color = color, font = font };
+        this.data = new Data() { id = id, text = text, position = position, size = size, color = color, font = font };
 
     }
     //public void image(string id, string image, double[] position, )

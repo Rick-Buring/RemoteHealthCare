@@ -97,10 +97,12 @@ namespace VR_Project
 
         public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
+
+
             Debug.WriteLine("From: ViewModel");
             Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
             this.client.Update(ergometer, heartBeatMonitor);
-            //Send data to the vr engine here
+            this.vrManager.WriteToPanel();
         }
 
         public void Window_Closed(object sender, EventArgs e)

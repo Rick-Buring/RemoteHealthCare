@@ -131,6 +131,31 @@ namespace VR_Project
             SendMessageResponseToJsonArray(client, WrapJsonMessage<PanelNode>(this.dest, panelNode), out panelResponse);
 
             this.panelUuid = panelResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
+
+            Panel panel = new Panel();
+            panel.setclearColor(this.panelUuid, new int[] { 1, 1, 1, 1 });
+            SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+        }
+
+        public void WriteToPanel ()
+        {
+            if (this.panelUuid != null)
+            {
+                Panel panel = new Panel();
+
+                panel.Clear(this.panelUuid);
+                SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+
+                panel.drawText(this.panelUuid, "testing", new double[] { 10d, 10d }, 12d, new int[] { 0, 0, 0, 1 }, "segoeui");
+                JObject response;
+                SendMessageResponseToJsonArray(client, WrapJsonMessage<Panel>(this.dest, panel), out response);
+                Debug.WriteLine(response.ToString());
+
+                panel.Swap(this.panelUuid);
+                SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                //Debug.WriteLine(writeResponse.ToString());
+            }
+
         }
 
         public void MakeAndFollowRoute(string nodeID)

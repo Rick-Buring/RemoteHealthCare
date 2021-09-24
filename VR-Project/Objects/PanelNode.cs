@@ -39,8 +39,8 @@ namespace VR_Project.Objects
 
                 public Components ()
                 {
-                    this.transform = new Transform(new int[] { 0, 3, 0 }, 1, new int[] { 0, 0, 0 });
-                    this.panel = new Panel(new int[] { 5,5 }, new int[] { 512, 512 }, new int[] { 1, 1, 1, 1 }, false);
+                    this.transform = new Transform(new int[] { 0, 3, 0 }, 1, new double[] { (Math.PI / 2.0), (Math.PI / 2.0), (Math.PI / 2.0) });
+                    this.panel = new Panel(new double[] { 0.3,0.8 }, new int[] { 512, 512 }, new int[] { 1, 1, 1, 1 }, false);
 
                 }
 
@@ -49,9 +49,9 @@ namespace VR_Project.Objects
                 {
                     public int[] position { get; set; }
                     public int scale { get; set; }
-                    public int[] rotation { get; set; }
+                    public double[] rotation { get; set; }
 
-                    public Transform(int[] position, int scale, int[] rotation)
+                    public Transform(int[] position, int scale, double[] rotation)
                     {
                         this.position = position;
                         this.scale = scale;
@@ -61,12 +61,12 @@ namespace VR_Project.Objects
 
                 public class Panel
                 {
-                    public int[] size { get; set; }
+                    public double[] size { get; set; }
                     public int[] resolution { get; set; }
                     public int[] background { get; set; }
                     public bool castShadow { get; set; }
 
-                    public Panel (int[] size, int[] resolution, int[] background, bool castShadow)
+                    public Panel (double[] size, int[] resolution, int[] background, bool castShadow)
                     {
                         this.size = size;
                         this.resolution = resolution;
