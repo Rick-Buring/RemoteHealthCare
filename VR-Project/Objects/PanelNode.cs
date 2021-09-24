@@ -10,11 +10,26 @@ namespace VR_Project.Objects
         public string id { get; set; }
         public Data data { get; set; }
 
+        public PanelNode (string id, string name, string parent)
+        {
+            this.id = id;
+            this.data = new Data(name, parent);
+        }
+
+
         public class Data
         {
             public string name { get; set; }
             public string parent { get; set; }
             public Components components { get; set; }
+
+
+            public Data (string name, string parent)
+            {
+                this.name = name;
+                this.parent = parent;
+                this.components = new Components();
+            }
 
             public class Components
             {

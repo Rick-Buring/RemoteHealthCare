@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Windows;
 using Vr_Project.RemoteHealthcare;
+using VR_Project.Objects;
 
 namespace VR_Project
 {
@@ -17,6 +18,8 @@ namespace VR_Project
 
         private TcpClient client = new TcpClient("145.48.6.10", 6666);
         private string dest;
+        private string panelUuid;
+        private string bikeUuid;
 
         public VrManager(EngineCallback listener)
         {
@@ -110,8 +113,9 @@ namespace VR_Project
             deleteGroundPlane();
 
             addTerrain();
-
-            MakeAndFollowRoute(makeBikeObject());
+            this.bikeUuid = makeBikeObject();
+            //MakePanel(this.bikeUuid);
+            MakeAndFollowRoute(this.bikeUuid);
         }
 
         public string makeBikeObject()
@@ -128,7 +132,13 @@ namespace VR_Project
 
         public void MakePanel (string parentID)
         {
+            PanelNode panelNode = new PanelNode("scene/node/add", "dataPanel", parentID);
 
+            JObject panelResponse;
+
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<PanelNode>(this.dest, panelNode), out panelResponse);
+
+            this.panelUuid = panelResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
         }
 
         public void MakeAndFollowRoute(string nodeID)
