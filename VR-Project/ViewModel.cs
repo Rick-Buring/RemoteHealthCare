@@ -109,8 +109,9 @@ namespace VR_Project
         {
 
             client.Stop();
-            
+            if (serverConnectionThread != null)
             serverConnectionThread.Join();
+
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();
         }

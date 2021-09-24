@@ -113,7 +113,7 @@ namespace VR_Project
         public string makeBikeObject()
         {
 
-            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Carpet.obj", new int[3] { 0, 0, 0 });
+            ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Carpet.obj", new int[3] { 15, 15, 15 });
 
             JObject BikeResponse;
 

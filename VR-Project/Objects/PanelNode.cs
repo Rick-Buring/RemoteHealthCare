@@ -39,19 +39,19 @@ namespace VR_Project.Objects
 
                 public Components ()
                 {
-                    this.transform = new Transform(new int[] { 0, 3, 0 }, 1, new double[] { Math.PI * 2.0, Math.PI, 0 });
-                    this.panel = new Panel(new double[] { 0.3,0.8 }, new int[] { 512, 512 }, new int[] { 1, 1, 1, 1 }, false);
+                    this.transform = new Transform(new float[] { 0.2f, 1f, 0 }, 1, new float[] { 50, 90, 0 });
+                    this.panel = new Panel(new double[] { 0.6,0.6 }, new int[] { 512, 512 }, new int[] { 1, 1, 1, 1 }, false);
 
                 }
 
 
                 public class Transform
                 {
-                    public int[] position { get; set; }
+                    public float[] position { get; set; }
                     public int scale { get; set; }
-                    public double[] rotation { get; set; }
+                    public float[] rotation { get; set; }
 
-                    public Transform(int[] position, int scale, double[] rotation)
+                    public Transform(float[] position, int scale, float[] rotation)
                     {
                         this.position = position;
                         this.scale = scale;
