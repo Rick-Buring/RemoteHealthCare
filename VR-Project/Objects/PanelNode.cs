@@ -39,7 +39,7 @@ namespace VR_Project.Objects
 
                 public Components ()
                 {
-                    this.transform = new Transform(new int[] { 0, 3, 0 }, 1, new double[] { (Math.PI / 2.0), (Math.PI / 2.0), (Math.PI / 2.0) });
+                    this.transform = new Transform(new int[] { 0, 3, 0 }, 1, new double[] { Math.PI * 2.0, Math.PI, 0 });
                     this.panel = new Panel(new double[] { 0.3,0.8 }, new int[] { 512, 512 }, new int[] { 1, 1, 1, 1 }, false);
 
                 }

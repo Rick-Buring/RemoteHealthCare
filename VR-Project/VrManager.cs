@@ -137,7 +137,7 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
         }
 
-        public void WriteToPanel ()
+        public void WriteToPanel (int rpm)
         {
             if (this.panelUuid != null)
             {
@@ -146,7 +146,7 @@ namespace VR_Project
                 panel.Clear(this.panelUuid);
                 SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 
-                panel.drawText(this.panelUuid, "testing", new double[] { 10d, 10d }, 12d, new int[] { 0, 0, 0, 1 }, "segoeui");
+                panel.drawText(this.panelUuid, "RPM : " + rpm, new double[] { 10d, 20d }, 30d, new int[] { 0, 0, 0, 1 }, "segoeui");
                 JObject response;
                 SendMessageResponseToJsonArray(client, WrapJsonMessage<Panel>(this.dest, panel), out response);
                 Debug.WriteLine(response.ToString());

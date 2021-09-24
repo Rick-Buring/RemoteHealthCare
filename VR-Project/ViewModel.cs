@@ -102,7 +102,7 @@ namespace VR_Project
             Debug.WriteLine("From: ViewModel");
             Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
             this.client.Update(ergometer, heartBeatMonitor);
-            this.vrManager.WriteToPanel();
+            this.vrManager.WriteToPanel(ergometer.GetErgometerData().Cadence);
         }
 
         public void Window_Closed(object sender, EventArgs e)

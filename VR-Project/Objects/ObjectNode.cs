@@ -31,7 +31,7 @@ namespace VR_Project{
                 this.name = name;
 
                 this.components = new Components();
-                this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
+                this.components.transform = new Transform(position, 1, new double[3] { Math.PI * 2.0, 0, 0 });
                 this.components.model = new Model(file);
             }
 
@@ -40,7 +40,7 @@ namespace VR_Project{
                 this.name = name;
 
                 this.components = new Components();
-                this.components.transform = new Transform(position, 1, new int[3] { 0, 0, 0 });
+                this.components.transform = new Transform(position, 1, new double[3] { 0, 0, 0 });
                 this.components.model = new Model(file, animationFile);
             }
 
@@ -54,7 +54,7 @@ namespace VR_Project{
 
             public class Transform
             {
-                public Transform(int[] position, int? scale, int[]? rotation)
+                public Transform(int[] position, int? scale, double[]? rotation)
                 {
                     this.position = position;
                     this.scale = scale;
@@ -63,7 +63,7 @@ namespace VR_Project{
 
                 public int[]? position { get; set; }
                 public int? scale { get; set; }
-                public int[]? rotation { get; set; }
+                public double[]? rotation { get; set; }
             }
 
             public class Model
