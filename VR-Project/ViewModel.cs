@@ -85,7 +85,7 @@ namespace VR_Project
         {
             if (SelectClient == null)
                 return;
-            this.vrManager.connectToTunnel(SelectClient.id);
+            this.vrManager.ConnectToTunnel(SelectClient.id);
             this.equipment.startEquipment();
 
         }
@@ -97,8 +97,6 @@ namespace VR_Project
 
         public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
-
-
             Debug.WriteLine("From: ViewModel");
             Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
             this.client.Update(ergometer, heartBeatMonitor);

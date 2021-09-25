@@ -89,7 +89,7 @@ namespace VR_Project
         }
 
 
-        public void connectToTunnel(string tunnelID)
+        public void ConnectToTunnel(string tunnelID)
         {
             string tunnel = @"{""id"" : ""tunnel/create"", ""data"" :{""session"" : """ + tunnelID + @"""}}";
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(tunnel));
@@ -103,20 +103,19 @@ namespace VR_Project
             var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
-            changeSkyBoxTime(15);
+            ChangeSkyBoxTime(15);
 
-            deleteGroundPlane();
+            DeleteGroundPlane();
 
-            addTerrain();
-            this.bikeUuid = makeBikeObject();
+            AddTerrain();
+            this.bikeUuid = MakeBikeObject();
             MakePanel(this.bikeUuid);
             MakeAndFollowRoute(this.bikeUuid);
-            getScene();
-            this.cameraID = getCamera();
-            stickCameraToPlayer();
+            this.cameraID = GetCamera();
+            StickCameraToPlayer();
         }
 
-        public string makeBikeObject()
+        public string MakeBikeObject()
         {
 
             ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Carpet.obj", new int[3] { 15, 15, 15 });
@@ -128,7 +127,7 @@ namespace VR_Project
             return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
         }
 
-        public string getScene ()
+        public string GetScene ()
         {
             string request = @"{ ""id"" : ""scene/get"" }";
             JObject sceneResponse;
@@ -137,16 +136,16 @@ namespace VR_Project
             return sceneResponse.ToString();
         }
 
-        public string getCamera ()
+        public string GetCamera ()
         {
             string request = @"{ ""id"" : ""scene/node/find"", ""data"": {""name"" : ""Camera""}}";
             JObject cameraResponse;
             SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out cameraResponse);
             Debug.WriteLine(cameraResponse.ToString());
-            return getCameraID(cameraResponse);
+            return GetCameraID(cameraResponse);
         }
 
-        public void stickCameraToPlayer ()
+        public void StickCameraToPlayer ()
         {
             UpdateNode node = new UpdateNode("scene/node/update", this.cameraID, this.bikeUuid, new double[] { 90, 90, 0 });
             JObject updateResponse;
@@ -154,7 +153,7 @@ namespace VR_Project
             Debug.WriteLine(updateResponse.ToString());
         }
 
-        private string getCameraID (JObject cameraObject) 
+        private string GetCameraID (JObject cameraObject) 
         {
             return cameraObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data").ElementAt(0).Value<string>("uuid");
         }
@@ -190,7 +189,6 @@ namespace VR_Project
 
                 panel.Swap(this.panelUuid);
                 SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
-                //Debug.WriteLine(writeResponse.ToString());
             }
 
         }
@@ -208,7 +206,7 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, nodeID, 2)));
         }
 
-        public void changeSkyBoxTime(int time)
+        public void ChangeSkyBoxTime(int time)
         {
             Skybox skybox = new Skybox();
             skybox.id = "scene/skybox/settime";
@@ -221,7 +219,7 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
         }
 
-        public void deleteGroundPlane()
+        public void DeleteGroundPlane()
         {
             Node findNode = new Node("scene/node/find");
             findNode.data.name = "GroundPlane";
@@ -238,7 +236,7 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<Node>(this.dest, deleteNode));
         }
 
-        public void add3dObjects()
+        public void Add3dObjects()
         {
             ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 1, 2, 1 });
 
@@ -253,7 +251,7 @@ namespace VR_Project
             SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
         }
 
-        public void addTerrain()
+        public void AddTerrain()
         {
 
             Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/HeightmapSmol.bmp");
