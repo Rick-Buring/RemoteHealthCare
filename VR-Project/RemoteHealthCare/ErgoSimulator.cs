@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace Vr_Project.RemoteHealthcare
                 listener.notify(base.ergometerData);
                 Thread.Sleep(1000);
             }
-
+            Debug.WriteLine("Ending Ergo Sim");
         }
 
         //Verandert de waardes in de data klasse met een random waarde rond de baseline plus een random waarde tussen 0 en een aantal % van de baseline.

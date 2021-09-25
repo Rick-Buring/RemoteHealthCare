@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Objects;
+using VR_Project.Objects.Node;
 
 namespace VR_Project
 {
@@ -20,6 +22,7 @@ namespace VR_Project
         private string dest;
         private string panelUuid;
         private string bikeUuid;
+        private string cameraID;
 
         public VrManager(EngineCallback listener)
         {
@@ -108,6 +111,9 @@ namespace VR_Project
             this.bikeUuid = makeBikeObject();
             MakePanel(this.bikeUuid);
             MakeAndFollowRoute(this.bikeUuid);
+            getScene();
+            this.cameraID = getCamera();
+            stickCameraToPlayer();
         }
 
         public string makeBikeObject()
@@ -120,6 +126,37 @@ namespace VR_Project
             SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode), out BikeResponse);
 
             return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
+        }
+
+        public string getScene ()
+        {
+            string request = @"{ ""id"" : ""scene/get"" }";
+            JObject sceneResponse;
+            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out sceneResponse);
+            Debug.WriteLine(sceneResponse.ToString());
+            return sceneResponse.ToString();
+        }
+
+        public string getCamera ()
+        {
+            string request = @"{ ""id"" : ""scene/node/find"", ""data"": {""name"" : ""Camera""}}";
+            JObject cameraResponse;
+            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out cameraResponse);
+            Debug.WriteLine(cameraResponse.ToString());
+            return getCameraID(cameraResponse);
+        }
+
+        public void stickCameraToPlayer ()
+        {
+            UpdateNode node = new UpdateNode("scene/node/update", this.cameraID, this.bikeUuid, new double[] { 90, 90, 0 });
+            JObject updateResponse;
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<UpdateNode>(dest, node), out updateResponse);
+            Debug.WriteLine(updateResponse.ToString());
+        }
+
+        private string getCameraID (JObject cameraObject) 
+        {
+            return cameraObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data").ElementAt(0).Value<string>("uuid");
         }
 
         public void MakePanel (string parentID)
@@ -242,6 +279,12 @@ namespace VR_Project
 
             string message = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + objectToJson + "}}";
 
+            return message;
+        }
+
+        public static string WrapJsonMessage (string dest, string request)
+        {
+            string message = @"{""id"" : ""tunnel/send"", ""data"" : " + @"{""dest"" : """ + dest + @""", ""data"" : " + request + "}}";
             return message;
         }
 

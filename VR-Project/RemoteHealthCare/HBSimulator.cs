@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,7 @@ namespace Vr_Project.RemoteHealthcare
                 listener.notify(base.heartBeatData);
                 Thread.Sleep(1000);
             }
+            Debug.WriteLine("Ending HB Sim");
         }
 
         //Verandert de data in de data klasse.
