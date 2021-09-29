@@ -125,7 +125,7 @@ namespace Server
                 returnRoot.sender = root.target;
                 returnRoot.target = root.sender;
 
-
+                root = returnRoot;
             }
 
             this.server.send(root);
