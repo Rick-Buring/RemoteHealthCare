@@ -82,6 +82,7 @@ namespace Server
                 {
                     Console.WriteLine(e);
                     //todo disconnect client
+
                 }
             }
         }
