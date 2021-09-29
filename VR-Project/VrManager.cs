@@ -24,6 +24,8 @@ namespace VR_Project
         private string bikeUuid;
         private string cameraID;
 
+
+        // __CR__ [PSMG] Wel erg veel code in de constructor
         public VrManager(EngineCallback listener)
         {
          
@@ -79,6 +81,7 @@ namespace VR_Project
         private string tunnelID;
         private Data _selectedMilight;
 
+        // __CR__ [PSMG] Waarom maak je er niet meteen een property van?
         public Data SelectedMilight
         {
             get { return _selectedMilight; }

@@ -19,7 +19,7 @@ namespace Server
                 writer.WriteLine(data.ToString());  
             } catch
             {
-
+                // __CR__ [PSMG] Catch nooit alle exception en doe er dan niks mee!
             } finally
             {
                 writer.Close();

@@ -8,6 +8,8 @@ using System.Windows.Input;
 
 namespace VR_Project.Util
 {
+
+    // __CR__ [PSMG] Dit was alleen als voorbeeld. Beter kan je een lib hiervoor pakken zoals die van Microsoft. Microsoft.MVVM
     public class RelayCommand : ICommand
     {
         #region Fields

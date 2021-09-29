@@ -8,6 +8,8 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Server
 {
+
+    // __CR__ [PSMG] Implementeer hier ook de IDisposable interface
     public class Server
     {
         private TcpListener listener;
@@ -24,6 +26,7 @@ namespace Server
         public Server()
         {
             this.clients = new List<ClientHandler>();
+            // __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
             this.listener = new TcpListener(System.Net.IPAddress.Any, 5005);
             this.manager = new DataManager();
             this.Certificate = new X509Certificate(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Certificaat.pfx", "test1234");
@@ -44,6 +47,7 @@ namespace Server
 
         public void OnDisconnect(ClientHandler client)
         {
+            // __CR__ [PSMG] Hier krijg je mogelijk een fout met multithreading!
             if (this.clients.Contains(client))
             {
                 this.clients.Remove(client);
@@ -55,6 +59,7 @@ namespace Server
         {
             string target = message.target;
 
+            // __CR__ [PSMG] Eventueel omzetten naar enum
             if (target == "all")
             {
                 foreach (ClientHandler client in clients)

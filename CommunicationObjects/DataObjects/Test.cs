@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects.DataObjects
 {
+
+    // __CR__ [PSMG] Plaats dit in aparte unit test code.
     public class Test
     {
         //private string test = "{\"Type\":\"Server.Chat\",\"sender\":\"doc\",\"data\":{\"message\":\"hallo\"},\"target\":\"henk\"}";

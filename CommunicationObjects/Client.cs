@@ -12,6 +12,8 @@ namespace CommunicationObjects
     {
         private const string certificateName = "testCertificaat";
 
+
+        // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
         private TcpClient client;
         private SslStream stream;
         public Client(TcpClient client)
@@ -65,6 +67,7 @@ namespace CommunicationObjects
             {
                 stream.Write(WrapMessage(message));
                 stream.Flush();
+                // __CR__ [PSMG] Probeer niet alle exceptions te catchen
             } catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
@@ -95,6 +98,8 @@ namespace CommunicationObjects
             return Encoding.ASCII.GetString(received);
         }
 
+
+        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
         public void terminate()
         {
             this.stream.Close();
