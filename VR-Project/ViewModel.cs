@@ -1,8 +1,11 @@
 ﻿
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Util;
@@ -10,59 +13,45 @@ using VR_Project.Util;
 
 namespace VR_Project
 {
-    public class ViewModel : ObservableObject, EngineCallback
+    public class ViewModel : BindableBase
     {
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public Update updater;
 
         private VrManager vrManager;
-        private EquipmentManager equipment;
+        private EquipmentMain equipment;
         private ClientHandler client;
-        
+
         private Thread serverConnectionThread;
 
+
+        public ObservableCollection<VrManager.Data> Engines { get; }
+
+        public DelegateCommand SelectEngine { get; }
+        public DelegateCommand ConnectToServer { get; }
 
 
 
         public ViewModel()
         {
-            this.vrManager = new VrManager(this);
-
-            updater = NotifyData;
-            this.equipment = new EquipmentManager(updater);
-            this.client = new ClientHandler();
+            this.SelectEngine = new DelegateCommand(engageEngine);
+            this.ConnectToServer = new DelegateCommand(EngageConnection);
+            this.Engines = new ObservableCollection<VrManager.Data>();
+            GetOnlineEngines();
             
+            this.vrManager = new VrManager();
+            this.equipment = new EquipmentMain(updater);
+            this.client = new ClientHandler();
+
+            this.updater += this.vrManager.Update;
+            this.updater += this.client.Update;
         }
 
-        private ICommand _selectEngine;
-        public ICommand SelectEngine
+        private async void GetOnlineEngines()
         {
-            get
-            {
-
-                if (_selectEngine == null)
-                {
-                    _selectEngine = new RelayCommand(param => this.engageEngine());
-                }
-
-                return _selectEngine;
-            }
-        }
-
-        private ICommand connectToServer;
-        public ICommand ConnectToServer
-        {
-            get
-            {
-
-                if (connectToServer == null)
-                {
-                    connectToServer = new RelayCommand(param => this.EngageConnection());
-                }
-
-                return connectToServer;
-            }
+            this.Engines.Clear();
+            this.Engines.AddRange(await vrManager.GetEngineData());
         }
 
         private void EngageConnection()
@@ -71,47 +60,22 @@ namespace VR_Project
             this.serverConnectionThread.Start();
         }
 
+        public VrManager.Data SelectClient { get; set; }
 
-        private VrManager.Data selectClient;
-
-        public VrManager.Data SelectClient
-        {
-            get { return selectClient; }
-            set
-            {
-                selectClient = value;
-            }
-        }
-        private void engageEngine()
+        private async void engageEngine()
         {
             if (SelectClient == null)
                 return;
-            this.equipment.startEquipment();
+            await this.equipment.start();
             this.vrManager.ConnectToTunnel(SelectClient.id);
-            
-
-        }
-        public ObservableCollection<VrManager.Data> ob { get; set; }
-        public void notify(ObservableCollection<VrManager.Data> ob)
-        {
-            this.ob = ob;
-        }
-
-        public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        {
-            //Debug.WriteLine("From: ViewModel");
-            //Debug.WriteLine($"{ergometer.GetErgometerData()}\n{heartBeatMonitor.GetHeartBeat()}");
-            this.client.Update(ergometer, heartBeatMonitor);
-            this.vrManager.WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
-            
         }
 
         public void Window_Closed(object sender, EventArgs e)
         {
-            
+
             client.Stop();
             if (serverConnectionThread != null)
-            serverConnectionThread.Join();
+                serverConnectionThread.Join();
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();

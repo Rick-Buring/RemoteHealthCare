@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using System.Threading;
 using System.Windows;
 using Vr_Project.RemoteHealthcare;
@@ -26,22 +27,17 @@ namespace VR_Project
         private string cameraID;
 
 
-        // __CR__ [PSMG] Wel erg veel code in de constructor
-        public VrManager(EngineCallback listener)
+        public async Task<List<Data>> GetEngineData()
         {
-         
-            Root t = new Root();
-            t.id = "session/list";
+            Root root = new Root();
+            root.id = "session/list";
             //string message = @"{""id"" : ""session/list""}";
-            string message = JsonConvert.SerializeObject(t);
+            string message = JsonConvert.SerializeObject(root);
             //Debug.WriteLine(message);
             byte[] messageArray = Encoding.ASCII.GetBytes(message);
             var messageToSend = WrapMessage(messageArray);
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
-            //writer.Write(, 0);
-            //writer.Flush();
-            //Console.WriteLine(reader.ReadToEnd());
             byte[] array = new byte[4];
 
 
@@ -66,30 +62,12 @@ namespace VR_Project
             //Debug.WriteLine(test);
             root = JsonConvert.DeserializeObject<Root>(test);
 
-            ObservableCollection<Data> ob = new ObservableCollection<Data>();
+            List<Data> OnlineEngines = new List<Data>();
 
             foreach (Data d in root.data)
-                ob.Add(d);
+                OnlineEngines.Add(d);
 
-            listener.notify(ob);
-
-        }
-
- 
-
-        private Root root;
-
-        private string tunnelID;
-        private Data _selectedMilight;
-
-        // __CR__ [PSMG] Waarom maak je er niet meteen een property van?
-        public Data SelectedMilight
-        {
-            get { return _selectedMilight; }
-            set
-            {
-                _selectedMilight = value;
-            }
+            return OnlineEngines;
         }
 
 
@@ -147,6 +125,19 @@ namespace VR_Project
             SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out cameraResponse);
             Debug.WriteLine(cameraResponse.ToString());
             return GetCameraID(cameraResponse);
+        }
+        public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        {
+            //Debug.WriteLine("From: ViewModel");
+            //Debug.WriteLine($"{ergometer.GetErgometerData()}\n{heartBeatMonitor.GetHeartBeat()}");
+            WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
+            updateSpeed(ergometer.GetErgometerData().Cadence);
+
+        }
+
+        public void updateSpeed(double speed)
+        {
+            
         }
 
         public void StickCameraToPlayer ()
