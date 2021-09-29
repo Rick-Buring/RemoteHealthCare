@@ -108,13 +108,14 @@ namespace VR_Project
 
         public void Window_Closed(object sender, EventArgs e)
         {
-
+            
             client.Stop();
             if (serverConnectionThread != null)
             serverConnectionThread.Join();
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();
+            this.equipment.Dispose();
         }
     }
 }

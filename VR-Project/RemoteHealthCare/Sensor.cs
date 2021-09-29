@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public abstract class Sensor 
+    public abstract class Sensor
     {
         /// <summary>
         /// Deze methode zal worden gebruikt om te verbinden met een sensor.
@@ -28,6 +28,6 @@ namespace Vr_Project.RemoteHealthcare
         public abstract int GetHeartBeat();
 
         public abstract ErgometerData GetErgometerData();
-      
+
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class Ergometer : Sensor
+    public class Ergometer : Sensor, IDisposable
     {
         public string Name { get; }
 
@@ -152,6 +152,11 @@ namespace Vr_Project.RemoteHealthcare
         {
             return this.ergometerData;
         }
-
+        
+        public void Dispose()
+        {
+            this.bleBike.CloseDevice();
+            this.bleBike.Dispose();
+        }
     }
 }

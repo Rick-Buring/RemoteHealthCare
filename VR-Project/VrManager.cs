@@ -185,6 +185,8 @@ namespace VR_Project
             {
                 if (!running)
                 {
+                    //TODO kijken om er een task van maken.
+                    //TODO senden en ontvangen async maken.
                     running = true;
                     new Thread(() =>
                     {

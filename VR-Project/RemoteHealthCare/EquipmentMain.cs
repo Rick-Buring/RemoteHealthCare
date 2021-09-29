@@ -7,7 +7,7 @@ using VR_Project;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class EquipmentMain : IDataListener
+    public class EquipmentMain : IDataListener, IDisposable
     {
         private DataIO dataIO;
         
@@ -24,7 +24,7 @@ namespace Vr_Project.RemoteHealthcare
         public async Task start()
         {
             dataIO = new DataIO();
-            ergometer = new Ergometer("Tacx Flux 01249", this, dataIO);
+            ergometer = new Ergometer("Tacx Flux 00438", this, dataIO);
             //ergometer = new ErgoSimulator(this);
             //this.gui = new GUI();
             await ergometer.Connect();
@@ -50,6 +50,11 @@ namespace Vr_Project.RemoteHealthcare
                 this.updater(ergometer, heartBeatMonitor);
             }
            
+        }
+
+        public void Dispose()
+        {
+            ergometer.Dispose();
         }
     }
     

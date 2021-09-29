@@ -46,7 +46,7 @@ namespace Vr_Project.RemoteHealthcare
 
             // is the instantaneous power in Watts
             int instantaneousPowerLSB = data[9];
-            int instantaneousPowerMSB = data[10] & 0x0f << 8;
+            int instantaneousPowerMSB = (data[10] & 0x0f) << 8;
             InstantaneousPower = (instantaneousPowerMSB | instantaneousPowerLSB);
 
             // is the current trainer status

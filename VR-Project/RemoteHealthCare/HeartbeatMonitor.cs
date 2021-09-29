@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class HeartBeatMonitor : Sensor
+    public class HeartBeatMonitor : Sensor, IDisposable
     {
         private BLE bleHeart;
         protected HeartBeatData heartBeatData;
@@ -75,6 +75,12 @@ namespace Vr_Project.RemoteHealthcare
         public override ErgometerData GetErgometerData()
         {
             return null;
+        }
+
+        public void Dispose()
+        {
+            this.bleHeart.CloseDevice();
+            this.bleHeart.Dispose();
         }
     }
 }

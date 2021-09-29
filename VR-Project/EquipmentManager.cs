@@ -9,7 +9,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    class EquipmentManager
+    class EquipmentManager : IDisposable
     {
         public EquipmentMain equipment;
 
@@ -17,6 +17,11 @@ namespace VR_Project
         {
             this.equipment = new EquipmentMain(updater);
             
+        }
+
+        public void Dispose()
+        {
+            this.equipment.Dispose();
         }
 
         public void startEquipment ()
