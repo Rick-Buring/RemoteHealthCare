@@ -81,7 +81,7 @@ namespace Server
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    //todo disconnect client
+                    this.disconnect();
                 }
             }
         }
@@ -117,6 +117,15 @@ namespace Server
 
                     this.disconnect();
                 }
+            }
+            else if (false) //todo change false to type == typeof(historische informatie opvragen type)
+            {
+                Root returnRoot = new Root();
+
+                returnRoot.sender = root.target;
+                returnRoot.target = root.sender;
+
+
             }
 
             this.server.send(root);
