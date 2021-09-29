@@ -38,14 +38,15 @@ namespace VR_Project
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.ConnectToServer = new DelegateCommand(EngageConnection);
             this.Engines = new ObservableCollection<VrManager.Data>();
-            GetOnlineEngines();
-            
-            this.vrManager = new VrManager();
-            this.equipment = new EquipmentMain(updater);
-            this.client = new ClientHandler();
 
+
+            this.vrManager = new VrManager();
+            this.client = new ClientHandler();
             this.updater += this.vrManager.Update;
             this.updater += this.client.Update;
+
+            this.equipment = new EquipmentMain(updater);
+            GetOnlineEngines();
         }
 
         private async void GetOnlineEngines()
