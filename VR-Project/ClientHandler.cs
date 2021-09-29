@@ -56,9 +56,12 @@ namespace VR_Project
         public void Stop()
         {
             //TODO nullpointer afhandelen.
-            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-            { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
-            this.client.terminate();
+            if (this.client != null)
+            {
+                this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
+                { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
+                this.client.terminate();
+            }
         }
 
     }

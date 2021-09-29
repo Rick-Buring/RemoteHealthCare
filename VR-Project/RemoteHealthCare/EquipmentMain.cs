@@ -53,8 +53,9 @@ namespace Vr_Project.RemoteHealthcare
         }
 
         public void Dispose()
-        {
+        {   if (ergometer != null)
             ergometer.Dispose();
+
         }
     }
     
