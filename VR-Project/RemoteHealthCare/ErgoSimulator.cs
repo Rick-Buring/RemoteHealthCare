@@ -115,6 +115,8 @@ namespace Vr_Project.RemoteHealthcare
             this.distanceTraveled += 2;
         }
 
+
+
         public IData GetData()
         {
             return base.ergometerData;

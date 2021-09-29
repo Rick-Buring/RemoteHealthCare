@@ -1,6 +1,7 @@
 ﻿using Avans.TI.BLE;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,8 +79,18 @@ namespace Vr_Project.RemoteHealthcare
         //event voor binnenkomende data notificeren van de classes
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            this.ergometerData.Update(e.Data);
-            notifyListeners();
+            byte[] data = new List<byte>(e.Data).GetRange(0, e.Data.Length).ToArray();
+
+            if (checksum(data) == e.Data[e.Data.Length - 1])
+            {
+                Debug.WriteLine("Checksum correct");
+                this.ergometerData.Update(e.Data);
+                notifyListeners();
+            } else
+            {
+                Debug.WriteLine("Checksum incorrect");
+            }
+            
         }
 
         /// <summary>
@@ -141,5 +152,6 @@ namespace Vr_Project.RemoteHealthcare
         {
             return this.ergometerData;
         }
+
     }
 }
