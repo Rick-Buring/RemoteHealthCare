@@ -19,6 +19,7 @@ namespace VR_Project
         private VrManager vrManager;
         private EquipmentManager equipment;
         private ClientHandler client;
+        
         private Thread serverConnectionThread;
 
 
@@ -85,8 +86,9 @@ namespace VR_Project
         {
             if (SelectClient == null)
                 return;
-            this.vrManager.ConnectToTunnel(SelectClient.id);
             this.equipment.startEquipment();
+            this.vrManager.ConnectToTunnel(SelectClient.id);
+            
 
         }
         public ObservableCollection<VrManager.Data> ob { get; set; }
@@ -97,10 +99,11 @@ namespace VR_Project
 
         public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
-            Debug.WriteLine("From: ViewModel");
-            Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
+            //Debug.WriteLine("From: ViewModel");
+            //Debug.WriteLine($"{ergometer.GetErgometerData()}\n{heartBeatMonitor.GetHeartBeat()}");
             this.client.Update(ergometer, heartBeatMonitor);
-            this.vrManager.WriteToPanel(ergometer.GetErgometerData().Cadence);
+            this.vrManager.WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
+            
         }
 
         public void Window_Closed(object sender, EventArgs e)

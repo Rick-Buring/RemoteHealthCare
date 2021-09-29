@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Vr_Project.RemoteHealthcare
@@ -26,6 +27,7 @@ namespace Vr_Project.RemoteHealthcare
                 case 0x19: decodeSpecificData(bytes);
                     break;
             }
+            Debug.WriteLine(Cadence);
         }
 
         /// <summary>

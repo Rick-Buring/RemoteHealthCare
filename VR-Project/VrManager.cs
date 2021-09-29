@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Objects;
@@ -135,7 +136,7 @@ namespace VR_Project
             string request = @"{ ""id"" : ""scene/get"" }";
             JObject sceneResponse;
             SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out sceneResponse);
-            Debug.WriteLine(sceneResponse.ToString());
+            //Debug.WriteLine(sceneResponse.ToString());
             return sceneResponse.ToString();
         }
 
@@ -175,26 +176,42 @@ namespace VR_Project
             panel.setclearColor(this.panelUuid, new int[] { 1, 1, 1, 1 });
             SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
         }
-
-        public void WriteToPanel (int rpm)
+        private const string font = "segoeui";
+        private const double fontSize = 50d;
+        private bool running = false;
+        public void WriteToPanel (ErgometerData ergometerData, int heartBeat )
         {
-            if (this.panelUuid != null)
+            if (this.panelUuid != null && ergometerData != null)
             {
-                Panel panel = new Panel();
+                if (!running)
+                {
+                    running = true;
+                    new Thread(() =>
+                    {
+                        Panel panel = new Panel();
 
-                panel.Clear(this.panelUuid);
-                SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
-
-                panel.drawText(this.panelUuid, "RPM : " + rpm, new double[] { 10d, 20d }, 30d, new int[] { 0, 0, 0, 1 }, "segoeui");
-                JObject response;
-                SendMessageResponseToJsonArray(client, WrapJsonMessage<Panel>(this.dest, panel), out response);
-                Debug.WriteLine(response.ToString());
-
-                panel.Swap(this.panelUuid);
-                SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.Clear(this.panelUuid);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.drawText(this.panelUuid, "RPM : " + ergometerData.Cadence, new double[] { 10d, 40d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.drawText(this.panelUuid, "BPM : " + heartBeat, new double[] { 10d, 80d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.drawText(this.panelUuid, "Wattage : " + ergometerData.InstantaneousPower, new double[] { 10d, 120d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.drawText(this.panelUuid, "Speed (m/s) : " + ergometerData.InstantaneousSpeed, new double[] { 10d, 160d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        panel.Swap(this.panelUuid);
+                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        this.running = false;
+                    }).Start();
+                }
             }
 
         }
+
+   
+
+        
 
         public void MakeAndFollowRoute(string nodeID)
         {
@@ -230,9 +247,8 @@ namespace VR_Project
             JObject jObject;
             SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
 
-
-            string uuid = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data")[0].Value<string>("uuid");
-
+            string uuid = jObject.Value<JObject>("data").Value<JObject>("data")?.Value<JArray>("data")[0].Value<string>("uuid");
+          
             Node deleteNode = new Node("scene/node/delete");
             deleteNode.data.id = uuid;
 
@@ -317,16 +333,18 @@ namespace VR_Project
 
         public static void SendMessage(TcpClient client, string message)
         {
-            Debug.WriteLine(message);
+            
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
-            Debug.WriteLine(Encoding.ASCII.GetString(ReadMessage(client)));
+            string received = Encoding.ASCII.GetString(ReadMessage(client));
+
+            
         }
 
         public static void SendMessageResponseToJsonArray(TcpClient client, string message, out JObject jObject)
         {
-            Debug.WriteLine(message);
+            
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
@@ -343,16 +361,16 @@ namespace VR_Project
             //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
             byte[] received = new byte[size];
-
+            
 
             int bytesRead = 0;
             while (bytesRead < size)
             {
                 int read = client.GetStream().Read(received, bytesRead, received.Length - bytesRead);
                 bytesRead += read;
-                Console.WriteLine("ReadMessage: " + read);
+                //Console.WriteLine("ReadMessage: " + read);
             }
-
+            
             return received;
 
         }
