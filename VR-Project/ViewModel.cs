@@ -17,7 +17,9 @@ namespace VR_Project
     {
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
+        public delegate void SendResistance(float resistance);
         public Update updater;
+        public SendResistance resistanceUpdater;
 
         private VrManager vrManager;
         private EquipmentMain equipment;
@@ -38,10 +40,10 @@ namespace VR_Project
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.ConnectToServer = new DelegateCommand(EngageConnection);
             this.Engines = new ObservableCollection<VrManager.Data>();
-
-
+            
+            
             this.vrManager = new VrManager();
-            this.client = new ClientHandler();
+            this.client = new ClientHandler(this.resistanceUpdater);
             this.updater += this.vrManager.Update;
             this.updater += this.client.Update;
 
@@ -59,6 +61,7 @@ namespace VR_Project
         {
             this.serverConnectionThread = new Thread(client.StartConnection);
             this.serverConnectionThread.Start();
+            this.resistanceUpdater += this.equipment.ergometer.SendResistance;
         }
 
         public VrManager.Data SelectClient { get; set; }

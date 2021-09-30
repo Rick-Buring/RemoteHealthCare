@@ -10,7 +10,7 @@ namespace Server
 {
 
     // __CR__ [PSMG] Implementeer hier ook de IDisposable interface
-    public class Server
+    public class Server : IDisposable
     {
         private TcpListener listener;
         private List<ClientHandler> clients;
@@ -87,6 +87,13 @@ namespace Server
             root.data = new Selection() { selection = clients };
         }
 
-
+        public void Dispose()
+        {
+            foreach (ClientHandler client in this.clients)
+            {
+                client.disconnect();
+            }
+            this.listener.Stop();
+        }
     }
 }

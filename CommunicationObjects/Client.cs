@@ -5,6 +5,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
@@ -78,7 +79,7 @@ namespace CommunicationObjects
         /// Reads incomming messages
         /// </summary>
         /// <returns>message in form of a string</returns>
-        public string Read()
+        public async Task<string> Read()
         {
             byte[] length = new byte[4];
             this.stream.Read(length, 0, 4);
@@ -90,7 +91,7 @@ namespace CommunicationObjects
             int bytesRead = 0;
             while (bytesRead < size)
             {
-                int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
+                int read = await this.stream.ReadAsync(received, bytesRead, received.Length - bytesRead);
                 bytesRead += read;
                 //Console.WriteLine("ReadMessage: " + read);
             }

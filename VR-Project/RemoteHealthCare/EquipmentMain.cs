@@ -11,7 +11,7 @@ namespace Vr_Project.RemoteHealthcare
     {
         private DataIO dataIO;
         
-        private Ergometer ergometer;
+        public Ergometer ergometer { get; private set; }
         private HeartBeatMonitor heartBeatMonitor;
         private GUI gui;
         private ViewModel.Update updater;
@@ -47,7 +47,7 @@ namespace Vr_Project.RemoteHealthcare
             if(heartBeatMonitor != null)
             {
                 //Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
-                this.updater(ergometer, heartBeatMonitor);
+                this.updater.Invoke(ergometer, heartBeatMonitor);
             }
            
         }

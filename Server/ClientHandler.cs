@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommunicationObjects.DataObjects;
@@ -12,7 +13,7 @@ namespace Server
 {
     public class ClientHandler
     {
-        public string Name { get; }
+        public string Name { get; set; }
         private Client Client { get; }
 
         private Server server;
@@ -28,14 +29,18 @@ namespace Server
             this.Client = new Client(tcpClient, server.Certificate);
             this.server = server;
 
-            this.Name = getName();
+            
 
             new Thread(Run).Start();
         }
 
-        private string getName()
+        /// <summary>
+        /// method for getting the client's name from the client
+        /// </summary>
+        /// <returns>the client's name</returns>
+        private async Task<string> getName()
         {
-            string message = Client.Read();
+            string message = await Client.Read();
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
@@ -51,6 +56,9 @@ namespace Server
             return name;
         }
 
+        /// <summary>
+        /// used to disconnect a this client from the server
+        /// </summary>
         private void disconnect()
         {
             this.server.OnDisconnect(this);
@@ -67,22 +75,23 @@ namespace Server
         /// <summary>
         /// function to handle incoming messages
         /// </summary>
-        private void Run()
+        private async void Run()
         {
+            this.Name = await getName();
+
             this.active = true;
             while (active)
             {
                 try
                 {
-                    string result = Client.Read();
+                    string result = await Client.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    //todo disconnect client
-
+                    this.disconnect();
                 }
             }
         }
@@ -118,6 +127,18 @@ namespace Server
 
                     this.disconnect();
                 }
+            }
+            else if (type == typeof(History))
+            {
+                string sender = root.sender;
+                root.target = root.sender;
+                root.sender = sender;
+
+                History data = (root.data as JObject).ToObject<History>();
+
+                data.clientHistory = this.server.manager.GetHistory(data.clientName);
+
+                root.data = data;
             }
 
             this.server.send(root);
