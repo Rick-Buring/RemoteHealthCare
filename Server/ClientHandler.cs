@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommunicationObjects.DataObjects;
@@ -12,7 +13,7 @@ namespace Server
 {
     public class ClientHandler
     {
-        public string Name { get; }
+        public string Name { get; set; }
         private Client Client { get; }
 
         private Server server;
@@ -28,14 +29,14 @@ namespace Server
             this.Client = new Client(tcpClient, server.Certificate);
             this.server = server;
 
-            this.Name = getName();
+            
 
             new Thread(Run).Start();
         }
 
-        private string getName()
+        private async Task<string> getName()
         {
-            string message = Client.Read();
+            string message = await Client.Read();
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
@@ -69,6 +70,8 @@ namespace Server
         /// </summary>
         private async void Run()
         {
+            this.Name = await getName();
+
             this.active = true;
             while (active)
             {
