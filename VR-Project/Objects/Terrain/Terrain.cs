@@ -39,8 +39,10 @@ public class Terrain
 
 		public int[] size { get; set; }
 		public float[] heights { get; set; }
+#nullable enable
 		public float[]? position { get; set; }
 		public float[][]? positions { get; set; }
+#nullable disable
 	}
 
 

@@ -29,10 +29,12 @@ namespace VR_Project
 
         public async Task<List<Data>> GetEngineData()
         {
-            Root root = new Root();
-            root.id = "session/list";
+            EngineRoot EngineRoot = new EngineRoot
+            {
+                id = "session/list"
+            };
             //string message = @"{""id"" : ""session/list""}";
-            string message = JsonConvert.SerializeObject(root);
+            string message = JsonConvert.SerializeObject(EngineRoot);
             //Debug.WriteLine(message);
             byte[] messageArray = Encoding.ASCII.GetBytes(message);
             var messageToSend = WrapMessage(messageArray);
@@ -60,11 +62,11 @@ namespace VR_Project
 
             string test = Encoding.ASCII.GetString(received);
             //Debug.WriteLine(test);
-            root = JsonConvert.DeserializeObject<Root>(test);
+            EngineRoot = JsonConvert.DeserializeObject<EngineRoot>(test);
 
             List<Data> OnlineEngines = new List<Data>();
 
-            foreach (Data d in root.data)
+            foreach (Data d in EngineRoot.data)
                 OnlineEngines.Add(d);
 
             return OnlineEngines;
@@ -82,7 +84,6 @@ namespace VR_Project
             string tunnelOpen = Encoding.ASCII.GetString(received);
             Debug.WriteLine(tunnelOpen);
 
-            var destVar = JsonConvert.DeserializeObject(tunnelOpen);
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
             ChangeSkyBoxTime(15);
@@ -102,9 +103,8 @@ namespace VR_Project
 
             ObjectNode bikeNode = new ObjectNode("scene/node/add", "bike", @"data\NetworkEngine\models\cars\generic\Carpet.obj", new int[3] { 15, 15, 15 });
 
-            JObject BikeResponse;
 
-            SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode), out BikeResponse);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode), out JObject BikeResponse);
 
             return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
         }
@@ -112,8 +112,7 @@ namespace VR_Project
         public string GetScene ()
         {
             string request = @"{ ""id"" : ""scene/get"" }";
-            JObject sceneResponse;
-            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out sceneResponse);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out JObject sceneResponse);
             //Debug.WriteLine(sceneResponse.ToString());
             return sceneResponse.ToString();
         }
@@ -121,8 +120,7 @@ namespace VR_Project
         public string GetCamera ()
         {
             string request = @"{ ""id"" : ""scene/node/find"", ""data"": {""name"" : ""Camera""}}";
-            JObject cameraResponse;
-            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out cameraResponse);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request), out JObject cameraResponse);
             Debug.WriteLine(cameraResponse.ToString());
             return GetCameraID(cameraResponse);
         }
@@ -137,14 +135,13 @@ namespace VR_Project
 
         public void updateSpeed(double speed)
         {
-            
+           // throw new NotImplementedException();
         }
 
         public void StickCameraToPlayer ()
         {
             UpdateNode node = new UpdateNode("scene/node/update", this.cameraID, this.bikeUuid, new double[] { 90, 90, 0 });
-            JObject updateResponse;
-            SendMessageResponseToJsonArray(client, WrapJsonMessage<UpdateNode>(dest, node), out updateResponse);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<UpdateNode>(dest, node), out JObject updateResponse);
             Debug.WriteLine(updateResponse.ToString());
         }
 
@@ -157,9 +154,8 @@ namespace VR_Project
         {
             PanelNode panelNode = new PanelNode("scene/node/add", "dataPanel", parentID);
 
-            JObject panelResponse;
 
-            SendMessageResponseToJsonArray(client, WrapJsonMessage<PanelNode>(this.dest, panelNode), out panelResponse);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<PanelNode>(this.dest, panelNode), out JObject panelResponse);
 
             this.panelUuid = panelResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
 
@@ -208,9 +204,8 @@ namespace VR_Project
 
         public void MakeAndFollowRoute(string nodeID)
         {
-            JObject routeResponse;
             Route r = Route.getRoute();
-            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)), out routeResponse);
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)), out JObject routeResponse);
             string routeID = routeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
             Road road = new Road("scene/road/add", routeID);
 
@@ -221,8 +216,10 @@ namespace VR_Project
 
         public void ChangeSkyBoxTime(int time)
         {
-            Skybox skybox = new Skybox();
-            skybox.id = "scene/skybox/settime";
+            Skybox skybox = new Skybox
+            {
+                id = "scene/skybox/settime"
+            };
             skybox.data.time = time;
 
             SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
@@ -237,8 +234,7 @@ namespace VR_Project
             Node findNode = new Node("scene/node/find");
             findNode.data.name = "GroundPlane";
 
-            JObject jObject;
-            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out jObject);
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode), out JObject jObject);
 
             string uuid = jObject.Value<JObject>("data").Value<JObject>("data")?.Value<JArray>("data")[0].Value<string>("uuid");
           
@@ -272,9 +268,8 @@ namespace VR_Project
 
             TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
 
-            JObject response;
 
-            SendMessageResponseToJsonArray(client, WrapJsonMessage<TerrainNode>(this.dest, node), out response);
+            SendMessageResponseToJsonArray(client, WrapJsonMessage<TerrainNode>(this.dest, node), out JObject response);
 
             string uuid = response.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
 
@@ -309,21 +304,6 @@ namespace VR_Project
             return ret;
         }
 
-
-
-        //public static string getCorrectID(Root root)
-        //{
-        //    foreach (Data d in root.data)
-        //    {
-        //        if (d.clientinfo.host.Equals(Environment.MachineName))
-        //        {
-        //            return d.id;
-        //        }
-        //    }
-        //    Debug.WriteLine("Could not find desktop");
-        //    return "0XFF";
-        //}
-
         public static void SendMessage(TcpClient client, string message)
         {
             
@@ -331,13 +311,11 @@ namespace VR_Project
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
             string received = Encoding.ASCII.GetString(ReadMessage(client));
-
-            
+            Console.WriteLine(received);
         }
 
         public static void SendMessageResponseToJsonArray(TcpClient client, string message, out JObject jObject)
         {
-            
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
             client.GetStream().Write(messageToSend, 0, messageToSend.Length);
             client.GetStream().Flush();
@@ -363,60 +341,14 @@ namespace VR_Project
                 bytesRead += read;
                 //Console.WriteLine("ReadMessage: " + read);
             }
-            
+
             return received;
-
         }
-
-        public void UpdatePanel (Ergometer ergometer)
-        {
-
-        }
-
         public void CloseConnection ()
         {
             this.client.Close();
             this.client.Dispose();
         }
-
-
-        public class Fp
-        {
-            public double? time { get; set; }
-            public double? fps { get; set; }
-        }
-
-        public class Clientinfo
-        {
-            public string? host { get; set; }
-            public string? user { get; set; }
-            public string? file { get; set; }
-            public string? renderer { get; set; }
-        }
-
-        public class Data
-        {
-            public string? id { get; set; }
-            public DateTime? beginTime { get; set; }
-            public DateTime? lastPing { get; set; }
-            public List<Fp>? fps { get; set; }
-            public List<string>? features { get; set; }
-            public Clientinfo? clientinfo { get; set; }
-        }
-
-        public class Root
-        {
-            public string? id { get; set; }
-            public List<Data>? data { get; set; }
-        }
-
-        //private void button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (SelectedMilight == null)
-        //        return;
-        //    this.tunnelID = SelectedMilight.id;
-            
-        //}
 
     }
 }

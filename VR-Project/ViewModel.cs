@@ -5,10 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Vr_Project.RemoteHealthcare;
-using VR_Project.Util;
 
 
 namespace VR_Project
@@ -17,7 +14,8 @@ namespace VR_Project
     {
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
-        public Update updater;
+        public event Update updater;
+
 
         private VrManager vrManager;
         private EquipmentMain equipment;
@@ -26,7 +24,7 @@ namespace VR_Project
         private Thread serverConnectionThread;
 
 
-        public ObservableCollection<VrManager.Data> Engines { get; }
+        public ObservableCollection<Data> Engines { get; }
 
         public DelegateCommand SelectEngine { get; }
         public DelegateCommand ConnectToServer { get; }
@@ -37,7 +35,7 @@ namespace VR_Project
         {
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.ConnectToServer = new DelegateCommand(EngageConnection);
-            this.Engines = new ObservableCollection<VrManager.Data>();
+            this.Engines = new ObservableCollection<Data>();
 
 
             this.vrManager = new VrManager();
@@ -61,7 +59,7 @@ namespace VR_Project
             this.serverConnectionThread.Start();
         }
 
-        public VrManager.Data SelectClient { get; set; }
+        public Data SelectClient { get; set; }
 
         private async void engageEngine()
         {

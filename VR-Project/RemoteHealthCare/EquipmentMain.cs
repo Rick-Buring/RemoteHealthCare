@@ -13,9 +13,8 @@ namespace Vr_Project.RemoteHealthcare
         
         private Ergometer ergometer;
         private HeartBeatMonitor heartBeatMonitor;
-        private GUI gui;
         private ViewModel.Update updater;
-
+        
         public EquipmentMain (ViewModel.Update updater)
         {
             this.updater = updater;
