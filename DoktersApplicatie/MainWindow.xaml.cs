@@ -20,9 +20,33 @@ namespace DoktersApplicatie
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<Employee> employees;
+
         public MainWindow()
         {
             InitializeComponent();
+            employees = new List<Employee>();
+            employees.Add(new Employee {Name = "Kapil Malhotra", Age = 30 });
+            employees.Add(new Employee {Name = "Raj Kundra", Age = 34 });
+            employees.Add(new Employee {Name = "Amitabh Bachan", Age = 80 });
+            employees.Add(new Employee {Name = "Deepak Khanna", Age = 72 });
+
+            this.DataContext = this;
         }
+
+        public List<Employee> Employees
+        {
+            get
+            {
+                return employees;
+            }
+        }
+    }
+
+    public class Employee
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
     }
 }
