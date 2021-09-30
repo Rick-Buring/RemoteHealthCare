@@ -17,5 +17,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Selection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Setting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Test.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataObjects\History.cs" />
   </ItemGroup>
 </Project>

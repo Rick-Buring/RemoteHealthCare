@@ -34,6 +34,10 @@ namespace Server
             new Thread(Run).Start();
         }
 
+        /// <summary>
+        /// method for getting the client's name from the client
+        /// </summary>
+        /// <returns>the client's name</returns>
         private async Task<string> getName()
         {
             string message = await Client.Read();
@@ -52,7 +56,10 @@ namespace Server
             return name;
         }
 
-        public void disconnect()
+        /// <summary>
+        /// used to disconnect a this client from the server
+        /// </summary>
+        private void disconnect()
         {
             this.server.OnDisconnect(this);
             this.active = false;
@@ -84,8 +91,7 @@ namespace Server
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    //todo disconnect client
-
+                    this.disconnect();
                 }
             }
         }
@@ -121,6 +127,18 @@ namespace Server
 
                     this.disconnect();
                 }
+            }
+            else if (type == typeof(History))
+            {
+                string sender = root.sender;
+                root.target = root.sender;
+                root.sender = sender;
+
+                History data = (root.data as JObject).ToObject<History>();
+
+                data.clientHistory = this.server.manager.GetHistory(data.clientName);
+
+                root.data = data;
             }
 
             this.server.send(root);
