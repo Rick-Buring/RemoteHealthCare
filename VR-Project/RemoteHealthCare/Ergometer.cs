@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class Ergometer : Sensor
+    public class Ergometer : Sensor
     {
         public string Name { get; }
 
@@ -71,6 +71,8 @@ namespace RemoteHealthCare
             {
                 errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             }
+
+            bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", ResistanceMessage(70));
         }
 
         //event voor binnenkomende data notificeren van de classes
@@ -130,9 +132,14 @@ namespace RemoteHealthCare
             }
         }
 
-        public override string GetData()
+        public override int GetHeartBeat()
         {
-            return this.ergometerData.GetString();
+            return 0;
+        }
+
+        public override ErgometerData GetErgometerData()
+        {
+            return this.ergometerData;
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    abstract class Sensor 
+    public abstract class Sensor 
     {
         /// <summary>
         /// Deze methode zal worden gebruikt om te verbinden met een sensor.
@@ -25,7 +25,9 @@ namespace RemoteHealthCare
         /// Deze methode zal worden gebruikt om de data van een sensor geven. 
         /// </summary>
         /// <returns>String</returns>
-        public abstract string GetData();
+        public abstract int GetHeartBeat();
+
+        public abstract ErgometerData GetErgometerData();
       
     }
 }

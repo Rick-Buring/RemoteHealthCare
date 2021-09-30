@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class ErgometerData : IData
+    public class ErgometerData : IData
     {
         //0x19 data page variables
         public int ID { get; set; }
@@ -88,6 +88,11 @@ namespace RemoteHealthCare
            
 
             return builder.ToString();
+        }
+
+        internal ErgometerData getData ()
+        {
+            return this;
         }
     }
 }

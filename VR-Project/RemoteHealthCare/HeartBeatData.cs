@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class HeartBeatData : IData
+    public class HeartBeatData : IData
     {
         public int HeartRate{ get; set; }
 
@@ -16,6 +16,11 @@ namespace RemoteHealthCare
         internal string GetString()
         {
             return $"Heartrate: {HeartRate}";
+        }
+
+        internal int GetHeartRate ()
+        {
+            return this.HeartRate;
         }
     }
 }

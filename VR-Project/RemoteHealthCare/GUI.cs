@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class GUI
+    public class GUI
     {
 
         public GUI ()
@@ -18,8 +18,8 @@ namespace RemoteHealthCare
         /// <param name="text">De tekst die moet worden opgeschreven.</param>
         public void write (string text)
         {
-            Console.Clear();
-            Console.Write(text);
+            //Console.Clear();
+            Console.Write(text + "__________________\n");
         }
     }
 }

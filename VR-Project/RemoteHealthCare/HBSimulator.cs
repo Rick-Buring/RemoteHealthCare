@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class HBSimulator : HeartBeatMonitor
+    public class HBSimulator : HeartBeatMonitor
     {
 
         private IDataListener listener;

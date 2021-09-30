@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RemoteHealthCare
+namespace Vr_Project.RemoteHealthcare
 {
-    class HeartBeatMonitor : Sensor
+    public class HeartBeatMonitor : Sensor
     {
         private BLE bleHeart;
         protected HeartBeatData heartBeatData;
@@ -50,9 +50,9 @@ namespace RemoteHealthCare
             }
         }
 
-        public override string GetData()
+        public override int GetHeartBeat()
         {
-            return this.heartBeatData.GetString();
+            return this.heartBeatData.HeartRate;
         }
 
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
@@ -72,5 +72,9 @@ namespace RemoteHealthCare
             }
         }
 
+        public override ErgometerData GetErgometerData()
+        {
+            return null;
+        }
     }
 }
