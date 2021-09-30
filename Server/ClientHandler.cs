@@ -33,6 +33,10 @@ namespace Server
             new Thread(Run).Start();
         }
 
+        /// <summary>
+        /// method for getting the client's name from the client
+        /// </summary>
+        /// <returns>the client's name</returns>
         private string getName()
         {
             string message = Client.Read();
@@ -51,6 +55,9 @@ namespace Server
             return name;
         }
 
+        /// <summary>
+        /// used to disconnect a this client from the server
+        /// </summary>
         private void disconnect()
         {
             this.server.OnDisconnect(this);
