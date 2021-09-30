@@ -118,14 +118,17 @@ namespace Server
                     this.disconnect();
                 }
             }
-            else if (false) //todo change false to type == typeof(historische informatie opvragen type)
+            else if (type == typeof(History))
             {
-                Root returnRoot = new Root();
+                string sender = root.sender;
+                root.target = root.sender;
+                root.sender = sender;
 
-                returnRoot.sender = root.target;
-                returnRoot.target = root.sender;
+                History data = (root.data as JObject).ToObject<History>();
 
-                root = returnRoot;
+                data.clientHistory = this.server.manager.GetHistory(data.clientName);
+
+                root.data = data;
             }
 
             this.server.send(root);

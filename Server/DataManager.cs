@@ -15,5 +15,10 @@ namespace Server
         {
             this.io.writeToFile(sender, data);
         }
+
+        internal string GetHistory(string clientName)
+        {
+            return this.io.getText(clientName);
+        }
     }
 }

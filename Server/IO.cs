@@ -17,13 +17,18 @@ namespace Server
             try
             {
                 writer.WriteLine(data.ToString());  
-            } catch
+            } catch (FileNotFoundException e)
             {
-
+                Console.WriteLine(e.StackTrace);
             } finally
             {
                 writer.Close();
             }
+        }
+
+        public string getText(string clientName)
+        {
+            return File.ReadAllText($"{Environment.CurrentDirectory}/{clientName}.txt");
         }
     }
 }
