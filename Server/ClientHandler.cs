@@ -51,7 +51,7 @@ namespace Server
             return name;
         }
 
-        private void disconnect()
+        public void disconnect()
         {
             this.server.OnDisconnect(this);
             this.active = false;
@@ -67,14 +67,14 @@ namespace Server
         /// <summary>
         /// function to handle incoming messages
         /// </summary>
-        private void Run()
+        private async void Run()
         {
             this.active = true;
             while (active)
             {
                 try
                 {
-                    string result = Client.Read();
+                    string result = await Client.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }
