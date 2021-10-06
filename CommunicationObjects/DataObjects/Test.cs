@@ -29,13 +29,13 @@ namespace CommunicationObjects.DataObjects
 
             for (int i = 0; i < obj.Length; i++)
            {
-                root[i] = new Root() { Type = obj[i].GetType().FullName, sender = "me", data = obj[i], target = "server" };
+                root[i] = new Root() { type = obj[i].GetType().FullName, sender = "me", data = obj[i], target = "server" };
 
                 serialized[i] = JsonConvert.SerializeObject(root[i]);
 
                 deserializedRoot[i] = JsonConvert.DeserializeObject<Root>(serialized[i]);
 
-                deserializedobj[i] = (deserializedRoot[i].data as JObject).ToObject(Type.GetType(deserializedRoot[i].Type));
+                deserializedobj[i] = (deserializedRoot[i].data as JObject).ToObject(Type.GetType(deserializedRoot[i].type));
             }
 
 

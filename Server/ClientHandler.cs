@@ -44,7 +44,7 @@ namespace Server
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
-            if (jsonObject.Type == typeof(Connection).FullName &&
+            if (jsonObject.type == typeof(Connection).FullName &&
                 (jsonObject.data as JObject).ToObject<Connection>().connect)
             {
                 name = jsonObject.sender;
@@ -78,7 +78,9 @@ namespace Server
         private async void Run()
         {
             this.Name = await getName();
-
+            send(new Root { type = typeof(Acknowledge).FullName, data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull."}, sender = "server", target = this.Name });
+            //send acknowledgement
+            
             this.active = true;
             while (active)
             {
@@ -104,7 +106,7 @@ namespace Server
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-            Type type = Type.GetType(root.Type);
+            Type type = Type.GetType(root.type);
 
             if (type == typeof(HealthData))
             {
