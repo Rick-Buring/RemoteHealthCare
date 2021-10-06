@@ -91,7 +91,8 @@ namespace VR_Project
             Mediator.Subscribe("LoginBikeVR", OnGoToLoginBikeVR);
             Mediator.Subscribe("Connected", OnGoToConnected);
 
-            OnGoToLoginBikeVR();
+            //OnGoToLoginBikeVR();
+            OnGoToConnected();
         }
 
         public void Window_Closed(object sender, EventArgs e)
