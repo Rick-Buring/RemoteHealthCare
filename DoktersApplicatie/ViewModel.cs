@@ -17,15 +17,10 @@ namespace DoktersApplicatie
 
         public DelegateCommand ExecuteDelegateCommand { get; private set; }
 
-        public List<Employee> employees;
-
-        public int activeMainTab { get; set; }
-        public int activeSecondaryTab { get; set; }
-
         public ViewModel()
         {
             Data data = new Data();
-            this.employees = data.employees;
+            this.Employees = data.employees;
             //this.activeMainTab = 0;
             //this.activeSecondaryTab = 0;
             MoreInfo = new DelegateCommand<object>(ToMoreInfo, canSubmit);
@@ -33,9 +28,9 @@ namespace DoktersApplicatie
 
         public void ToMoreInfo(object parameter)
         {
-            Debug.WriteLine(activeMainTab + " : " + activeSecondaryTab);
-            activeMainTab = 1;
-            activeSecondaryTab = 3;
+            Debug.WriteLine(ActiveMainTab + " : " + ActiveSecondaryTab);
+            ActiveMainTab = 1;
+            ActiveSecondaryTab = 3;
             Debug.WriteLine("Click");
         }
 
@@ -46,36 +41,20 @@ namespace DoktersApplicatie
 
         public List<Employee> Employees
         {
-            get
-            {
-                return employees;
-            }
+            get;
+            private set;
         }
 
         public int ActiveMainTab
         {
-            get
-            {
-                return activeMainTab;
-            }
-            set
-            {
-                activeMainTab = value;
-                RaisePropertyChanged("ActiveMainTab");
-            }
+            get;
+            set;
         }
 
         public int ActiveSecondaryTab
         {
-            get
-            {
-                return activeSecondaryTab;
-            }
-            set
-            {
-                activeSecondaryTab = value;
-                RaisePropertyChanged("ActiveSecondaryTab");
-            }
+            get;
+            set;
         }
 
     }
