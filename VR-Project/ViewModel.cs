@@ -19,14 +19,12 @@ namespace VR_Project
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public delegate void SendResistance(float resistance);
-        public Update updater;
-        public SendResistance resistanceUpdater;
+        public static Update updater;
+        public static SendResistance resistanceUpdater;
 
         private VrManager vrManager;
         private EquipmentMain equipment;
         private ClientHandler client;
-
-        private Thread serverConnectionThread;
 
         private BindableBase _currentPageViewModel;
         private List<BindableBase> _pageViewModels;
@@ -63,12 +61,10 @@ namespace VR_Project
             CurrentPageViewModel = PageViewModels
                 .FirstOrDefault(vm => vm == viewModel);
         }
-
         private void onGoToConnectToServer()
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectToServerVM).FullName));
         }
-
         private void OnGoToConnected()
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectedVM).FullName));
@@ -80,26 +76,17 @@ namespace VR_Project
 
         public ViewModel()
         {
-            this.SelectEngine = new DelegateCommand(engageEngine);
-            this.ConnectToServer = new DelegateCommand(EngageConnection);
-            this.Engines = new ObservableCollection<Data>();
             this.vrManager = new VrManager();
-            this.client = new ClientHandler(this.resistanceUpdater);
-            this.updater += this.vrManager.Update;
-            this.updater += this.client.Update;
+            this.client = new ClientHandler();
 
-            this.equipment = new EquipmentMain(updater);
+            this.equipment = new EquipmentMain();
 
+            updater += this.vrManager.Update;
+            updater += this.client.Update;
 
             PageViewModels.Add(new LoginBikeVRVM(vrManager, equipment));
-            PageViewModels.Add(new ConnectToServerVM(client));
+            PageViewModels.Add(new ConnectToServerVM(client, equipment));
             PageViewModels.Add(new ConnectedVM(client, vrManager, equipment));
-        private void EngageConnection()
-        {
-            this.serverConnectionThread = new Thread(client.StartConnection);
-            this.serverConnectionThread.Start();
-            this.resistanceUpdater += this.equipment.ergometer.SendResistance;
-        }
 
 
             Mediator.Subscribe("ConnectToServer", onGoToConnectToServer);
@@ -107,28 +94,20 @@ namespace VR_Project
             Mediator.Subscribe("Connected", OnGoToConnected);
 
             OnGoToLoginBikeVR();
-        private async void engageEngine()
-        {
-            if (SelectClient == null)
-                return;
-            await this.equipment.start();
-            await this.vrManager.ConnectToTunnel(SelectClient.id);
         }
-
-
 
         public void Window_Closed(object sender, EventArgs e)
         {
 
             client.Stop();
-            if (serverConnectionThread != null)
-                serverConnectionThread.Join();
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();
             this.equipment.Dispose();
         }
     }
+
+
     public static class Mediator
     {
         private static IDictionary<string, List<Action>> pl_dict =

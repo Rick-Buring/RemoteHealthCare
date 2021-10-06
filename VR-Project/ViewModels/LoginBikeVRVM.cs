@@ -41,9 +41,15 @@ namespace VR_Project.ViewModels
             if (SelectClient == null)
                 return;
             Mediator.Notify("ConnectToServer");
-            //await this.eq.start();
-            //this.vr.ConnectToTunnel(SelectClient.id);
+            await this.eq.start();
+            await this.vr.ConnectToTunnel(SelectClient.id);
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
         private string _BikeName;
         public string BikeName
         {

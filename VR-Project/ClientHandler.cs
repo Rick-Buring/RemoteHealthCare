@@ -14,13 +14,7 @@ namespace VR_Project
     class ClientHandler
     {
         private Client client;
-        private ViewModel.SendResistance resistanceUpdater;
-        
 
-        public ClientHandler (ViewModel.SendResistance resistanceUpdater)
-        {
-            this.resistanceUpdater = resistanceUpdater;
-        }
 
         public void StartConnection()
         {
@@ -30,8 +24,8 @@ namespace VR_Project
 
             this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
 
-            
-      
+
+
         }
         private bool active;
         private async void Run()
@@ -53,7 +47,7 @@ namespace VR_Project
                 }
             }
         }
-        
+
         private void Parse(string toParse)
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
@@ -64,7 +58,8 @@ namespace VR_Project
             {
                 Setting data = (root.data as JObject).ToObject<Setting>();
                 float targetResistance = data.res;
-                this.resistanceUpdater(targetResistance);
+                if (ViewModel.resistanceUpdater != null)
+                    ViewModel.resistanceUpdater(targetResistance);
 
             }
             else if (type == typeof(Chat))

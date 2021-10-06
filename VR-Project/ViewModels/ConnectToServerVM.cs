@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
@@ -11,11 +12,10 @@ namespace VR_Project.ViewModels
     {
         private Thread serverConnectionThread;
         private ClientHandler client;
-
-
+        private EquipmentMain eq;
         public DelegateCommand ConnectToServer { get; }
 
-        public ConnectToServerVM(ClientHandler client)
+        public ConnectToServerVM(ClientHandler client, EquipmentMain equipment)
         {
             this.client = client;
             this.ConnectToServer = new DelegateCommand(EngageConnection);
@@ -53,7 +53,7 @@ namespace VR_Project.ViewModels
         {
             this.serverConnectionThread = new Thread(client.StartConnection);
             this.serverConnectionThread.Start();
-
+            ViewModel.resistanceUpdater += this.eq.ergometer.SendResistance;
             Mediator.Notify("Connected");
         }
 
