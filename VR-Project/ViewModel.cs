@@ -26,21 +26,21 @@ namespace VR_Project
         private EquipmentMain equipment;
         private ClientHandler client;
 
-        private BindableBase _currentPageViewModel;
-        private List<BindableBase> _pageViewModels;
+        private IDisposable _currentPageViewModel;
+        private List<IDisposable> _pageViewModels;
 
-        public List<BindableBase> PageViewModels
+        public List<IDisposable> PageViewModels
         {
             get
             {
                 if (_pageViewModels == null)
-                    _pageViewModels = new List<BindableBase>();
+                    _pageViewModels = new List<IDisposable>();
 
                 return _pageViewModels;
             }
         }
 
-        public BindableBase CurrentPageViewModel
+        public IDisposable CurrentPageViewModel
         {
             get
             {
@@ -53,7 +53,7 @@ namespace VR_Project
             }
         }
 
-        private void ChangeViewModel(BindableBase viewModel)
+        private void ChangeViewModel(IDisposable viewModel)
         {
             if (!PageViewModels.Contains(viewModel))
                 PageViewModels.Add(viewModel);
@@ -73,12 +73,10 @@ namespace VR_Project
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(LoginBikeVRVM).FullName));
         }
-
         public ViewModel()
         {
             this.vrManager = new VrManager();
             this.client = new ClientHandler();
-
             this.equipment = new EquipmentMain();
 
             updater += this.vrManager.Update;
@@ -100,6 +98,10 @@ namespace VR_Project
         {
 
             client.Stop();
+            for (int i = 0; i < PageViewModels.Count; i++)
+            {
+                PageViewModels[i].Dispose();
+            }
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();
