@@ -8,13 +8,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommunicationObjects.DataObjects;
 using CommunicationObjects;
+using System.Net.Security;
 
 namespace Server
 {
     public class ClientHandler
     {
         public string Name { get; set; }
-        private Client Client { get; }
+        private TcpClient Client { get; }
+        private ReadWrite rw;
 
         private Server server;
         private bool active;
@@ -26,7 +28,10 @@ namespace Server
         /// <param name="server">The server the client is connecting too</param>
         public ClientHandler(TcpClient tcpClient, Server server)
         {
-            this.Client = new Client(tcpClient, server.Certificate);
+            this.Client = tcpClient;
+
+            SslStream stream = new SslStream(this.Client.GetStream(), false);
+            stream.AuthenticateAsServer(server.Certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
             this.server = server;
 
             
@@ -40,7 +45,7 @@ namespace Server
         /// <returns>the client's name</returns>
         private async Task<string> getName()
         {
-            string message = await Client.Read();
+            string message = await rw.Read();
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
@@ -63,13 +68,13 @@ namespace Server
         {
             this.server.OnDisconnect(this);
             this.active = false;
-            this.Client.terminate();
+            this.rw.terminate();
         }
 
         internal void send(Root message)
         {
             byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
-            Client.Write(toSend);
+            rw.Write(toSend);
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace Server
             {
                 try
                 {
-                    string result = await Client.Read();
+                    string result = await rw.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }

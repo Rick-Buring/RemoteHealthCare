@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using Vr_Project.RemoteHealthcare;
@@ -13,19 +14,25 @@ namespace VR_Project
 {
     class ClientHandler
     {
-        private Client client;
-
+        private ReadWrite rw;
+        private TcpClient client;
 
         public void StartConnection()
         {
+            this.client = new TcpClient("localhost", 5005);
 
-            this.client = new Client(new TcpClient("localhost", 5005));
+            SslStream stream = new SslStream(
+                this.client.GetStream(),
+                false,
+                new RemoteCertificateValidationCallback(ReadWrite.ValidateServerCertificate),
+                null
+            );
+            stream.AuthenticateAsClient(ReadWrite.certificateName);
+            
+            this.rw = new ReadWrite(stream);
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
 
-            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-
-
-
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
         }
         private bool active;
         private async void Run()
@@ -35,7 +42,7 @@ namespace VR_Project
             {
                 try
                 {
-                    string result = await client.Read();
+                    string result = await rw.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }
@@ -91,7 +98,7 @@ namespace VR_Project
                     target = "Hank"
                 };
 
-                this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
             }
 
         }
@@ -99,11 +106,11 @@ namespace VR_Project
         public void Stop()
         {
             //TODO nullpointer afhandelen.
-            if (this.client != null)
+            if (this.rw != null)
             {
-                this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
                 { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
-                this.client.terminate();
+                this.rw.terminate();
             }
         }
 
