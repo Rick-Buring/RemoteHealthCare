@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using CommunicationObjects.DataObjects;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Configuration;
 
 namespace Server
 {
@@ -16,6 +17,8 @@ namespace Server
         private List<ClientHandler> clients;
         public DataManager manager { get; private set; }
         internal X509Certificate Certificate { get; private set; }
+
+        private IConfiguration config;
 
         static void Main(string[] args)
         {
@@ -29,7 +32,15 @@ namespace Server
             // __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
             this.listener = new TcpListener(System.Net.IPAddress.Any, 5005);
             this.manager = new DataManager();
-            this.Certificate = new X509Certificate(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/Certificaat.pfx", "test1234");
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddUserSecrets<Server>()
+                .AddJsonFile(path: "config.json");
+            config = builder.Build();
+
+            this.Certificate = new X509Certificate(config["CertificatePath"], config["CertificatePassword"]);
+
 
             listener.Start();
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
