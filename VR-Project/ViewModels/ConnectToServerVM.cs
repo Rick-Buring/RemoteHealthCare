@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace VR_Project.ViewModels
 {
-    class ConnectToServerVM : BindableBase, IPageViewModels
+    class ConnectToServerVM : BindableBase, IDisposable
     {
         private Thread serverConnectionThread;
         private ClientHandler client;
@@ -60,6 +60,11 @@ namespace VR_Project.ViewModels
         private bool notValid()
         {
             return IPAddress.Length > 0 && PortNumber.Length > 0;
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

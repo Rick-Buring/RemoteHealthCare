@@ -9,7 +9,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    class EquipmentManager : IDisposable
+    class EquipmentManager : System.IDisposable
     {
         public EquipmentMain equipment;
 

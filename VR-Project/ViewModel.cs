@@ -26,21 +26,21 @@ namespace VR_Project
 
         private Thread serverConnectionThread;
 
-        private IPageViewModels _currentPageViewModel;
-        private List<IPageViewModels> _pageViewModels;
+        private BindableBase _currentPageViewModel;
+        private List<BindableBase> _pageViewModels;
 
-        public List<IPageViewModels> PageViewModels
+        public List<BindableBase> PageViewModels
         {
             get
             {
                 if (_pageViewModels == null)
-                    _pageViewModels = new List<IPageViewModels>();
+                    _pageViewModels = new List<BindableBase>();
 
                 return _pageViewModels;
             }
         }
 
-        public IPageViewModels CurrentPageViewModel
+        public BindableBase CurrentPageViewModel
         {
             get
             {
@@ -53,7 +53,7 @@ namespace VR_Project
             }
         }
 
-        private void ChangeViewModel(IPageViewModels viewModel)
+        private void ChangeViewModel(BindableBase viewModel)
         {
             if (!PageViewModels.Contains(viewModel))
                 PageViewModels.Add(viewModel);

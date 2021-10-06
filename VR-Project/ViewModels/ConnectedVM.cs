@@ -6,7 +6,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class ConnectedVM : BindableBase, IPageViewModels
+    class ConnectedVM : BindableBase, IDisposable
     {
         public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
         {
@@ -18,5 +18,10 @@ namespace VR_Project.ViewModels
         public ClientHandler Client { get; }
         public VrManager VrManager { get; }
         public EquipmentMain Equipment { get; }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

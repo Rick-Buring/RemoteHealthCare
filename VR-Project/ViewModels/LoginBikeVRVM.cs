@@ -8,7 +8,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class LoginBikeVRVM : BindableBase, IPageViewModels
+    class LoginBikeVRVM : BindableBase, IDisposable
     {
         public DelegateCommand Refresh { get; }
         public ObservableCollection<Data> Engines { get; }
@@ -41,8 +41,8 @@ namespace VR_Project.ViewModels
             if (SelectClient == null)
                 return;
             Mediator.Notify("ConnectToServer");
-            await this.eq.start();
-            this.vr.ConnectToTunnel(SelectClient.id);
+            //await this.eq.start();
+            //this.vr.ConnectToTunnel(SelectClient.id);
         }
         private string _BikeName;
         public string BikeName
