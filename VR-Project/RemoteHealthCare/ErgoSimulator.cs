@@ -10,8 +10,6 @@ namespace Vr_Project.RemoteHealthcare
 
     public class ErgoSimulator : Ergometer
     {
-
-        private string Name;
         private IDataListener listener;
 
         private int baseline;
@@ -34,7 +32,6 @@ namespace Vr_Project.RemoteHealthcare
             this.distanceTraveled = 0;
 
             this.listener = listener[0];
-            this.Name = base.Name;
 
         }
 

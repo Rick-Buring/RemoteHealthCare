@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Timers;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
@@ -28,7 +26,6 @@ namespace VR_Project
         {
 
             this.client = new Client(new TcpClient("localhost", 5005));
-            HealthData data = new HealthData() { AccWatt = 100, CurWatt = 50, Heartbeat = 120, RPM = 95, Speed = 5.02 };
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
 
             this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
@@ -37,14 +34,14 @@ namespace VR_Project
       
         }
         private bool active;
-        private void Run()
+        private async void Run()
         {
             this.active = true;
             while (active)
             {
                 try
                 {
-                    string result = client.Read();
+                    string result = await client.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }

@@ -59,7 +59,7 @@ namespace Server
         /// <summary>
         /// used to disconnect a this client from the server
         /// </summary>
-        private void disconnect()
+        public void disconnect()
         {
             this.server.OnDisconnect(this);
             this.active = false;

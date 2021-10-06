@@ -5,10 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Vr_Project.RemoteHealthcare;
-using VR_Project.Util;
 
 
 namespace VR_Project
@@ -21,6 +18,7 @@ namespace VR_Project
         public Update updater;
         public SendResistance resistanceUpdater;
 
+
         private VrManager vrManager;
         private EquipmentMain equipment;
         private ClientHandler client;
@@ -28,7 +26,7 @@ namespace VR_Project
         private Thread serverConnectionThread;
 
 
-        public ObservableCollection<VrManager.Data> Engines { get; }
+        public ObservableCollection<Data> Engines { get; }
 
         public DelegateCommand SelectEngine { get; }
         public DelegateCommand ConnectToServer { get; }
@@ -39,9 +37,7 @@ namespace VR_Project
         {
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.ConnectToServer = new DelegateCommand(EngageConnection);
-            this.Engines = new ObservableCollection<VrManager.Data>();
-            
-            
+            this.Engines = new ObservableCollection<Data>();
             this.vrManager = new VrManager();
             this.client = new ClientHandler(this.resistanceUpdater);
             this.updater += this.vrManager.Update;
@@ -64,14 +60,14 @@ namespace VR_Project
             this.resistanceUpdater += this.equipment.ergometer.SendResistance;
         }
 
-        public VrManager.Data SelectClient { get; set; }
+        public Data SelectClient { get; set; }
 
         private async void engageEngine()
         {
             if (SelectClient == null)
                 return;
             await this.equipment.start();
-            this.vrManager.ConnectToTunnel(SelectClient.id);
+            await this.vrManager.ConnectToTunnel(SelectClient.id);
         }
 
         public void Window_Closed(object sender, EventArgs e)

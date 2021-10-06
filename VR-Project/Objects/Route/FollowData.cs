@@ -22,7 +22,7 @@ namespace VR_Project.Objects.Route
         {
             this.route = routeid;
             this.node = nodeid;
-            this.speed = 1;
+            this.speed = speed;
             this.offset = 0;
             this.rotate = "XZ";
             this.smoothing = 1.0f;
