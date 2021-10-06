@@ -10,14 +10,14 @@
         Title="Dokters Applicatie"
         Height="450"
         Width="830"
-        ResizeMode="NoResize">
+        ResizeMode="CanMinimize">
 
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
     
     <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
-        <TabControl x:Name="TabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="593">
+        <TabControl x:Name="TabControl" SelectedIndex="{Binding ActiveMainTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="593">
 
             <TabItem x:Name="ControlPanel" Header="Control Panel" >
                 <ListView x:Name="MainListView" ItemsSource="{Binding Employees}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True">
@@ -34,7 +34,7 @@
                                         </StackPanel>
                                     </Border>
                                     <StackPanel x:Name="ButtonBox" Width="150">
-                                        <Button x:Name="MoreInfoButton" Command="{Binding DataContext.MoreInfo, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="TabControl" Content="More info" HorizontalAlignment="Stretch" Margin="5,5,5,5" FontSize="15" VerticalAlignment="Stretch"/>
+                                        <Button x:Name="MoreInfoButton" Command="{Binding DataContext.MoreInfo, RelativeSource={RelativeSource AncestorType=ListView}}" Content="More info" HorizontalAlignment="Stretch" Margin="5,5,5,5" FontSize="15" VerticalAlignment="Stretch"/>
                                         <Button x:Name="SessionButton" Content="Sesion Placeholder" Margin="5,5,5,5" FontSize="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                         <Button x:Name="EmergencyStopButton" Content="Emergency stop" Margin="5,5,5,5" FontSize="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                     </StackPanel>
@@ -45,7 +45,7 @@
                 </ListView>
             </TabItem>
             <TabItem x:Name="ClientPanel" Header="Clients">
-                <TabControl x:Name="ClientsTabControl" ItemsSource="{Binding Employees}">
+                <TabControl x:Name="ClientsTabControl" ItemsSource="{Binding Employees}" SelectedIndex="{Binding ActiveSecondaryTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <TabControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>

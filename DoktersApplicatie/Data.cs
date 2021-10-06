@@ -23,38 +23,12 @@ namespace DoktersApplicatie
             employees.Add(new Employee { Name = "Deepak Khanna", Age = 72 });
         }
 
-
     }
 
-    public class Employee : BindableBase, INotifyPropertyChanged
+    public class Employee
     {
         public string Name { get; set; }
         public int Age { get; set; }
-
-        public DelegateCommand<object> MoreInfo { get; private set; }
-
-        public DelegateCommand ExecuteDelegateCommand { get; private set; }
-
-        public Employee()
-        {
-
-            MoreInfo = new DelegateCommand<object>(ToMoreInfo, canSubmit);
-
-        }
-
-        public void ToMoreInfo(object parameter)
-        {
-            Debug.WriteLine(parameter);
-            TabControl tabControl = parameter as TabControl;
-            tabControl.SelectedIndex = 1;
-            Debug.WriteLine("Click");
-        }
-
-        public bool canSubmit(object parameter)
-        {
-            return true;
-        }
-
     }
 
 }
