@@ -15,23 +15,31 @@ namespace DoktersApplicatie
 
         public DelegateCommand<object> MoreInfo { get; private set; }
 
-        public DelegateCommand ExecuteDelegateCommand { get; private set; }
+        public List<Employee> Employees { get; private set; }
+        public int ActiveSecondaryTab { get; set; }
+        public int ActiveMainTab { get; set; }
 
         public ViewModel()
         {
             Data data = new Data();
             this.Employees = data.employees;
-            //this.activeMainTab = 0;
-            //this.activeSecondaryTab = 0;
             MoreInfo = new DelegateCommand<object>(ToMoreInfo, canSubmit);
         }
 
         public void ToMoreInfo(object parameter)
         {
-            Debug.WriteLine(ActiveMainTab + " : " + ActiveSecondaryTab);
+            Debug.WriteLine(parameter);
             ActiveMainTab = 1;
-            ActiveSecondaryTab = 3;
-            Debug.WriteLine("Click");
+
+            foreach (var employee in Employees)
+            {
+                if (employee.Name.Equals(parameter))
+                {
+                    ActiveSecondaryTab = Employees.IndexOf(employee);
+                }
+            }
+
+            Debug.WriteLine(ActiveMainTab + " : " + ActiveSecondaryTab);
         }
 
         public bool canSubmit(object parameter)
@@ -39,23 +47,7 @@ namespace DoktersApplicatie
             return true;
         }
 
-        public List<Employee> Employees
-        {
-            get;
-            private set;
-        }
-
-        public int ActiveMainTab
-        {
-            get;
-            set;
-        }
-
-        public int ActiveSecondaryTab
-        {
-            get;
-            set;
-        }
+       
 
     }
 }
