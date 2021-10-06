@@ -117,7 +117,7 @@ namespace VR_Project
 		{
 			string request = @"{ ""id"" : ""scene/get"" }";
 			JObject sceneResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request));
-			//Debug.WriteLine(sceneResponse.ToString());
+			Debug.WriteLine(sceneResponse.ToString());
 			return sceneResponse.ToString();
 		}
 
@@ -138,6 +138,8 @@ namespace VR_Project
 				this.running = true;
 				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
+				//test
+				await GetScene();
 				this.running = false;
 			}
 
@@ -302,6 +304,9 @@ namespace VR_Project
 
 			await SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
 		}
+
+
+		//ja
 
 		public static string WrapJsonMessage<T>(string dest, T t)
 		{
