@@ -9,6 +9,7 @@
     <None Remove="Newtonsoft.Json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <Import Project="..\CommunicationObjects\CommunicationObjects.projitems" Label="Shared" />

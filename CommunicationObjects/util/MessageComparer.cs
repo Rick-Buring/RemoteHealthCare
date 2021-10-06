@@ -12,8 +12,8 @@ namespace CommunicationObjects
 		{
 
 			if (x.priority == y.priority) return 0;
-			else if (x.priority == Priority.LOW && y.priority == Priority.HIGH) return 1;
-			else return -1;
+			else if (x.priority == Priority.LOW && y.priority == Priority.HIGH) return -1;
+			else return 1;
 			
 		}
 	}
