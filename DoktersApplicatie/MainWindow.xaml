@@ -34,7 +34,7 @@
                                         </StackPanel>
                                     </Border>
                                     <StackPanel x:Name="ButtonBox" Width="150">
-                                        <Button x:Name="MoreInfoButton" Command="{Binding MoreInfo}" CommandParameter="TabControl" Content="More info" HorizontalAlignment="Stretch" Margin="5,5,5,5" FontSize="15" VerticalAlignment="Stretch"/>
+                                        <Button x:Name="MoreInfoButton" Command="{Binding DataContext.MoreInfo, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="TabControl" Content="More info" HorizontalAlignment="Stretch" Margin="5,5,5,5" FontSize="15" VerticalAlignment="Stretch"/>
                                         <Button x:Name="SessionButton" Content="Sesion Placeholder" Margin="5,5,5,5" FontSize="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                         <Button x:Name="EmergencyStopButton" Content="Emergency stop" Margin="5,5,5,5" FontSize="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                     </StackPanel>
