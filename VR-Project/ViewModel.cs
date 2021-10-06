@@ -62,16 +62,16 @@ namespace VR_Project
                 .FirstOrDefault(vm => vm == viewModel);
         }
 
-        private void onGoToConnectToServer(object obj)
+        private void onGoToConnectToServer()
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectToServerVM).FullName));
         }
 
-        private void OnGoToConnected(object obj)
+        private void OnGoToConnected()
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectedVM).FullName));
         }
-        private void OnGoToLoginBikeVR(object obj)
+        private void OnGoToLoginBikeVR()
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(LoginBikeVRVM).FullName));
         }
@@ -95,7 +95,7 @@ namespace VR_Project
             Mediator.Subscribe("LoginBikeVR", OnGoToLoginBikeVR);
             Mediator.Subscribe("Connected", OnGoToConnected);
 
-            OnGoToLoginBikeVR("");
+            OnGoToLoginBikeVR();
         }
 
 
@@ -114,14 +114,14 @@ namespace VR_Project
     }
     public static class Mediator
     {
-        private static IDictionary<string, List<Action<object>>> pl_dict =
-           new Dictionary<string, List<Action<object>>>();
+        private static IDictionary<string, List<Action>> pl_dict =
+           new Dictionary<string, List<Action>>();
 
-        public static void Subscribe(string token, Action<object> callback)
+        public static void Subscribe(string token, Action callback)
         {
             if (!pl_dict.ContainsKey(token))
             {
-                var list = new List<Action<object>>();
+                var list = new List<Action>();
                 list.Add(callback);
                 pl_dict.Add(token, list);
             }
@@ -136,17 +136,17 @@ namespace VR_Project
             }
         }
 
-        public static void Unsubscribe(string token, Action<object> callback)
+        public static void Unsubscribe(string token, Action callback)
         {
             if (pl_dict.ContainsKey(token))
                 pl_dict[token].Remove(callback);
         }
 
-        public static void Notify(string token, object args = null)
+        public static void Notify(string token)
         {
             if (pl_dict.ContainsKey(token))
                 foreach (var callback in pl_dict[token])
-                    callback(args);
+                    callback();
         }
     }
 

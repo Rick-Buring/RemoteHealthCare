@@ -40,7 +40,7 @@ namespace VR_Project.ViewModels
         {
             if (SelectClient == null)
                 return;
-            Mediator.Notify("ConnectToServer", this.GetType().FullName);
+            Mediator.Notify("ConnectToServer");
             await this.eq.start();
             this.vr.ConnectToTunnel(SelectClient.id);
         }

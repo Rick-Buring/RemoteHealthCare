@@ -54,7 +54,7 @@ namespace VR_Project.ViewModels
             this.serverConnectionThread = new Thread(client.StartConnection);
             this.serverConnectionThread.Start();
 
-            Mediator.Notify("Connected", this.GetType().FullName);
+            Mediator.Notify("Connected");
         }
 
         private bool notValid()
