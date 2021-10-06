@@ -58,23 +58,41 @@ namespace Server
         public void send(Root message)
         {
             string target = message.target;
+            bool found = false;
 
             // __CR__ [PSMG] Eventueel omzetten naar enum
             if (target == "all")
             {
+                found = true;
                 foreach (ClientHandler client in clients)
                 {
                     if (target != message.sender)
                         client.send(message);
                 }
-                return;
             }
-            foreach (ClientHandler client in clients)
+            else
             {
-                if (target == client.Name)
-                    client.send(message);
+                foreach (ClientHandler client in clients)
+                {
+                    if (target == client.Name)
+                    {
+                        client.send(message);
+                        found = true;
+                    }
+                }
             }
 
+            if (!(message.type == typeof(Acknowledge).FullName))
+            {
+                if (found)
+                {
+                    SendAcknowledge(message, 404, "target not found");
+                }
+                else
+                {
+                    SendAcknowledge(message, 200, "ok");
+                }
+            }
         }
 
         public void recieveClients(ref Root root)
@@ -82,9 +100,23 @@ namespace Server
             List<string> clients = new List<string>();
             foreach (ClientHandler client in this.clients)
             {
-                clients.Add(client.Name);
+                if (client.Name != root.sender)
+                {
+                    clients.Add(client.Name);
+                }
             }
             root.data = new Selection() { selection = clients };
+        }
+
+        public void SendAcknowledge(Root root, int status, string message)
+        {
+            this.send(new Root()
+            {
+                sender = "server",
+                target = root.sender,
+                type = typeof(Acknowledge).FullName,
+                data = new Acknowledge() { subtype = root.type, status = status, statusmessage = message }
+            });
         }
 
         public void Dispose()

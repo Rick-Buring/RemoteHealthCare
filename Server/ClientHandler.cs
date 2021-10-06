@@ -78,7 +78,9 @@ namespace Server
         private async void Run()
         {
             this.Name = await getName();
-            send(new Root { type = typeof(Acknowledge).FullName, data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull."}, sender = "server", target = this.Name });
+            send(new Root { type = typeof(Acknowledge).FullName,
+                data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull."},
+                sender = "server", target = this.Name });
             //send acknowledgement
             
             this.active = true;
@@ -108,6 +110,8 @@ namespace Server
 
             Type type = Type.GetType(root.type);
 
+            bool errorFound = false;
+
             if (type == typeof(HealthData))
             {
                 HealthData data = (root.data as JObject).ToObject<HealthData>();
@@ -121,13 +125,13 @@ namespace Server
             {
                 if (!(root.data as JObject).ToObject<Connection>().connect)
                 {
-                    string sender = root.sender;
-                    root.target = root.sender;
-                    root.sender = sender;
-
-                    send(root);
-
+                    this.server.SendAcknowledge(root, 200, "terminating connection");
                     this.disconnect();
+                }
+                else
+                {
+                    this.server.SendAcknowledge(root, 403, "already connected");
+                    errorFound = true;
                 }
             }
             else if (type == typeof(History))
@@ -142,11 +146,32 @@ namespace Server
 
                 root.data = data;
             }
+            else if (type == typeof(Setting))
+            {
+                Setting data = (root.data as JObject).ToObject<Setting>();
+                if ((data.res > 100 || data.res < 0) && !data.emergencystop)
+                {
+                    this.server.SendAcknowledge(root, 412, "invalid resistance value");
+                    errorFound = true;
+                }
+            }
+            else if (type == typeof(Chat))
+            {
+                if (root.sender == root.target)
+                {
+                    this.server.SendAcknowledge(root, 409, "sender can't be target");
+                    errorFound = true;
+                }
 
-            this.server.send(root);
+                Chat data = (root.data as JObject).ToObject<Chat>();
+                if (data.message == "" && !errorFound)
+                {
+                    this.server.SendAcknowledge(root, 412, "empty message is not allowed");
+                    errorFound = true;
+                }
+            }
+
+            if (this.active && !errorFound) this.server.send(root);
         }
-
-
     }
-
 }
