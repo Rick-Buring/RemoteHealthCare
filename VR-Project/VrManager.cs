@@ -138,8 +138,10 @@ namespace VR_Project
 				this.running = true;
 				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
-				//test
-				await GetScene();
+
+				await GetHeightDependantResistance();
+				//todo set ergometer resistance
+
 				this.running = false;
 			}
 
@@ -219,7 +221,7 @@ namespace VR_Project
 
 		public async Task MakeAndFollowRoute(string nodeID)
 		{
-			Route r = Route.getRoute();
+			Route r = await Route.getRouteWithHeight(this);
 			JObject routeResponse = await SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)));
 			string routeID = routeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
 			Road road = new Road("scene/road/add", routeID);
@@ -305,8 +307,55 @@ namespace VR_Project
 			await SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
 		}
 
+		public async Task<float> GetHeightDependantResistance()
+		{
+			//test
+			//await GetScene();
 
-		//ja
+			/*Object getObject = new
+            {
+                id = "get",
+                data = new
+                {
+                    uuid = this.bikeUuid
+                }
+            };
+            JObject jObject;
+            SendMessageResponseToJsonArray(this.client, WrapJsonMessage(this.dest, getObject), out jObject);
+            Debug.WriteLine(jObject);*/
+
+
+			Node findNode = new Node("scene/node/find");
+			findNode.data.name = "bike";
+			JObject jObject = await SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode));
+			JArray position = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data").ElementAt(0).Value<JArray>("components").ElementAt(0).Value<JArray>("position");
+
+			Debug.WriteLine(position);
+
+			//implemented for now since terainheight can not be found
+			Random r = new Random();
+			return r.Next(1, 100);
+		}
+
+
+
+		//Use this method if only terain height can be found
+		private async Task<float> calculateAngle(float[] position1, float[] position2, float distance)
+		{
+			float height1 =  await getTerrainHeight(position1);
+			float height2 =  await getTerrainHeight (position2);
+
+			return (float)Math.Tan(distance / (height2 - height1));
+		}
+
+
+		public async Task<float> getTerrainHeight(float[] position)
+        {
+            Terrain t = new Terrain("scene/terrain/getheight", position);
+            JObject terrainResponce = await SendMessageResponseToJsonArray(client, WrapJsonMessage<Terrain>(dest, t));
+            Debug.WriteLine(terrainResponce.ToString());
+            return terrainResponce.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<float>("height");
+        }
 
 		public static string WrapJsonMessage<T>(string dest, T t)
 		{
