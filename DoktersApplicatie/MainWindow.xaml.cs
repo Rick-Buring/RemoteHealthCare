@@ -15,9 +15,7 @@ using System.Windows.Shapes;
 
 namespace DoktersApplicatie
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
         
@@ -28,11 +26,9 @@ namespace DoktersApplicatie
         {
             InitializeComponent();
             viewModel = new ViewModel();
-            this.DataContext = viewModel;
+            DataContext = viewModel;
         }
 
     }
-
-
 
 }

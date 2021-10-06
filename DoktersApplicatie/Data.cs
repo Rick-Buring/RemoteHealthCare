@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
+using System.Windows.Controls;
 
 namespace DoktersApplicatie
 {
@@ -21,10 +26,35 @@ namespace DoktersApplicatie
 
     }
 
-    public class Employee
+    public class Employee : BindableBase, INotifyPropertyChanged
     {
         public string Name { get; set; }
         public int Age { get; set; }
+
+        public DelegateCommand<object> MoreInfo { get; private set; }
+
+        public DelegateCommand ExecuteDelegateCommand { get; private set; }
+
+        public Employee()
+        {
+
+            MoreInfo = new DelegateCommand<object>(ToMoreInfo, canSubmit);
+
+        }
+
+        public void ToMoreInfo(object parameter)
+        {
+            Debug.WriteLine(parameter);
+            TabControl tabControl = parameter as TabControl;
+            tabControl.SelectedIndex = 1;
+            Debug.WriteLine("Click");
+        }
+
+        public bool canSubmit(object parameter)
+        {
+            return true;
+        }
+
     }
 
 }
