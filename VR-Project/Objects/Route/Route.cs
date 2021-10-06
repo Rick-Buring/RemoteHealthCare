@@ -34,6 +34,11 @@ public class Route
         return new RouteObject("route/update", dataGen.getDataUpdate(show, uuid));
     }
 
+    public RouteObject UpdateFollowSpeed(string uuid, float speed)
+    {
+        return new RouteObject("route/follow/speed", new FollowData(null, uuid, speed));
+
+    }
 
     public RouteObject followRoute(string routeid, string nodeid, float speed)
     {

@@ -10,15 +10,10 @@ namespace Vr_Project.RemoteHealthcare
     public class EquipmentMain : IDataListener, System.IDisposable
     {
         private DataIO dataIO;
-        
-        private Ergometer ergometer;
+
+        public Ergometer ergometer { get; private set; }
         private HeartBeatMonitor heartBeatMonitor;
-        private ViewModel.Update updater;
-        
-        public EquipmentMain (ViewModel.Update updater)
-        {
-            this.updater = updater;
-        }
+
         // starts the application
         public async Task start()
         {
@@ -27,7 +22,7 @@ namespace Vr_Project.RemoteHealthcare
             ergometer = new ErgoSimulator(this);
             //this.gui = new GUI();
             await ergometer.Connect();
-            
+
 
             //heartBeatMonitor = new HeartBeatMonitor(this, dataIO);
             heartBeatMonitor = new HBSimulator(this);
@@ -43,19 +38,20 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="data">Data in de vorm van IData.</param>
         public void notify(IData data)
         {
-            if(heartBeatMonitor != null)
+            if (heartBeatMonitor != null)
             {
                 //Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
-                this.updater(ergometer, heartBeatMonitor);
+                ViewModel.updater.Invoke(ergometer, heartBeatMonitor);
             }
-           
+
         }
 
         public void Dispose()
-        {   if (ergometer != null)
-            ergometer.Dispose();
+        {
+            if (ergometer != null)
+                ergometer.Dispose();
 
         }
     }
-    
+
 }

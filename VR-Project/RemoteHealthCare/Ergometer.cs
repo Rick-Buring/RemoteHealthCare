@@ -98,7 +98,7 @@ namespace Vr_Project.RemoteHealthcare
         /// </summary>
         /// <param name="resistance">hoeveel weerstant de fiets moet bieden in hele procenten met een max van 100</param>
         /// <returns>een bye array die naar de fiets gestuurt kan worden</returns>
-        private static byte[] ResistanceMessage(float resistance)
+        public override byte[] ResistanceMessage(float resistance)
         {
             byte[] buff = new byte[13];
             //head
@@ -116,6 +116,14 @@ namespace Vr_Project.RemoteHealthcare
 
             return buff;
         }
+
+        public async override void SendResistance(float resistance)
+        {
+            byte[] toSend = ResistanceMessage(resistance);
+            int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+        }
+
+       
         /// <summary>
         /// checksum berekenen
         /// </summary>

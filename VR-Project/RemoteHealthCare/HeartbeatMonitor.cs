@@ -82,5 +82,15 @@ namespace Vr_Project.RemoteHealthcare
             this.bleHeart.CloseDevice();
             this.bleHeart.Dispose();
         }
+
+        public override byte[] ResistanceMessage(float resistance)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SendResistance(float resistance)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

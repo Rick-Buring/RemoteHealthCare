@@ -28,6 +28,7 @@ namespace Vr_Project.RemoteHealthcare
         public abstract int GetHeartBeat();
 
         public abstract ErgometerData GetErgometerData();
-
+        public abstract byte[] ResistanceMessage(float resistance);
+        public abstract void SendResistance(float resistance);
     }
 }
