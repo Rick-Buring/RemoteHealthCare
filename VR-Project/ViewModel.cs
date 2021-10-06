@@ -66,7 +66,7 @@ namespace VR_Project
             if (SelectClient == null)
                 return;
             await this.equipment.start();
-            this.vrManager.ConnectToTunnel(SelectClient.id);
+            await this.vrManager.ConnectToTunnel(SelectClient.id);
         }
 
         public void Window_Closed(object sender, EventArgs e)

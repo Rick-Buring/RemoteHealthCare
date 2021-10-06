@@ -40,12 +40,12 @@ namespace VR_Project
             //Debug.WriteLine(message);
             byte[] messageArray = Encoding.ASCII.GetBytes(message);
             var messageToSend = WrapMessage(messageArray);
-            this.stream.Write(messageToSend, 0, messageToSend.Length);
-            this.stream.Flush();
+            await this.stream.WriteAsync(messageToSend, 0, messageToSend.Length);
+            await this.stream.FlushAsync();
             byte[] array = new byte[4];
 
 
-            client.GetStream().Read(array, 0, 4);
+            await client.GetStream().ReadAsync(array, 0, 4);
 
             //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
@@ -75,13 +75,13 @@ namespace VR_Project
         }
 
 
-        public async void ConnectToTunnel(string tunnelID)
+        public async Task ConnectToTunnel(string tunnelID)
         {
 
             string tunnel = @"{""id"" : ""tunnel/create"", ""data"" :{""session"" : """ + tunnelID + @"""}}";
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(tunnel));
-            this.stream.Write(messageToSend, 0, messageToSend.Length);
-            this.stream.Flush();
+            await this.stream.WriteAsync(messageToSend, 0, messageToSend.Length);
+            await this.stream.FlushAsync();
 
             byte[] received = await ReadMessage(client);
             string tunnelOpen = Encoding.ASCII.GetString(received);
@@ -89,16 +89,16 @@ namespace VR_Project
 
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
-            ChangeSkyBoxTime(15);
+            await ChangeSkyBoxTime(15);
 
-            DeleteGroundPlane();
+            await DeleteGroundPlane();
 
-            AddTerrain();
+            await AddTerrain();
             this.bikeUuid = await MakeBikeObject();
-            MakePanel(this.bikeUuid);
-            MakeAndFollowRoute(this.bikeUuid);
+            await MakePanel(this.bikeUuid);
+            await MakeAndFollowRoute(this.bikeUuid);
             this.cameraID = await GetCamera();
-            StickCameraToPlayer();
+            await StickCameraToPlayer();
         }
 
         public async Task<string> MakeBikeObject()
@@ -141,7 +141,7 @@ namespace VR_Project
            // throw new NotImplementedException();
         }
 
-        public async void StickCameraToPlayer ()
+        public async Task StickCameraToPlayer ()
         {
             UpdateNode node = new UpdateNode("scene/node/update", this.cameraID, this.bikeUuid, new double[] { 90, 90, 0 });
             JObject updateResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage<UpdateNode>(dest, node));
@@ -153,7 +153,7 @@ namespace VR_Project
             return cameraObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data").ElementAt(0).Value<string>("uuid");
         }
 
-        public async void MakePanel (string parentID)
+        public async Task MakePanel (string parentID)
         {
             PanelNode panelNode = new PanelNode("scene/node/add", "dataPanel", parentID);
 
@@ -164,7 +164,7 @@ namespace VR_Project
 
             Panel panel = new Panel();
             panel.setclearColor(this.panelUuid, new int[] { 1, 1, 1, 1 });
-            SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+            await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
         }
         private const string font = "segoeui";
         private const double fontSize = 50d;
@@ -178,22 +178,22 @@ namespace VR_Project
                     //TODO kijken om er een task van maken.
                     //TODO senden en ontvangen async maken.
                     running = true;
-                    new Thread(() =>
+                    new Thread(async() =>
                     {
                         Panel panel = new Panel();
 
                         panel.Clear(this.panelUuid);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         panel.drawText(this.panelUuid, "RPM : " + ergometerData.Cadence, new double[] { 10d, 40d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         panel.drawText(this.panelUuid, "BPM : " + heartBeat, new double[] { 10d, 80d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         panel.drawText(this.panelUuid, "Wattage : " + ergometerData.InstantaneousPower, new double[] { 10d, 120d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         panel.drawText(this.panelUuid, "Speed (m/s) : " + ergometerData.InstantaneousSpeed, new double[] { 10d, 160d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         panel.Swap(this.panelUuid);
-                        SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                        await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                         this.running = false;
                     }).Start();
                 }
@@ -205,19 +205,19 @@ namespace VR_Project
 
         
 
-        public async void MakeAndFollowRoute(string nodeID)
+        public async Task MakeAndFollowRoute(string nodeID)
         {
             Route r = Route.getRoute();
             JObject routeResponse = await SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)));
             string routeID = routeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
             Road road = new Road("scene/road/add", routeID);
 
-            SendMessage(client, WrapJsonMessage<Road>(dest, road));
+            await SendMessage(client, WrapJsonMessage<Road>(dest, road));
 
-            SendMessage(client, WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, nodeID, 2)));
+            await SendMessage(client, WrapJsonMessage<Route.RouteObject>(dest, r.followRoute(routeID, nodeID, 2)));
         }
 
-        public void ChangeSkyBoxTime(int time)
+        public async Task ChangeSkyBoxTime(int time)
         {
             Skybox skybox = new Skybox
             {
@@ -228,14 +228,14 @@ namespace VR_Project
                 }
             };
 
-            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+            await SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
 
             skybox.id = "scene/skybox/update";
 
-            SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
+            await SendMessage(client, WrapJsonMessage<Skybox>(this.dest, skybox));
         }
 
-        public async void DeleteGroundPlane()
+        public async Task DeleteGroundPlane()
         {
             Node findNode = new Node("scene/node/find")
             {
@@ -257,30 +257,30 @@ namespace VR_Project
                 }
             };
 
-            SendMessage(client, WrapJsonMessage<Node>(this.dest, deleteNode));
+            await SendMessage(client, WrapJsonMessage<Node>(this.dest, deleteNode));
         }
 
-        public void Add3dObjects()
+        public async Task Add3dObjects()
         {
             ObjectNode ObjectNode1 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 1, 2, 1 });
 
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
+            await SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode1));
 
             ObjectNode ObjectNode2 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 3, 1 });
 
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
+            await SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode2));
 
             ObjectNode ObjectNode3 = new ObjectNode("scene/node/add", "object1", @"data\NetworkEngine\models\trees\fantasy\tree1.obj", new int[3] { 0, 0, 0 });
 
-            SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
+            await SendMessage(client, WrapJsonMessage<ObjectNode>(this.dest, ObjectNode3));
         }
 
-        public async void AddTerrain()
+        public async Task AddTerrain()
         {
 
             Terrain terrain = new Terrain("scene/terrain/add", new int[] { 256, 256 }, Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/HeightmapSmol.bmp");
 
-            SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
+            await SendMessage(client, WrapJsonMessage<Terrain>(this.dest, terrain));
 
             TerrainNode node = new TerrainNode("scene/node/add", "terrainNode", true);
 
@@ -290,7 +290,7 @@ namespace VR_Project
 
             AddLayerNode layerNode = new AddLayerNode("scene/node/addlayer", uuid, @"data\NetworkEngine\textures\terrain\adesert_mntn2_d.jpg");
 
-            SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
+            await SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
         }
 
         public static string WrapJsonMessage<T>(string dest, T t)
@@ -319,36 +319,34 @@ namespace VR_Project
             return ret;
         }
 
-        public async void SendMessage(TcpClient client, string message)
+        public async Task SendMessage(TcpClient client, string message)
         {
-            
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
-            this.stream.Write(messageToSend, 0, messageToSend.Length);
-            this.stream.Flush();
-            string received = Encoding.ASCII.GetString(await ReadMessage(client));
+            await this.stream.WriteAsync(messageToSend, 0, messageToSend.Length);
+            await this.stream.FlushAsync();
 
-            
+            string received = Encoding.ASCII.GetString(await ReadMessage(client)); 
         }
 
         public async Task<JObject> SendMessageResponseToJsonArray(TcpClient client, string message)
         {
+            
             byte[] messageToSend = WrapMessage(Encoding.ASCII.GetBytes(message));
-            this.stream.Write(messageToSend, 0, messageToSend.Length);
-            this.stream.Flush();
+            await this.stream.WriteAsync(messageToSend, 0, messageToSend.Length);
+            await this.stream.FlushAsync();
             return (JObject)JsonConvert.DeserializeObject(Encoding.ASCII.GetString(await ReadMessage(client)));
         }
 
         public async Task<byte[]> ReadMessage(TcpClient client)
         {
+            
             //Console.WriteLine(reader.ReadToEnd());
             byte[] array = new byte[4];
+            await stream.ReadAsync(array, 0, 4);
 
-            this.stream.Read(array, 0, 4);
-
-            //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
             byte[] received = new byte[size];
-            
+
 
             int bytesRead = 0;
             while (bytesRead < size)
@@ -358,7 +356,9 @@ namespace VR_Project
                 //Console.WriteLine("ReadMessage: " + read);
             }
 
+
             return received;
+
         }
         public void CloseConnection ()
         {
