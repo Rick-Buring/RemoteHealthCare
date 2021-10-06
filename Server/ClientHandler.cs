@@ -166,7 +166,7 @@ namespace Server
                 Chat data = (root.data as JObject).ToObject<Chat>();
                 if (data.message == "" && !errorFound)
                 {
-                    this.server.SendAcknowledge(root, 412, "empty message is not allowed");
+                    this.server.SendAcknowledge(root, 412, "empty messages are not allowed");
                     errorFound = true;
                 }
             }
