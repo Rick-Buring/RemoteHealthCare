@@ -7,7 +7,7 @@ using VR_Project;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class EquipmentMain : IDataListener, IDisposable
+    public class EquipmentMain : IDataListener, System.IDisposable
     {
         private DataIO dataIO;
         
