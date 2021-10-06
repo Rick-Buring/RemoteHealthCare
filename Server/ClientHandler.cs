@@ -32,6 +32,7 @@ namespace Server
 
             SslStream stream = new SslStream(this.Client.GetStream(), false);
             stream.AuthenticateAsServer(server.Certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+            this.rw = new ReadWrite(stream);
             this.server = server;
 
             

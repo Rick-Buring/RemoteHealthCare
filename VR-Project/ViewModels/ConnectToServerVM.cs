@@ -18,6 +18,7 @@ namespace VR_Project.ViewModels
         public ConnectToServerVM(ClientHandler client, EquipmentMain equipment)
         {
             this.client = client;
+            this.eq = equipment;
             this.ConnectToServer = new DelegateCommand(EngageConnection);
         }
 

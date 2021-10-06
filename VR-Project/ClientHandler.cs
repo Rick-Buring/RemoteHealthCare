@@ -80,7 +80,7 @@ namespace VR_Project
         public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
 
-            if (this.client != null)
+            if (this.client != null && this.rw != null)
             {
 
                 Root healthData = new Root()
