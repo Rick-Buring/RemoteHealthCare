@@ -19,5 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Setting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Test.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\History.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)util\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)util\MessageComparer.cs" />
   </ItemGroup>
 </Project>

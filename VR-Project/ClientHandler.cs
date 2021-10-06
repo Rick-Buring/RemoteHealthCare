@@ -1,5 +1,7 @@
 ﻿using CommunicationObjects;
 using CommunicationObjects.DataObjects;
+using CommunicationObjects.util;
+using DataStructures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -19,10 +21,14 @@ namespace VR_Project
 		private bool active;
 		private bool connected;
 
+		private PriorityQueue<Message> queue;
+
 		public ClientHandler(ViewModel.SendResistance resistanceUpdater)
 		{
 			this.resistanceUpdater = resistanceUpdater;
 			this.connected = false;
+			this.queue = new PriorityQueue<Message>(new MessageComparer());
+			//this.queue.
 		}
 
 		public async void StartConnection()
@@ -41,7 +47,7 @@ namespace VR_Project
 			} else {
 				//do something to close connection
 			}
-
+			
 			//When a disconnect message is send the Run method will end and here the conenction will be closed.
 		}
 
