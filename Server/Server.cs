@@ -39,8 +39,8 @@ namespace Server
 
         private void OnConnect(IAsyncResult ar)
         {
-            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
             var tcpClient = listener.EndAcceptTcpClient(ar);
+            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
             Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
             clients.Add(new ClientHandler(tcpClient, this));
         }
