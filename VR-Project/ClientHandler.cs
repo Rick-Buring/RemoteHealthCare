@@ -156,16 +156,19 @@ namespace VR_Project
 			if (this.client != null && this.isSessionRunning && !this.isLocked)
 			{
 				this.isLocked = true;
+				ErgometerData data = ergometer.GetErgometerData();
 				Root healthData = new Root()
 				{
 					type = typeof(HealthData).FullName,
 					data = new HealthData()
 					{
-						RPM = ergometer.GetErgometerData().Cadence,
-						AccWatt = ergometer.GetErgometerData().AccumulatedPower,
-						CurWatt = ergometer.GetErgometerData().InstantaneousPower,
-						Speed = ergometer.GetErgometerData().InstantaneousSpeed,
-						Heartbeat = heartBeatMonitor.GetHeartBeat()
+						RPM = data.Cadence,
+						AccWatt = data.AccumulatedPower,
+						CurWatt = data.InstantaneousPower,
+						Speed = data.InstantaneousSpeed,
+						Heartbeat = heartBeatMonitor.GetHeartBeat(),
+						ElapsedTime = data.ElapsedTime,
+						DistanceTraveled = data.DistanceTraveled
 					},
 					sender = "Henk",
 					target = "Hank"
