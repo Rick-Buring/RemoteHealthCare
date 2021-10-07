@@ -314,9 +314,13 @@ namespace VR_Project
 			float[] position = await getPosition();
 			float distance = (float)Math.Sqrt(Math.Pow(position[0] - oldPos[0], 2) + Math.Pow(position[2] - oldPos[2], 2));
 			float Heightdifference = position[1] - oldPos[1];
-			float angle = (float)Math.Tan(distance / Heightdifference);
+			float angle = 0;
+			if (distance != 0 || Heightdifference != 0)
+			{
+				angle = (float)Math.Tan(distance / Heightdifference);
+			}
 			Debug.WriteLine($"calculated height dif: {Heightdifference} with the distance of: {distance} makes the angle of: {angle}");
-			float resistance = (float)Math.Round(Math.Clamp(20 + angle * 5, 0, 100), 2);
+			float resistance = (float)Math.Round(Math.Clamp(1 + angle/5, 0, 2), 2);
 			Debug.WriteLine($"resistance: {resistance}");
 			this.oldPos = position;
 			return resistance;
