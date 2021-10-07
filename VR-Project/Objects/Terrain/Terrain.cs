@@ -16,6 +16,13 @@ public class Terrain
 		this.data = new TerrainData(size, localHeigths);
     }
 
+	public Terrain(string id, float[] position)
+	{
+		this.id = id;
+		this.data = new TerrainData(position);
+	}
+
+
 	public Terrain(string id, float[] position, float[][] positions)
 	{
 		this.id = id;
@@ -30,6 +37,11 @@ public class Terrain
             this.size = size;
             this.heights = heights;
         }
+
+		public TerrainData(float[] position)
+		{
+			this.position = position;
+		}
 
 		public TerrainData(float[] position, float[][] positions)
 		{

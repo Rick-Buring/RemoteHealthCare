@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VR_Project.Objects.Route
 {
-    class FollowData : Data
+    public class FollowData : Data
     {
         public string route { get; set; }
         public string node { get; set; }
@@ -24,7 +24,7 @@ namespace VR_Project.Objects.Route
             this.node = nodeid;
             this.speed = speed;
             this.offset = 0;
-            this.rotate = "XZ";
+            this.rotate = "XYZ";
             this.smoothing = 1.0f;
             this.followHeight = true;
             this.rotateOffset = new float[3] { 0, 0, 1.5707963f };

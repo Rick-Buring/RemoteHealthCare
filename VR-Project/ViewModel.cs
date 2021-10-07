@@ -59,6 +59,7 @@ namespace VR_Project
             this.serverConnectionThread.Start();
             this.resistanceUpdater += this.equipment.ergometer.SendResistance;
             this.client.resistanceUpdater = this.resistanceUpdater;
+            this.vrManager.ResistanceUpdater = this.resistanceUpdater;
         }
 
         public Data SelectClient { get; set; }

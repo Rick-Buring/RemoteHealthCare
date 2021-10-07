@@ -14,6 +14,7 @@ using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Objects;
 using VR_Project.Objects.Node;
+using static VR_Project.ViewModel;
 
 namespace VR_Project
 {
@@ -26,6 +27,8 @@ namespace VR_Project
 		private string panelUuid;
 		private string bikeUuid;
 		private string cameraID;
+		private float[] oldPos;
+		public SendResistance ResistanceUpdater { get; set; }
 
 
 		public async Task<List<Data>> GetEngineData()
@@ -99,6 +102,7 @@ namespace VR_Project
 			await MakeAndFollowRoute(this.bikeUuid);
 			this.cameraID = await GetCamera();
 			await StickCameraToPlayer();
+			this.oldPos = await getPosition();
 			this.ready = true;
 		}
 
@@ -116,7 +120,7 @@ namespace VR_Project
 		{
 			string request = @"{ ""id"" : ""scene/get"" }";
 			JObject sceneResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request));
-			//Debug.WriteLine(sceneResponse.ToString());
+			Debug.WriteLine(sceneResponse.ToString());
 			return sceneResponse.ToString();
 		}
 
@@ -135,8 +139,11 @@ namespace VR_Project
 			if (this.ready && !this.running)
 			{
 				this.running = true;
-				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
+
+				float r = await getHeightDependantResistance();
+				//ResistanceUpdater(r);
+				
 				this.running = false;
 			}
 
@@ -216,7 +223,7 @@ namespace VR_Project
 
 		public async Task MakeAndFollowRoute(string nodeID)
 		{
-			Route r = Route.getRoute();
+			Route r = await Route.getRouteWithHeight(this);
 			JObject routeResponse = await SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, r.addRoute(true)));
 			string routeID = routeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
 			Road road = new Road("scene/road/add", routeID);
@@ -301,6 +308,36 @@ namespace VR_Project
 
 			await SendMessage(client, WrapJsonMessage<AddLayerNode>(this.dest, layerNode));
 		}
+
+		public async Task<float> getHeightDependantResistance()
+		{
+			float[] position = await getPosition();
+			float distance = (float)Math.Sqrt(Math.Pow(position[0] - oldPos[0], 2) + Math.Pow(position[2] - oldPos[2], 2));
+			float Heightdifference = position[1] - oldPos[1];
+			float angle = (float)Math.Tan(distance / Heightdifference);
+			Debug.WriteLine($"calculated height dif: {Heightdifference} with the distance of: {distance} makes the angle of: {angle}");
+			float resistance = (float)Math.Round(Math.Clamp(20 + angle * 5, 0, 100), 2);
+			Debug.WriteLine($"resistance: {resistance}");
+			this.oldPos = position;
+			return resistance;
+		}
+
+		public async Task<float[]> getPosition()
+		{
+			Node findNode = new Node("scene/node/find");
+			findNode.data.name = "bike";
+			JObject jObject = await SendMessageResponseToJsonArray(this.client, WrapJsonMessage<Node>(this.dest, findNode));
+			JArray jPossition = jObject.Value<JObject>("data").Value<JObject>("data").Value<JArray>("data").ElementAt(0).Value<JArray>("components").ElementAt(0).Value<JArray>("position");
+			return new float[3] { (float)jPossition[0], (float)jPossition[1], (float)jPossition[2] };
+		}
+
+		public async Task<float> getTerrainHeight(float[] position)
+        {
+            Terrain t = new Terrain("scene/terrain/getheight", position);
+            JObject terrainResponce = await SendMessageResponseToJsonArray(client, WrapJsonMessage<Terrain>(dest, t));
+            //Debug.WriteLine(terrainResponce.ToString());
+            return terrainResponce.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<float>("height");
+        }
 
 		public static string WrapJsonMessage<T>(string dest, T t)
 		{
