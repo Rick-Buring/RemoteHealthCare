@@ -219,6 +219,14 @@ namespace VR_Project
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				panel.drawText(this.panelUuid, "Speed (km/h) : " + ergometerData.InstantaneousSpeed, new double[] { 10d, 160d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+				panel.drawText(this.panelUuid, "Distance Traveled: (m) : " + ergometerData.DistanceTraveled, new double[] { 10d, 200d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+				string sec = ergometerData.ElapsedTime % 60 + "";
+				if ((ergometerData.ElapsedTime % 60) < 10) sec = 0 + sec;
+				string min = Math.Floor((decimal)ergometerData.ElapsedTime / 60) + "";
+				string time = string.Format($"Elapsed Time: {min}:{sec}");
+				panel.drawText(this.panelUuid, time, new double[] { 10d, 240d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				panel.Swap(this.panelUuid);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				

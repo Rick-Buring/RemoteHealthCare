@@ -85,7 +85,8 @@ namespace Vr_Project.RemoteHealthcare
 
             int speedLSB = data[8];
             int speedMSB = data[9];
-            this.InstantaneousSpeed = (speedMSB << 8 | speedLSB) / 1000.0;
+            //TODO fix calculation
+            this.InstantaneousSpeed = (((speedMSB << 8) | speedLSB) / 1000) * 3.6;
 
 
             //this.capabilities = data[10] & 0x0f;
