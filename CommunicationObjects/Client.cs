@@ -11,7 +11,7 @@ namespace CommunicationObjects
 {
     public class Client : IDisposable
     {
-        private const string certificateName = "Certificaat";
+        private const string certificateName = "testCertificaat";
 
 
         // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
