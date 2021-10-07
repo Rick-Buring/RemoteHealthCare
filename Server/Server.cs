@@ -82,9 +82,9 @@ namespace Server
                 }
             }
 
-            if (!(message.type == typeof(Acknowledge).FullName) || !(message.type == typeof(HealthData).FullName))
+            if (!(message.type == typeof(Acknowledge).FullName) && !(message.type == typeof(HealthData).FullName))
             {
-                if (found)
+                if (!found)
                 {
                     SendAcknowledge(message, 404, "target not found");
                 }
