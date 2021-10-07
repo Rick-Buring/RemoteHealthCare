@@ -78,11 +78,15 @@ namespace Server
         private async void Run()
         {
             this.Name = await getName();
-            send(new Root { type = typeof(Acknowledge).FullName,
-                data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull."},
-                sender = "server", target = this.Name });
+            send(new Root
+            {
+                type = typeof(Acknowledge).FullName,
+                sender = "server",
+                target = this.Name,
+                data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+            });
             //send acknowledgement
-            
+
             this.active = true;
             while (active)
             {
