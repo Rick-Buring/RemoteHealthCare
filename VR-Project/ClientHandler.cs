@@ -20,6 +20,7 @@ namespace VR_Project
 		public ViewModel.SendResistance resistanceUpdater { get; set; }
 		private bool active;
 		private bool connected;
+		private bool isSessionRunning;
 
 		private PriorityQueue<Message> queue;
 
@@ -27,6 +28,7 @@ namespace VR_Project
 		{
 			this.resistanceUpdater = resistanceUpdater;
 			this.connected = false;
+			this.isSessionRunning = false;
 			this.queue = new PriorityQueue<Message>(new MessageComparer());
 			//this.queue.
 		}
@@ -87,8 +89,22 @@ namespace VR_Project
 			if (type == typeof(Setting))
 			{
 				Setting data = (root.data as JObject).ToObject<Setting>();
-				float targetResistance = data.res;
-				this.resistanceUpdater(targetResistance);
+
+				if (data.emergencystop){
+					this.resistanceUpdater(0);
+					//TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
+				} else {
+					float targetResistance = data.res;
+					this.resistanceUpdater(targetResistance);
+				}
+
+				//TODO notify vrclient dat de session start of stopt 
+				if (data.sesionchange == SessionType.START) {
+					this.isSessionRunning = true;
+				} else if (data.sesionchange == SessionType.STOP){
+					this.isSessionRunning = false;
+				}
+				
 
 			}
 			else if (type == typeof(Chat))
@@ -116,7 +132,7 @@ namespace VR_Project
 		public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 
-			if (this.client != null)
+			if (this.client != null && this.isSessionRunning)
 			{
 
 				Root healthData = new Root()
