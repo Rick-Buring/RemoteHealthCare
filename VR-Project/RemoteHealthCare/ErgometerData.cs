@@ -72,17 +72,15 @@ namespace Vr_Project.RemoteHealthcare
         private void decodeGeneralData(byte[] data)
         {
             //this.equipmentType = data[5];
-           
-
             int newTime = data[6] / 4;
             if (newTime < this.oldTime) this.timeRollovers++;
             this.oldTime = newTime;
             this.ElapsedTime = this.timeRollovers * this.rolloverTime + newTime;
 
-            this.DistanceTraveled = data[7];
-
             int newDistance = data[7];
-            if (newDistance < this.oldDistance)
+            if (newDistance < this.oldDistance) this.distanceRollovers++;
+            this.oldDistance = newDistance;
+            this.DistanceTraveled = this.distanceRollovers * this.rolloverDistance + newDistance;
 
 
             int speedLSB = data[8];
