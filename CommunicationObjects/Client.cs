@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class Client
+    public class Client : IDisposable
     {
         private const string certificateName = "testCertificaat";
 
@@ -100,15 +100,13 @@ namespace CommunicationObjects
         }
 
 
-        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
-        public void terminate()
-        {
+        
+		public void Dispose ()
+		{
             this.stream.Close();
             this.stream.Dispose();
             this.client.Close();
             this.client.Dispose();
         }
-
-       
-    }
+	}
 }

@@ -7,9 +7,13 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Media;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
@@ -79,6 +83,10 @@ namespace VR_Project
 				}
 			}
 		}
+		private SoundPlayer soundPlayer = new SoundPlayer(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "mixkit-alert-alarm-1005.wav"));
+		private void StopSound (Object source, ElapsedEventArgs e) {
+			soundPlayer.Stop();
+		}
 
 		private void Parse(string toParse)
 		{
@@ -92,10 +100,22 @@ namespace VR_Project
 
 				if (data.emergencystop){
 					this.resistanceUpdater(0);
+					new Thread(async () => {
+						soundPlayer.Load();
+						soundPlayer.PlayLooping();
+						
+						System.Timers.Timer timer = new System.Timers.Timer(5000);
+						timer.Elapsed += StopSound;
+						timer.AutoReset = false;
+						timer.Enabled = true;
+						timer.Start();
+					}).Start();
 					//TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
 				} else {
 					float targetResistance = data.res;
 					this.resistanceUpdater(targetResistance);
+					
+					
 				}
 
 				//TODO notify vrclient dat de session start of stopt 
@@ -129,12 +149,13 @@ namespace VR_Project
 			}
 		}
 
-		public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+		private bool isLocked = false;
+		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
-
-			if (this.client != null && this.isSessionRunning)
+			
+			if (this.client != null && this.isSessionRunning && !this.isLocked)
 			{
-
+				this.isLocked = true;
 				Root healthData = new Root()
 				{
 					type = typeof(HealthData).FullName,
@@ -151,6 +172,7 @@ namespace VR_Project
 				};
 
 				this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+				this.isLocked = false;
 			}
 
 		}
@@ -162,7 +184,7 @@ namespace VR_Project
 			{
 				this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
 				{ type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
-				this.client.terminate();
+				this.client.Dispose();
 			}
 		}
 

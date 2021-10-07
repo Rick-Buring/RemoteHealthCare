@@ -109,7 +109,6 @@ namespace VR_Project
 
 			JObject BikeResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage<ObjectNode>(this.dest, bikeNode));
 
-
 			return BikeResponse.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<string>("uuid");
 		}
 

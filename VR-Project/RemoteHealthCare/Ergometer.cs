@@ -15,6 +15,7 @@ namespace Vr_Project.RemoteHealthcare
         private IDataListener[] listeners;
         private BLE bleBike;
         protected ErgometerData ergometerData;
+        private bool connected;
 
         /// <summary>
         /// constructor voor de fiets
@@ -23,6 +24,7 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="listener"> een lijst met classes die genotificeert willen worden op nieuwe data</param>
         public Ergometer(string name, params IDataListener[] listener)
         {
+            this.connected = false;
             this.ergometerData = new ErgometerData();
             this.Name = name;
             this.bleBike = new BLE();
@@ -72,7 +74,7 @@ namespace Vr_Project.RemoteHealthcare
             {
                 errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             }
-
+            this.connected = true;
             //bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", ResistanceMessage(70));
         }
 
@@ -119,9 +121,12 @@ namespace Vr_Project.RemoteHealthcare
 
         public async override void SendResistance(float resistance)
         {
-            Debug.WriteLine("sending resistance");
-            byte[] toSend = ResistanceMessage(resistance);
-            int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+            if (this.connected)
+            {
+                Debug.WriteLine("sending resistance");
+                byte[] toSend = ResistanceMessage(resistance);
+                int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+            }
         }
 
        
