@@ -82,7 +82,7 @@ namespace Server
                 }
             }
 
-            if (!(message.type == typeof(Acknowledge).FullName))
+            if (!(message.type == typeof(Acknowledge).FullName) || !(message.type == typeof(HealthData).FullName))
             {
                 if (found)
                 {
