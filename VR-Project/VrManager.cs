@@ -140,7 +140,7 @@ namespace VR_Project
 			{
 				this.running = true;
 				await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
-
+				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				float r = await getHeightDependantResistance();
 				//ResistanceUpdater(r);
 				
