@@ -44,7 +44,7 @@ namespace VR_Project{
 
                 this.components = new Components
                 {
-                    transform = new Transform(position, 1, new double[3] { 0, 0, 0 }),
+                    transform = new Transform(position, 1, new double[3] { 0, 90, 0 }),
                     model = new Model(file, animationFile)
                 };
             }

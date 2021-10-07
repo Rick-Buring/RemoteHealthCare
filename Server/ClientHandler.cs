@@ -86,7 +86,7 @@ namespace Server
                 data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
             });
             //send acknowledgement
-            send(new Root { type = typeof(Setting).FullName, sender = "server", target = this.Name, data = new Setting { emergencystop = true, res = 30 } });
+            send(new Root { type = typeof(Setting).FullName, sender = "server", target = this.Name, data = new Setting { emergencystop = false, res = 50 } });
             this.active = true;
             while (active)
             {

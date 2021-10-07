@@ -21,16 +21,15 @@ namespace VR_Project
 	class ClientHandler
 	{
 		private Client client;
-		public ViewModel.SendResistance resistanceUpdater { get; set; }
+		public ViewModel.RequestResistance resistanceUpdater { get; set; }
 		private bool active;
 		private bool connected;
 		private bool isSessionRunning;
 
 		private PriorityQueue<Message> queue;
 
-		public ClientHandler(ViewModel.SendResistance resistanceUpdater)
+		public ClientHandler()
 		{
-			this.resistanceUpdater = resistanceUpdater;
 			this.connected = false;
 			this.isSessionRunning = false;
 			this.queue = new PriorityQueue<Message>(new MessageComparer());

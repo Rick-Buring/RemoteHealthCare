@@ -29,6 +29,8 @@ namespace VR_Project
 		private string cameraID;
 		private float[] oldPos;
 		public SendResistance ResistanceUpdater { get; set; }
+		private float requestedResistance = 50;
+		public float resistanceMultiplier { get; } = 5f;
 
 
 		public async Task<List<Data>> GetEngineData()
@@ -131,6 +133,11 @@ namespace VR_Project
 			Debug.WriteLine(cameraResponse.ToString());
 			return GetCameraID(cameraResponse);
 		}
+
+		public void RequestResistance(float resistance) {
+			this.requestedResistance = resistance;
+		}
+
 		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 			//Debug.WriteLine("From: ViewModel");
@@ -142,11 +149,16 @@ namespace VR_Project
 				await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
 				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				float r = await getHeightDependantResistance();
-				//ResistanceUpdater(r);
+				
+				ResistanceUpdater(CalculateResistance(r));
 				
 				this.running = false;
 			}
 
+		}
+
+		private float CalculateResistance (float heightResistance) {
+			return this.requestedResistance * heightResistance;
 		}
 
 		public async Task UpdateSpeed(double speed)
@@ -320,7 +332,7 @@ namespace VR_Project
 				angle = (float)Math.Tan(distance / Heightdifference);
 			}
 			Debug.WriteLine($"calculated height dif: {Heightdifference} with the distance of: {distance} makes the angle of: {angle}");
-			float resistance = (float)Math.Round(Math.Clamp(1 + angle/5, 0, 2), 2);
+			float resistance = (float)Math.Round(Math.Clamp(1 + angle/this.resistanceMultiplier, 0, 2), 2);
 			Debug.WriteLine($"resistance: {resistance}");
 			this.oldPos = position;
 			return resistance;

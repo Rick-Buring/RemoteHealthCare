@@ -15,8 +15,10 @@ namespace VR_Project
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public delegate void SendResistance(float resistance);
+        public delegate void RequestResistance (float resistance);
         public Update updater;
         public SendResistance resistanceUpdater;
+        public RequestResistance requestResistance;
 
 
         private VrManager vrManager;
@@ -39,7 +41,7 @@ namespace VR_Project
             this.ConnectToServer = new DelegateCommand(EngageConnection);
             this.Engines = new ObservableCollection<Data>();
             this.vrManager = new VrManager();
-            this.client = new ClientHandler(this.resistanceUpdater);
+            this.client = new ClientHandler();
             this.updater += this.vrManager.Update;
             this.updater += this.client.Update;
 
@@ -57,9 +59,10 @@ namespace VR_Project
         {
             this.serverConnectionThread = new Thread(client.StartConnection);
             this.serverConnectionThread.Start();
-            this.resistanceUpdater += this.equipment.ergometer.SendResistance;
-            this.client.resistanceUpdater = this.resistanceUpdater;
-            this.vrManager.ResistanceUpdater = this.resistanceUpdater;
+            //this.resistanceUpdater += this.equipment.ergometer.SendResistance;
+            this.requestResistance += this.vrManager.RequestResistance;
+            this.client.resistanceUpdater = this.requestResistance;
+            
         }
 
         public Data SelectClient { get; set; }
@@ -70,6 +73,8 @@ namespace VR_Project
                 return;
             await this.equipment.start();
             await this.vrManager.ConnectToTunnel(SelectClient.id);
+            this.resistanceUpdater += this.equipment.ergometer.SendResistance;
+            this.vrManager.ResistanceUpdater = this.resistanceUpdater;
         }
 
         public void Window_Closed(object sender, EventArgs e)
