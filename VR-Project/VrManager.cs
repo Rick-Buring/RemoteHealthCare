@@ -132,7 +132,7 @@ namespace VR_Project
 		{
 			//Debug.WriteLine("From: ViewModel");
 			//Debug.WriteLine($"{ergometer.GetErgometerData()}\n{heartBeatMonitor.GetHeartBeat()}");
-			Debug.WriteLine(ergometer.GetErgometerData().Cadence);
+			//Debug.WriteLine(ergometer.GetErgometerData().Cadence);
 			if (this.ready && !this.running)
 			{
 				this.running = true;
@@ -145,7 +145,7 @@ namespace VR_Project
 
 		public async Task UpdateSpeed(double speed)
 		{
-			Debug.WriteLine("updating speed");
+			//Debug.WriteLine("updating speed");
 			Route r = new Route();
 			Route.RouteObject rObject = r.UpdateFollowSpeed(this.bikeUuid, (float)speed);
 			await SendMessage(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, rObject));
@@ -190,7 +190,7 @@ namespace VR_Project
 
 
 				Panel panel = new Panel();
-				Debug.WriteLine("writing to panel");
+				//Debug.WriteLine("writing to panel");
 				panel.Clear(this.panelUuid);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				panel.drawText(this.panelUuid, "RPM : " + ergometerData.Cadence, new double[] { 10d, 40d }, fontSize, new int[] { 0, 0, 0, 1 }, font);

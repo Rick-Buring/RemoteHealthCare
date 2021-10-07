@@ -119,6 +119,7 @@ namespace Vr_Project.RemoteHealthcare
 
         public async override void SendResistance(float resistance)
         {
+            Debug.WriteLine("sending resistance");
             byte[] toSend = ResistanceMessage(resistance);
             int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
         }

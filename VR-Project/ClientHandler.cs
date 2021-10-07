@@ -17,7 +17,7 @@ namespace VR_Project
 	class ClientHandler
 	{
 		private Client client;
-		private ViewModel.SendResistance resistanceUpdater;
+		public ViewModel.SendResistance resistanceUpdater { get; set; }
 		private bool active;
 		private bool connected;
 
