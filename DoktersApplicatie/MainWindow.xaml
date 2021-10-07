@@ -16,7 +16,7 @@
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
-    
+
     <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
         <TabControl x:Name="TabControl" SelectedIndex="{Binding ActiveMainTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="593">
 
@@ -54,14 +54,39 @@
                     </TabControl.ItemTemplate>
                     <TabControl.ContentTemplate >
                         <DataTemplate>
-                            <TextBlock Text="{Binding Age}"/>
+                            <StackPanel Orientation="Vertical" >
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="ClientSessionButton" Content="Session Placeholder" Margin="5,0,0,0"/>
+                                    <Button x:Name="ClientEmergencyButton" Content="Emergency stop" Margin="5,0,0,0"/>
+                                    <TextBlock Text="Resistance: 0%" Margin="5,0,0,0"/>
+                                    <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Width="200" Margin="5,0,0,0" />
+                                    <Button x:Name="ResistanceButton" Content="Set Resistance" Margin="5,0,0,0"/>
+                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Accumulated Watt: " Margin="4,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Total Distance: " Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Session Time: " Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Current Resistance: " Margin="5,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+
                         </DataTemplate>
                     </TabControl.ContentTemplate>
                 </TabControl>
             </TabItem>
 
         </TabControl>
-            
+
         <Grid x:Name="ChatGrid" HorizontalAlignment="Right">
             <StackPanel x:Name="ChatStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ListView x:Name="ChatListView" MinHeight="397" ItemsSource="{Binding Messages}">
