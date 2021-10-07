@@ -10,6 +10,12 @@ namespace CommunicationObjects.DataObjects
     {
         public int res { get; set; }
         public bool emergencystop { get; set; }
-        public string sesionchange { get; set; }
+        public SessionType sesionchange { get; set; }
+    }
+
+    public enum SessionType
+    {
+        START,
+        STOP
     }
 }
