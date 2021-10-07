@@ -18,6 +18,7 @@ namespace DoktersApplicatie
         public DelegateCommand<object> cStartStopSession { get; private set; }
         public DelegateCommand<object> cEmergencyStop { get; private set; }
         public DelegateCommand<object> cSendMessage { get; private set; }
+        public DelegateCommand<object> cSetResistance { get; private set; }
 
         public ObservableCollection<Client> Clients { get; private set; }
         public ObservableCollection<Message> Messages { get; private set; }
@@ -35,6 +36,7 @@ namespace DoktersApplicatie
             cStartStopSession = new DelegateCommand<object>(StartStopSession, canSubmit);
             cEmergencyStop = new DelegateCommand<object>(EmergencyStop, canSubmit);
             cSendMessage = new DelegateCommand<object>(SendMessage, canSubmit);
+            cSetResistance = new DelegateCommand<object>(SetResistance, canSubmit);
         }
 
         public bool canSubmit(object parameter)
@@ -58,16 +60,26 @@ namespace DoktersApplicatie
             //Debug.WriteLine(ActiveMainTab + " : " + ActiveSecondaryTab);
         }
 
+        //TODO Send message to server
         public void StartStopSession(object parameter)
         {
             Debug.WriteLine("Started/Stopped session");
         }
 
+        //TODO Send message to server
         public void EmergencyStop(object parameter)
         {
             Debug.WriteLine("Emergency Stop");
         }
 
+        //TODO Send message to server
+        public void SetResistance(object ResistanceSlider)
+        {
+            Slider slider = (Slider)ResistanceSlider;
+            Debug.WriteLine("Set resistance to: " + slider.Value);
+        }
+
+        //TODO Send message to server
         public void SendMessage(object messageBox)
         {
             TextBox textbox = (TextBox)messageBox;

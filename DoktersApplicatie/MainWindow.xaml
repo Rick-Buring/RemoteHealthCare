@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoktersApplicatie"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         MinHeight="470"
         MinWidth="850"
@@ -56,11 +55,12 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical" >
                                 <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="ClientSessionButton" Content="Session Placeholder" Margin="5,0,0,0"/>
-                                    <Button x:Name="ClientEmergencyButton" Content="Emergency stop" Margin="5,0,0,0"/>
-                                    <TextBlock Text="Resistance: 0%" Margin="5,0,0,0"/>
-                                    <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Width="200" Margin="5,0,0,0" />
-                                    <Button x:Name="ResistanceButton" Content="Set Resistance" Margin="5,0,0,0"/>
+                                    <Button x:Name="ClientSessionButton" Command="{Binding DataContext.cStartStopSession, RelativeSource={RelativeSource AncestorType=TabControl}}" CommandParameter="{Binding ElementName=ClientsTabControl}" Content="Session Placeholder" Margin="5,0,0,0"/>
+                                    <Button x:Name="ClientEmergencyButton" Command="{Binding DataContext.cEmergencyStop, RelativeSource={RelativeSource AncestorType=TabControl}}" CommandParameter="{Binding ElementName=ClientsTabControl}" Content="Emergency stop" Margin="5,0,0,0"/>
+                                    <TextBlock Text="Resistance: " Margin="5,0,0,0"/>
+                                    <TextBlock Text="{Binding Resistance}"/>
+                                    <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding Resistance}" Width="200" Margin="5,0,0,0" />
+                                    <Button x:Name="ResistanceButton" Command="{Binding DataContext.cSetResistance, RelativeSource={RelativeSource AncestorType=TabControl}}" CommandParameter="{Binding ElementName=ResistanceSlider}" Content="Set Resistance" Margin="5,0,0,0"/>
                                 </StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -73,10 +73,10 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Accumulated Watt: " Margin="4,0,0,0"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Total Distance: " Margin="5,0,0,0"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Session Time: " Margin="5,0,0,0"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Current Resistance: " Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding AccWattText}" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DistanceText}" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding SessionTimeText}" Margin="5,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ResistanceText}" Margin="5,0,0,0"/>
                                 </Grid>
                             </StackPanel>
 
@@ -89,7 +89,7 @@
 
         <Grid x:Name="ChatGrid" HorizontalAlignment="Right">
             <StackPanel x:Name="ChatStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ListView x:Name="ChatListView" MinHeight="397" ItemsSource="{Binding Messages}">
+                <ListView x:Name="ChatListView" MinHeight="397" ItemsSource="{Binding Messages}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxHeight="397">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
