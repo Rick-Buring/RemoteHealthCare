@@ -58,6 +58,8 @@ namespace VR_Project
             this.serverConnectionThread = new Thread(client.StartConnection);
             this.serverConnectionThread.Start();
             this.resistanceUpdater += this.equipment.ergometer.SendResistance;
+            this.vrManager.ResistanceUpdater = this.resistanceUpdater;
+            
         }
 
         public Data SelectClient { get; set; }
