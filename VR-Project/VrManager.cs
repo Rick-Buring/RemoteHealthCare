@@ -217,7 +217,7 @@ namespace VR_Project
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				panel.drawText(this.panelUuid, "Wattage : " + ergometerData.InstantaneousPower, new double[] { 10d, 120d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
-				panel.drawText(this.panelUuid, "Speed (m/s) : " + ergometerData.InstantaneousSpeed, new double[] { 10d, 160d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+				panel.drawText(this.panelUuid, "Speed (km/h) : " + ergometerData.InstantaneousSpeed, new double[] { 10d, 160d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
 				panel.Swap(this.panelUuid);
 				await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
