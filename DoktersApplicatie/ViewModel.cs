@@ -14,16 +14,20 @@ namespace DoktersApplicatie
     class ViewModel : BindableBase, INotifyPropertyChanged
     {
 
-        public DelegateCommand<object> cMoreInfo { get; private set; }
-        public DelegateCommand<object> cStartStopSession { get; private set; }
-        public DelegateCommand<object> cEmergencyStop { get; private set; }
-        public DelegateCommand<object> cSendMessage { get; private set; }
-        public DelegateCommand<object> cSetResistance { get; private set; }
+        public DelegateCommand cStartStopSession { get; private set; }
+        public DelegateCommand cSoloEmergencyStop { get; private set; }
+        public DelegateCommand cGlobalEmergencyStop { get; private set; }
+        public DelegateCommand cSendMessage { get; private set; }
+        public DelegateCommand cSendAllMessage { get; private set; }
+        public DelegateCommand cSetResistance { get; private set; }
 
         public ObservableCollection<Client> Clients { get; private set; }
         public ObservableCollection<Message> Messages { get; private set; }
         public int ActiveSecondaryTab { get; set; }
         public int ActiveMainTab { get; set; }
+
+        public string TextToSend { get; set; }
+        public Client SelectedClient { get; set; }
 
         public ViewModel()
         {
@@ -32,65 +36,82 @@ namespace DoktersApplicatie
             this.Clients = data.clients;
             this.Messages = data.messages;
 
-            cMoreInfo = new DelegateCommand<object>(MoreInfo, canSubmit);
-            cStartStopSession = new DelegateCommand<object>(StartStopSession, canSubmit);
-            cEmergencyStop = new DelegateCommand<object>(EmergencyStop, canSubmit);
-            cSendMessage = new DelegateCommand<object>(SendMessage, canSubmit);
-            cSetResistance = new DelegateCommand<object>(SetResistance, canSubmit);
+            cStartStopSession = new DelegateCommand(StartStopSession);
+            cSoloEmergencyStop = new DelegateCommand(SoloEmergencyStop);
+            cGlobalEmergencyStop = new DelegateCommand(GlobalEmergencyStop);
+            cSendMessage = new DelegateCommand(SendSingleMessage);
+            cSendAllMessage = new DelegateCommand(SendAllMessage);
+            cSetResistance = new DelegateCommand(SetResistance);
+
+            SelectedClient = Clients[0];
+
         }
 
-        public bool canSubmit(object parameter)
-        {
-            return true;
-        }
-
-        public void MoreInfo(object name)
-        {
-            Debug.WriteLine(name);
-            ActiveMainTab = 1;
-
-            foreach (var client in Clients)
-            {
-                if (client.Name.Equals(name))
-                {
-                    ActiveSecondaryTab = Clients.IndexOf(client);
-                }
-            }
-
-            //Debug.WriteLine(ActiveMainTab + " : " + ActiveSecondaryTab);
-        }
+        //public bool canSubmit(object parameter)
+        //{
+        //    return true;
+        //}
 
         //TODO Send message to server
-        public void StartStopSession(object parameter)
+        public void StartStopSession()
         {
             Debug.WriteLine("Started/Stopped session");
         }
 
-        //TODO Send message to server
-        public void EmergencyStop(object parameter)
+        public void EmergencyStop(List<Client> emergencyClients)
         {
-            Debug.WriteLine("Emergency Stop");
-        }
 
-        //TODO Send message to server
-        public void SetResistance(object ResistanceSlider)
-        {
-            Slider slider = (Slider)ResistanceSlider;
-            Debug.WriteLine("Set resistance to: " + slider.Value);
-        }
-
-        //TODO Send message to server
-        public void SendMessage(object messageBox)
-        {
-            TextBox textbox = (TextBox)messageBox;
-
-            if(textbox.Text != "")
+            foreach (Client client in emergencyClients)
             {
-                Messages.Add(new Message { Sender = "Doctor", Text = textbox.Text });
-                textbox.Clear();
-                Debug.WriteLine(textbox.Text);
+                Debug.WriteLine($"Emergency Stopped {client.Name}.");
             }
-            
+
+        }
+
+        //TODO Send message to server
+        public void SoloEmergencyStop()
+        {
+            Debug.WriteLine("Solo Emergency Stop");
+            List<Client> EmergencyList = new List<Client>();
+            EmergencyList.Add(SelectedClient);
+            EmergencyStop(EmergencyList);
+        }
+
+        public void GlobalEmergencyStop()
+        {
+            Debug.WriteLine("Global Emergency Stop");
+            List<Client> EmergencyList = new List<Client>(Clients);
+            EmergencyStop(EmergencyList);
+        }
+
+        //TODO Send message to server
+        public void SetResistance()
+        {
+            Debug.WriteLine("Set resistance to: " + SelectedClient.Resistance);
+        }
+
+        //TODO Send message to server
+        public void SendMessage(string text ,string receiver)
+        {
+
+            if(!String.IsNullOrEmpty(text))
+            {
+                Messages.Add(new Message { Sender = "Doctor", Text = text, Receiver = receiver });
+                Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
+
+                TextToSend = "";
+            }
+
+        }
+
+        private void SendSingleMessage()
+        {
+            SendMessage(TextToSend, SelectedClient.Name);
+        }
+
+        public void SendAllMessage()
+        {
+            SendMessage(TextToSend, "All");
         }
 
     }
