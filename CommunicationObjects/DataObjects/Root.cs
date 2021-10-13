@@ -8,9 +8,9 @@ namespace CommunicationObjects.DataObjects
 {
     public class Root
     {
-        public string type { get; set; }
-        public string sender { get; set; }
-        public string target { get; set; }
-        public Object data { get; set; }
+        public string Type { get; set; }
+        public string Sender { get; set; }
+        public string Target { get; set; }
+        public Object Data { get; set; }
     }
 }

@@ -58,6 +58,7 @@ namespace VR_Project.ViewModels
             Mediator.Notify("Connected");
         }
 
+
         private bool notValid()
         {
             return IPAddress.Length > 0 && PortNumber.Length > 0;

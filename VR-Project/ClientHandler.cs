@@ -29,7 +29,7 @@ namespace VR_Project
 		public ViewModel.RequestResistance resistanceUpdater { get; set; }
 
 		private PriorityQueue<Message> queue;
-        public void StartConnection()
+        public async void StartConnection()
         {
             this.client = new TcpClient("localhost", 5005);
 
@@ -42,15 +42,27 @@ namespace VR_Project
             stream.AuthenticateAsClient(ReadWrite.certificateName);
             
             this.rw = new ReadWrite(stream);
-            Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
+            
+			this.resistanceUpdater = ViewModel.requestResistance;
+			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+			Parse(await this.rw.Read());
 
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-        }
-        private bool active;
+			if (this.active) {
+				Run();
+			} else {
+
+			}
+
+		}
+        
         private async void Run()
         {
             this.active = true;
-            while (active)
+			
+			//await this.rw.Read();
+			//this.isSessionRunning = true;
+			while (active)
             {
                 try
                 {
@@ -76,11 +88,21 @@ namespace VR_Project
 		{
 			Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-			Type type = Type.GetType(root.type);
+			Type type = Type.GetType(root.Type);
 
 			if (type == typeof(Setting))
 			{
-				Setting data = (root.data as JObject).ToObject<Setting>();
+				Setting data = (root.Data as JObject).ToObject<Setting>();
+
+				//TODO notify vrclient dat de session start of stopt 
+				if (data.sesionchange == SessionType.START)
+				{
+					this.isSessionRunning = true;
+				}
+				else if (data.sesionchange == SessionType.STOP)
+				{
+					this.isSessionRunning = false;
+				}
 
 				if (data.emergencystop){
 					this.resistanceUpdater(0);
@@ -101,28 +123,20 @@ namespace VR_Project
 					
 					
 				}
-
-				//TODO notify vrclient dat de session start of stopt 
-				if (data.sesionchange == SessionType.START) {
-					this.isSessionRunning = true;
-				} else if (data.sesionchange == SessionType.STOP){
-					this.isSessionRunning = false;
-				}
-				
-
         
 			}
 			else if (type == typeof(Chat))
 			{
-				Chat data = (root.data as JObject).ToObject<Chat>();
+				Chat data = (root.Data as JObject).ToObject<Chat>();
 				string message = data.message;
             }
 			else if (type == typeof(Acknowledge))
 			{
-				Acknowledge ack = (root.data as JObject).ToObject<Acknowledge>();
+				Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
 				Type ackType = Type.GetType(ack.subtype);
                 if (ackType == typeof(Connection))
 				{
+					this.isSessionRunning = !this.isSessionRunning;
 					this.connected = !this.connected;
 					if (!this.connected) {
 						this.active = false;
@@ -145,8 +159,8 @@ namespace VR_Project
 				ErgometerData data = ergometer.GetErgometerData();
 				Root healthData = new Root()
 				{
-					type = typeof(HealthData).FullName,
-					data = new HealthData()
+					Type = typeof(HealthData).FullName,
+					Data = new HealthData()
 					{
 						RPM = data.Cadence,
 						AccWatt = data.AccumulatedPower,
@@ -156,8 +170,8 @@ namespace VR_Project
 						ElapsedTime = data.ElapsedTime,
 						DistanceTraveled = data.DistanceTraveled
 					},
-					sender = "Henk",
-					target = "Hank"
+					Sender = "Henk",
+					Target = "Hank"
 				};
             }
         }
@@ -167,7 +181,7 @@ namespace VR_Project
             if (this.rw != null)
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-                { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
+                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "Henk", Target = "server" })));
                 this.rw.terminate();
             }
         }
