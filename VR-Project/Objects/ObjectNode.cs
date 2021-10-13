@@ -33,7 +33,7 @@ namespace VR_Project{
 
                 this.components = new Components
                 {
-                    transform = new Transform(position, 1, new double[3] { Math.PI * 2.0, 0, 0 }),
+                    transform = new Transform(position, 1, new double[3] { 0, 0, 0 }),
                     model = new Model(file)
                 };
             }

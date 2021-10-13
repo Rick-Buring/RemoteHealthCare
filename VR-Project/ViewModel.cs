@@ -21,6 +21,10 @@ namespace VR_Project
         public delegate void SendResistance(float resistance);
         public static Update updater;
         public static SendResistance resistanceUpdater;
+        public delegate void RequestResistance (float resistance);
+        public Update updater;
+        public SendResistance resistanceUpdater;
+        public RequestResistance requestResistance;
 
         private VrManager vrManager;
         private EquipmentMain equipment;
@@ -94,6 +98,14 @@ namespace VR_Project
             Mediator.Subscribe("Connected", OnGoToConnected);
 
             OnGoToLoginBikeVR();
+        //private async void engageEngine()
+        //{
+            //if (SelectClient == null)
+                //return;
+            //await this.equipment.start();
+            //await this.vrManager.ConnectToTunnel(SelectClient.id);
+            //this.resistanceUpdater += this.equipment.ergometer.SendResistance;
+            //this.vrManager.ResistanceUpdater = this.resistanceUpdater;
         }
 
         public void Window_Closed(object sender, EventArgs e)

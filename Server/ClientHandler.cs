@@ -50,7 +50,7 @@ namespace Server
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
-            if (jsonObject.Type == typeof(Connection).FullName &&
+            if (jsonObject.type == typeof(Connection).FullName &&
                 (jsonObject.data as JObject).ToObject<Connection>().connect)
             {
                 name = jsonObject.sender;
@@ -84,7 +84,15 @@ namespace Server
         private async void Run()
         {
             this.Name = await getName();
-
+            send(new Root
+            {
+                type = typeof(Acknowledge).FullName,
+                sender = "server",
+                target = this.Name,
+                data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+            });
+            //send acknowledgement
+            send(new Root { type = typeof(Setting).FullName, sender = "server", target = this.Name, data = new Setting { emergencystop = false, res = 50 } });
             this.active = true;
             while (active)
             {
@@ -110,7 +118,9 @@ namespace Server
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-            Type type = Type.GetType(root.Type);
+            Type type = Type.GetType(root.type);
+
+            bool errorFound = false;
 
             if (type == typeof(HealthData))
             {
@@ -125,13 +135,13 @@ namespace Server
             {
                 if (!(root.data as JObject).ToObject<Connection>().connect)
                 {
-                    string sender = root.sender;
-                    root.target = root.sender;
-                    root.sender = sender;
-
-                    send(root);
-
+                    this.server.SendAcknowledge(root, 200, "terminating connection");
                     this.disconnect();
+                }
+                else
+                {
+                    this.server.SendAcknowledge(root, 403, "already connected");
+                    errorFound = true;
                 }
             }
             else if (type == typeof(History))
@@ -146,11 +156,32 @@ namespace Server
 
                 root.data = data;
             }
+            else if (type == typeof(Setting))
+            {
+                Setting data = (root.data as JObject).ToObject<Setting>();
+                if ((data.res > 100 || data.res < 0) && !data.emergencystop)
+                {
+                    this.server.SendAcknowledge(root, 412, "invalid resistance value");
+                    errorFound = true;
+                }
+            }
+            else if (type == typeof(Chat))
+            {
+                if (root.sender == root.target)
+                {
+                    this.server.SendAcknowledge(root, 409, "sender can't be target");
+                    errorFound = true;
+                }
 
-            this.server.send(root);
+                Chat data = (root.data as JObject).ToObject<Chat>();
+                if (data.message == "" && !errorFound)
+                {
+                    this.server.SendAcknowledge(root, 412, "empty messages are not allowed");
+                    errorFound = true;
+                }
+            }
+
+            if (this.active && !errorFound) this.server.send(root);
         }
-
-
     }
-
 }

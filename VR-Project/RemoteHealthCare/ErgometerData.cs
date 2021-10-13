@@ -15,7 +15,13 @@ namespace Vr_Project.RemoteHealthcare
 
         //0x10 data page variables
         public int ElapsedTime { get; set; }
+        private int timeRollovers = 0;
+        private int oldTime = 0;
+        private readonly int rolloverTime = 64;
         public int DistanceTraveled { get; set; }
+        private int distanceRollovers = 0;
+        private int oldDistance = 0;
+        private readonly int rolloverDistance = 256;
         public double InstantaneousSpeed { get; set; }
 
         //updates de variabelen
@@ -66,12 +72,22 @@ namespace Vr_Project.RemoteHealthcare
         private void decodeGeneralData(byte[] data)
         {
             //this.equipmentType = data[5];
-            this.ElapsedTime = data[6];
-            this.DistanceTraveled = data[7];
+            int newTime = data[6] / 4;
+            if (newTime < this.oldTime) this.timeRollovers++;
+            this.oldTime = newTime;
+            this.ElapsedTime = this.timeRollovers * this.rolloverTime + newTime;
+
+            int newDistance = data[7];
+            if (newDistance < this.oldDistance) this.distanceRollovers++;
+            this.oldDistance = newDistance;
+            this.DistanceTraveled = this.distanceRollovers * this.rolloverDistance + newDistance;
+
 
             int speedLSB = data[8];
             int speedMSB = data[9];
-            this.InstantaneousSpeed = (speedMSB << 8 | speedLSB) / 1000.0;
+            //TODO fix calculation
+            this.InstantaneousSpeed = (((speedMSB << 8) | speedLSB) / 1000) / 3.6;
+
 
             //this.capabilities = data[10] & 0x0f;
             //this.FEState = data[10] >> 4;

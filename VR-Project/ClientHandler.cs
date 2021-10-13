@@ -1,13 +1,20 @@
 ﻿using CommunicationObjects;
 using CommunicationObjects.DataObjects;
+using CommunicationObjects.util;
+using DataStructures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Media;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
@@ -16,7 +23,12 @@ namespace VR_Project
     {
         private ReadWrite rw;
         private TcpClient client;
+		private bool active;
+		private bool connected;
+		private bool isSessionRunning;
+		public ViewModel.RequestResistance resistanceUpdater { get; set; }
 
+		private PriorityQueue<Message> queue;
         public void StartConnection()
         {
             this.client = new TcpClient("localhost", 5005);
@@ -50,59 +62,105 @@ namespace VR_Project
                 {
                     Console.WriteLine(e);
                     //todo disconnect client
+                    this.active = false;
 
                 }
             }
         }
+		private SoundPlayer soundPlayer = new SoundPlayer(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "mixkit-alert-alarm-1005.wav"));
+		private void StopSound (Object source, ElapsedEventArgs e) {
+			soundPlayer.Stop();
+		}
 
-        private void Parse(string toParse)
-        {
-            Root root = JsonConvert.DeserializeObject<Root>(toParse);
+		private void Parse(string toParse)
+		{
+			Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-            Type type = Type.GetType(root.Type);
+			Type type = Type.GetType(root.type);
 
-            if (type == typeof(Setting))
-            {
-                Setting data = (root.data as JObject).ToObject<Setting>();
-                float targetResistance = data.res;
-                if (ViewModel.resistanceUpdater != null)
-                    ViewModel.resistanceUpdater(targetResistance);
+			if (type == typeof(Setting))
+			{
+				Setting data = (root.data as JObject).ToObject<Setting>();
 
+				if (data.emergencystop){
+					this.resistanceUpdater(0);
+					new Thread(async () => {
+						soundPlayer.Load();
+						soundPlayer.PlayLooping();
+						
+						System.Timers.Timer timer = new System.Timers.Timer(5000);
+						timer.Elapsed += StopSound;
+						timer.AutoReset = false;
+						timer.Enabled = true;
+						timer.Start();
+					}).Start();
+					//TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
+				} else {
+					float targetResistance = data.res;
+					this.resistanceUpdater(targetResistance);
+					
+					
+				}
+
+				//TODO notify vrclient dat de session start of stopt 
+				if (data.sesionchange == SessionType.START) {
+					this.isSessionRunning = true;
+				} else if (data.sesionchange == SessionType.STOP){
+					this.isSessionRunning = false;
+				}
+				
+
+        
+			}
+			else if (type == typeof(Chat))
+			{
+				Chat data = (root.data as JObject).ToObject<Chat>();
+				string message = data.message;
             }
-            else if (type == typeof(Chat))
-            {
-                Chat data = (root.data as JObject).ToObject<Chat>();
-                string message = data.message;
+			else if (type == typeof(Acknowledge))
+			{
+				Acknowledge ack = (root.data as JObject).ToObject<Acknowledge>();
+				Type ackType = Type.GetType(ack.subtype);
+                if (ackType == typeof(Connection))
+				{
+					this.connected = !this.connected;
+					if (!this.connected) {
+						this.active = false;
+					}
+				}
+                
+            }
+        
 
+			
+		}
+
+		private bool isLocked = false;
+		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+		{
+			
+			if (this.client != null && this.isSessionRunning && !this.isLocked)
+			{
+				this.isLocked = true;
+				ErgometerData data = ergometer.GetErgometerData();
+				Root healthData = new Root()
+				{
+					type = typeof(HealthData).FullName,
+					data = new HealthData()
+					{
+						RPM = data.Cadence,
+						AccWatt = data.AccumulatedPower,
+						CurWatt = data.InstantaneousPower,
+						Speed = data.InstantaneousSpeed,
+						Heartbeat = heartBeatMonitor.GetHeartBeat(),
+						ElapsedTime = data.ElapsedTime,
+						DistanceTraveled = data.DistanceTraveled
+					},
+					sender = "Henk",
+					target = "Hank"
+				};
             }
         }
-
-        public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        {
-
-            if (this.client != null && this.rw != null)
-            {
-
-                Root healthData = new Root()
-                {
-                    Type = typeof(HealthData).FullName,
-                    data = new HealthData()
-                    {
-                        RPM = ergometer.GetErgometerData().Cadence,
-                        AccWatt = ergometer.GetErgometerData().AccumulatedPower,
-                        CurWatt = ergometer.GetErgometerData().InstantaneousPower,
-                        Speed = ergometer.GetErgometerData().InstantaneousSpeed,
-                        Heartbeat = heartBeatMonitor.GetHeartBeat()
-                    },
-                    sender = "Henk",
-                    target = "Hank"
-                };
-
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
-            }
-
-        }
-
         public void Stop()
         {
             //TODO nullpointer afhandelen.
@@ -114,5 +172,7 @@ namespace VR_Project
             }
         }
 
-    }
+
+
+	}
 }
