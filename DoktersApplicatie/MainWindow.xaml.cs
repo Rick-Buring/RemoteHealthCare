@@ -29,6 +29,10 @@ namespace DoktersApplicatie
             DataContext = viewModel;
         }
 
+        private void ClientsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 
 }

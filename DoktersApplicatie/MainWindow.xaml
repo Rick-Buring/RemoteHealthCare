@@ -46,7 +46,7 @@
                 </ListView>
             </TabItem>
             <TabItem x:Name="ClientPanel" Header="Clients">
-                <TabControl x:Name="ClientsTabControl" ItemsSource="{Binding Clients}" SelectedIndex="{Binding ActiveSecondaryTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TabControl x:Name="ClientsTabControl" ItemsSource="{Binding Clients}" SelectedIndex="{Binding ActiveSecondaryTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="ClientsTabControl_SelectionChanged">
                     <TabControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
@@ -77,22 +77,23 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <lvc:CartesianChart  Height="200" Width="250">
+                                    <lvc:CartesianChart Height="200" Width="250" AnimationsSpeed="0:0:0.5">
                                         <lvc:CartesianChart.Series>
-                                            <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"></lvc:LineSeries>
+                                            <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
                                         </lvc:CartesianChart.Series>
                                         <lvc:CartesianChart.AxisX>
-                                 <lvc:Axis MinValue="0">
+                                            <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" Unit="{Binding AxisUnit}" LabelFormatter="{Binding Formatter}">
+                                                <lvc:Axis.Separator>
+                                                <lvc:Separator Step="10"/>
+                                                </lvc:Axis.Separator>
+                                            </lvc:Axis>
+                                        </lvc:CartesianChart.AxisX>
 
-                                 </lvc:Axis>
-                                </lvc:CartesianChart.AxisX>
+                                        <lvc:CartesianChart.AxisY>
+                                            <lvc:Axis Title="Watt" MinValue="0" MaxValue="800"/>
+                                        </lvc:CartesianChart.AxisY>
+                                    </lvc:CartesianChart>
 
-            <lvc:CartesianChart.AxisY>
-                <lvc:Axis MinValue="0">
-                </lvc:Axis>
-            </lvc:CartesianChart.AxisY>
-                                </lvc:CartesianChart>
-                                        
                                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Accumulated Watt: " Margin="4,0,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="Total Distance: " Margin="5,0,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Session Time: " Margin="5,0,0,0"/>
