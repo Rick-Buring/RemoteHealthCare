@@ -16,7 +16,9 @@ namespace VR_Project.ViewModels
 
         public DelegateCommand SelectEngine { get; }
 
-        
+        public bool SimulationChecked { get; set; }
+
+
         private VrManager vr;
         private Thread vrThread;
         private EquipmentMain eq;
@@ -45,7 +47,7 @@ namespace VR_Project.ViewModels
             if (SelectClient == null)
                 return;
             
-            this.equipmentThread = new Thread(async () => await this.eq.start());
+            this.equipmentThread = new Thread(async () => await this.eq.start(this.SimulationChecked));
             this.vrThread = new Thread(async () => await vr.ConnectToTunnel(SelectClient.id));
             this.equipmentThread.Start();
             this.vrThread.Start();

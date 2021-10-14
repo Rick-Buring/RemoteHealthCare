@@ -173,6 +173,8 @@ namespace VR_Project
 					Sender = "Henk",
 					Target = "Hank"
 				};
+				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+				this.isLocked = false;
             }
         }
         public void Stop()
