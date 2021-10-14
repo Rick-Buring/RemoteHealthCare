@@ -136,17 +136,21 @@
                         <lvc:Axis Title="Watt" MinValue="0" MaxValue="800"/>
                     </lvc:CartesianChart.AxisY>
                 </lvc:CartesianChart>
-                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Accumulated Watt:" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedClient.AccWatt}" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Distance:" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding SelectedClient.Distance}" Margin="5,0,0,0"/>
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Accumulated Watt:" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding SelectedClient.AccWatt}" Margin="5,0,0,0"/>
                 </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Session time:" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedClient.SessionTime}" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Resistance:" Margin="5,0,0,0"/>
-                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding SelectedClient.Resistance}" Margin="5,0,0,0"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Distance:" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding SelectedClient.Distance}" Margin="5,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Session time:" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding SelectedClient.SessionTime}" Margin="5,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <TextBlock Text="Resistance:" Margin="5,0,0,0"/>
+                    <TextBlock Text="{Binding SelectedClient.Resistance}" Margin="5,0,0,0"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
