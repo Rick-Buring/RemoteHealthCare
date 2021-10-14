@@ -20,14 +20,15 @@ namespace DoktersApplicatie
         public DelegateCommand cSendMessage { get; private set; }
         public DelegateCommand cSendAllMessage { get; private set; }
         public DelegateCommand cSetResistance { get; private set; }
+        public DelegateCommand cOpenHistory { get; private set; }
 
         public ObservableCollection<Client> Clients { get; private set; }
         public ObservableCollection<Message> Messages { get; private set; }
-        public int ActiveSecondaryTab { get; set; }
-        public int ActiveMainTab { get; set; }
 
         public string TextToSend { get; set; }
+        public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
+        public int TempResistance { get; set; }
 
         public ViewModel()
         {
@@ -42,8 +43,11 @@ namespace DoktersApplicatie
             cSendMessage = new DelegateCommand(SendSingleMessage);
             cSendAllMessage = new DelegateCommand(SendAllMessage);
             cSetResistance = new DelegateCommand(SetResistance);
+            cOpenHistory = new DelegateCommand(OpenHistory);
 
             SelectedClient = Clients[0];
+            SessionButtonText = "Start Session";
+            TempResistance = 50;
 
         }
 
@@ -55,9 +59,17 @@ namespace DoktersApplicatie
         //TODO Send message to server
         public void StartStopSession()
         {
+            if(SessionButtonText.Equals("Start Session"))
+            {
+                SessionButtonText = "Stop Session";
+            } else
+            {
+                SessionButtonText = "Start Session";
+            }
             Debug.WriteLine("Started/Stopped session");
         }
 
+        //TODO Send message to server
         public void EmergencyStop(List<Client> emergencyClients)
         {
 
@@ -68,7 +80,6 @@ namespace DoktersApplicatie
 
         }
 
-        //TODO Send message to server
         public void SoloEmergencyStop()
         {
             Debug.WriteLine("Solo Emergency Stop");
@@ -112,6 +123,16 @@ namespace DoktersApplicatie
         public void SendAllMessage()
         {
             SendMessage(TextToSend, "All");
+        }
+
+        public void OpenHistory()
+        {
+
+            HistoryVM historyVM = new HistoryVM();
+            var window = new HistoryWindow();
+
+            window.DataContext = historyVM;
+            window.Show();
         }
 
     }
