@@ -21,9 +21,7 @@ namespace VR_Project
         public delegate void SendResistance(float resistance);
         public static Update updater;
         public static SendResistance resistanceUpdater;
-        public delegate void RequestResistance (float resistance);
-       
-        public static RequestResistance requestResistance;
+        
 
         private VrManager vrManager;
         private EquipmentMain equipment;

@@ -58,6 +58,7 @@ namespace Server
         }
 
         public async void AddClient(ClientHandler client) {
+        if (!this.clients.ContainsKey(client.Name))
             this.clients.Add(client.Name , client);
 		}
 
@@ -105,7 +106,7 @@ namespace Server
                 ClientHandler client = null;
                 clients.TryGetValue(target, out client);
                 if (client != null) {
-                    clients[target].send(message);
+                    client.send(message);
                 } else {
                     Console.WriteLine("Could not find client");
 				}

@@ -99,7 +99,7 @@ namespace Server
             });
             //send acknowledgement
             //Temporary doctor command
-            send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
+            //send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
             this.active = true;
             while (active)
             {

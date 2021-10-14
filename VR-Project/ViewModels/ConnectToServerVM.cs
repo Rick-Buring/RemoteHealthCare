@@ -16,11 +16,15 @@ namespace VR_Project.ViewModels
         private EquipmentMain eq;
         public DelegateCommand ConnectToServer { get; }
 
+        public delegate void RequestResistance(float resistance);
+        public static RequestResistance requestResistance;
+
         public ConnectToServerVM(ClientHandler client, EquipmentMain equipment)
         {
             this.Client = client;
             this.eq = equipment;
             this.ConnectToServer = new DelegateCommand(EngageConnection);
+            requestResistance += this.eq.ergometer.SendResistance;
         }
 
         public string PortNumber { get; set; } = "5005";

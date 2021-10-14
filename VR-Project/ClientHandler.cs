@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Vr_Project.RemoteHealthcare;
+using VR_Project.ViewModels;
 
 namespace VR_Project
 {
@@ -28,9 +29,10 @@ namespace VR_Project
 		private bool active;
 		private bool connected;
 		private bool isSessionRunning;
-		public ViewModel.RequestResistance resistanceUpdater { get; set; }
+		public ConnectToServerVM.RequestResistance resistanceUpdater { get; set; }
+		
 
-        public string PatientName { get; set; } = "Patient Name";
+		public string PatientName { get; set; } = "Patient Name";
 		
 		private PriorityQueue<Message> queue;
         public async void StartConnection(string ip, int port)
@@ -49,8 +51,8 @@ namespace VR_Project
             
             this.rw = new ReadWrite(stream);
             
-			this.resistanceUpdater = ViewModel.requestResistance;
-			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+			this.resistanceUpdater = ConnectToServerVM.requestResistance;
+			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "henk", Target = "server" };
 			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
 			Parse(await this.rw.Read());
 
@@ -144,9 +146,8 @@ namespace VR_Project
 				{
 					this.isSessionRunning = !this.isSessionRunning;
 					this.connected = !this.connected;
-					if (!this.connected) {
-						this.active = false;
-					}
+					this.active = !this.active;
+					
 				}
                 
             }
@@ -176,8 +177,8 @@ namespace VR_Project
 						ElapsedTime = data.ElapsedTime,
 						DistanceTraveled = data.DistanceTraveled
 					},
-					Sender = "Henk",
-					Target = "Hank"
+					Sender = "henk",
+					Target = "hank"
 				};
 				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
 				this.isLocked = false;
@@ -189,7 +190,7 @@ namespace VR_Project
             if (this.rw != null)
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "Henk", Target = "server" })));
+                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "henk", Target = "server" })));
                 this.rw.terminate();
             }
         }
