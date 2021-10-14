@@ -85,8 +85,7 @@ namespace Vr_Project.RemoteHealthcare
 
             int speedLSB = data[8];
             int speedMSB = data[9];
-            //TODO fix calculation
-            this.InstantaneousSpeed = (((speedMSB << 8) | speedLSB) / 1000) / 3.6;
+            this.InstantaneousSpeed = ((speedMSB << 8 | speedLSB) / 1000.0 ) / 3.6;
 
 
             //this.capabilities = data[10] & 0x0f;
@@ -102,7 +101,7 @@ namespace Vr_Project.RemoteHealthcare
             builder.Append("\nInt power: " + InstantaneousPower);
             builder.Append("\nElapsed time (s): " + this.ElapsedTime / 4);
             builder.Append("\nDistance traveled: " + this.DistanceTraveled);
-            builder.Append("\nSpeed (m/s): " + this.InstantaneousSpeed);
+            builder.Append("\nSpeed (km/h): " + this.InstantaneousSpeed);
            
 
             return builder.ToString();

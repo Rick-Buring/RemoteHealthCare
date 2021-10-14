@@ -13,9 +13,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTest", "ServerTest\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRClientTest", "VRClientTest\VRClientTest.csproj", "{27B76235-AF55-45C9-9C5C-3F6E6A93D740}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoktersApplicatie", "DoktersApplicatie\DoktersApplicatie.csproj", "{055815A7-1527-4AFC-B026-69B858EAB39C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CommunicationObjects\CommunicationObjects.projitems*{0e41145c-afd4-4f2f-ac7b-122ca07a7ec9}*SharedItemsImports = 5
+		CommunicationObjects\CommunicationObjects.projitems*{055815a7-1527-4afc-b026-69b858eab39c}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{7745af08-f623-47d7-9fad-99da95d59c84}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{8ef3f2b6-f14d-42f2-ac72-79cfed410c9f}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{8f1b13f2-fb29-4486-baa9-8e1ea1636d6a}*SharedItemsImports = 13
@@ -41,6 +44,10 @@ Global
 		{27B76235-AF55-45C9-9C5C-3F6E6A93D740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27B76235-AF55-45C9-9C5C-3F6E6A93D740}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27B76235-AF55-45C9-9C5C-3F6E6A93D740}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055815A7-1527-4AFC-B026-69B858EAB39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055815A7-1527-4AFC-B026-69B858EAB39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055815A7-1527-4AFC-B026-69B858EAB39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055815A7-1527-4AFC-B026-69B858EAB39C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
