@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DoktersApplicatie"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         MinHeight="470"
         MinWidth="850"
@@ -69,11 +71,71 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <lvc:CartesianChart Grid.Row="0" Grid.Column="0" DataContext="{Binding SelectedClient.BpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="10"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="bpm" MinValue="0" MaxValue="220"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+                <lvc:CartesianChart Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedClient.RpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="10"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="rpm" MinValue="0" MaxValue="200"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+                <lvc:CartesianChart Grid.Row="1" Grid.Column="0" DataContext="{Binding SelectedClient.KmhChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="10"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="km/h" MinValue="0" MaxValue="60"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+                <lvc:CartesianChart Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedClient.WattChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="10"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Watt" MinValue="0" MaxValue="800"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Accumulated Watt:" Margin="5,0,0,0"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedClient.AccWatt}" Margin="5,0,0,0"/>
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="Distance:" Margin="5,0,0,0"/>

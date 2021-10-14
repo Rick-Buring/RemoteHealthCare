@@ -1,6 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
 
 namespace DoktersApplicatie
 {
@@ -9,6 +16,9 @@ namespace DoktersApplicatie
 
         public ObservableCollection<Client> clients { get; set; }
         public ObservableCollection<Message> messages { get; set; }
+
+        public Func<double, string> Formatter { get; set; }
+        public SeriesCollection Series { get; set; }
 
         public Data()
         {
@@ -23,6 +33,8 @@ namespace DoktersApplicatie
 
     }
 
+
+
     public class Client
     {
         public string Name { get; set; }
@@ -34,7 +46,82 @@ namespace DoktersApplicatie
         public int AccWatt { get; set; }
         public int SessionTime { get; set; }
         public int Resistance { get; set; }
+
+        public ValueTimeChart WattChart { get; set; } = new ValueTimeChart();
+        public ValueTimeChart BpmChart { get; set; } = new ValueTimeChart();
+        public ValueTimeChart RpmChart { get; set; } = new ValueTimeChart();
+        public ValueTimeChart KmhChart { get; set; } = new ValueTimeChart();
+
+
+        public class ValueTimeChart : INotifyPropertyChanged
+        {
+            public Func<double, string> Formatter { get; set; }
+            public ChartValues<ValueTime> Values { get; set; }
+            public DateTime time { get; set; } = DateTime.Now;
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            public double MinValue { get; set; }
+            public double MaxValue { get; set; }
+
+
+            public ValueTimeChart()
+            {
+                var dayConfig = new CartesianMapper<ValueTime>()
+                .X(dayModel => dayModel.SecondsSinceStart)
+                .Y(dayModel => dayModel.Value);
+
+                this.MaxValue = 30.00;
+                this.Values = new ChartValues<ValueTime>();
+                Charting.For<ValueTime>(dayConfig);
+
+                Random random = new Random();
+
+                new Thread(async () =>
+                {
+                    while (true)
+                    {
+                        ValueTime dayModel = new ValueTime(random.NextDouble() * 400, time);
+                        add(dayModel);
+
+                        await Task.Delay(500);
+                    }
+                }).Start();
+
+                Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
+
+            }
+
+            public void add(ValueTime valueTime)
+            {
+                if (valueTime.SecondsSinceStart > 30)
+                {
+                    this.MinValue = valueTime.SecondsSinceStart - 30;
+                    this.MaxValue = valueTime.SecondsSinceStart;
+                }
+                if (Values.Count > 65) Values.RemoveAt(0);
+
+                this.Values.Add(valueTime);
+
+            }
+
+            public class ValueTime
+            {
+                public double SecondsSinceStart { get; set; }
+                public double Value { get; set; }
+
+                public ValueTime(double value, DateTime startTime)
+                {
+                    SecondsSinceStart = ((double)DateTime.Now.Ticks - startTime.Ticks) / TimeSpan.TicksPerSecond;
+                    Debug.WriteLine(SecondsSinceStart);
+                    Value = value;
+                }
+            }
+        }
     }
+
+
+
 
     public class Message
     {
