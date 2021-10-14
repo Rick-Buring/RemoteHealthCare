@@ -7,19 +7,19 @@
         mc:Ignorable="d"
         >
     <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="{Binding Client.PatientName}" />
-            <Grid Grid.Row="1" Margin="10, 10, 5, 10">
-                <Border BorderBrush="Black" BorderThickness="1">
+
+        <Label Grid.Row="0" Content="{Binding Client.PatientName}" />
+        <Grid Grid.Row="1" Margin="10, 10, 5, 10">
+            <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Heardbeat: " />
@@ -50,26 +50,11 @@
                         <Label Content="{Binding Equipment.ergometer.ergometerData.ElapsedTime}" />
                     </StackPanel>
                 </StackPanel>
-                </Border>
-            </Grid>
-            <Button Content="Disconnect" Grid.Row="2"/>
-        </Grid>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <Border BorderBrush="Black" BorderThickness="1" Margin="5, 10, 10, 10">
-            <TextBlock Grid.Row="0"></TextBlock>
             </Border>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="Message" />
-                <Button Grid.Column="1" Content="Send"/>
-            </Grid>
         </Grid>
+        <Button Content="Disconnect" Grid.Row="2" Grid.ColumnSpan="2"/>
+        <Border Grid.Column="1" Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5, 10, 10, 10">
+            <TextBlock Grid.Row="0" Text=""></TextBlock>
+        </Border>
     </Grid>
 </UserControl>

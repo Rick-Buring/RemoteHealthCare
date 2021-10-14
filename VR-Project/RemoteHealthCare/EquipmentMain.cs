@@ -21,20 +21,20 @@ namespace Vr_Project.RemoteHealthcare
         {
             dataIO = new DataIO();
             if (!simulationChecked)
-                ergometer = new Ergometer(bikeName, this, dataIO);
+                Ergometer = new Ergometer(bikeName, this, dataIO);
             else
-                ergometer = new ErgoSimulator(this);
-            ViewModel.resistanceUpdater += ergometer.SendResistance;
+                Ergometer = new ErgoSimulator(this);
+            ViewModel.resistanceUpdater += Ergometer.SendResistance;
             //ergometer = new ErgoSimulator(this);
 
             //this.gui = new GUI();
            
-            await ergometer.Connect();
+            await Ergometer.Connect();
 
 
             //heartBeatMonitor = new HeartBeatMonitor(this, dataIO);
-            heartBeatMonitor = new HBSimulator(this);
-            await heartBeatMonitor.Connect();
+            HeartBeatMonitor = new HBSimulator(this);
+            await HeartBeatMonitor.Connect();
 
 
             Console.Read();
@@ -46,18 +46,18 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="data">Data in de vorm van IData.</param>
         public void notify(IData data)
         {
-            if (heartBeatMonitor != null)
+            if (HeartBeatMonitor != null)
             {
                 //Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
-                ViewModel.updater.Invoke(ergometer, heartBeatMonitor);
+                ViewModel.updater.Invoke(Ergometer, HeartBeatMonitor);
             }
 
         }
 
         public void Dispose()
         {
-            if (ergometer != null)
-                ergometer.Dispose();
+            if (Ergometer != null)
+                Ergometer.Dispose();
 
         }
     }

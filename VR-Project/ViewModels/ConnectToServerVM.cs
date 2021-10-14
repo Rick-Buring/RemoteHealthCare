@@ -30,7 +30,7 @@ namespace VR_Project.ViewModels
         {
             this.serverConnectionThread = new Thread(() => Client.StartConnection(this.IPAddress, Int32.Parse(this.PortNumber)));
             this.serverConnectionThread.Start();
-            ViewModel.resistanceUpdater += this.eq.ergometer.SendResistance;
+            ViewModel.resistanceUpdater += this.eq.Ergometer.SendResistance;
             Mediator.Notify("Connected");
         }
 
