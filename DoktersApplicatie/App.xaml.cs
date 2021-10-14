@@ -8,10 +8,19 @@ using System.Windows;
 
 namespace DoktersApplicatie
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+
+        private ViewModel viewModel;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            viewModel = new ViewModel();
+            var window = new MainWindow();
+
+            window.DataContext = viewModel;
+            window.Show();
+        }
+
     }
 }
