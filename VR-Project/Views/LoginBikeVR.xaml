@@ -9,15 +9,9 @@
         <StackPanel Visibility="{Binding EngineSelect}" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Vertical" Margin="10">
-                        <StackPanel Orientation="Horizontal" Margin="10">
-                            <Label Content="Name:" Width="100"/>
-                            <TextBox Width="100" Text="{Binding PatientName}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="10">
+                    <StackPanel Orientation="Horizontal" Margin="10">
                             <Label Content="Bike Name:" Width="100"/>
                             <TextBox Text="{Binding BikeName}" Width="100"/>
-                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel  Margin="10">

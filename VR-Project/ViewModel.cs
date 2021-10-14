@@ -5,6 +5,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -14,9 +15,8 @@ using VR_Project.ViewModels;
 
 namespace VR_Project
 {
-    public class ViewModel : BindableBase
+    public class ViewModel : BindableBase, INotifyPropertyChanged
     {
-
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public delegate void SendResistance(float resistance);
         public static Update updater;
@@ -29,21 +29,21 @@ namespace VR_Project
         private EquipmentMain equipment;
         private ClientHandler client;
 
-        private BindableBase _currentPageViewModel;
-        private List<BindableBase> _pageViewModels;
+        private IDisposable _currentPageViewModel;
+        private List<IDisposable> _pageViewModels;
 
-        public List<BindableBase> PageViewModels
+        public List<IDisposable> PageViewModels
         {
             get
             {
                 if (_pageViewModels == null)
-                    _pageViewModels = new List<BindableBase>();
+                    _pageViewModels = new List<IDisposable>();
 
                 return _pageViewModels;
             }
         }
 
-        public BindableBase CurrentPageViewModel
+        public IDisposable CurrentPageViewModel
         {
             get
             {
@@ -56,7 +56,7 @@ namespace VR_Project
             }
         }
 
-        private void ChangeViewModel(BindableBase viewModel)
+        private void ChangeViewModel(IDisposable viewModel)
         {
             if (!PageViewModels.Contains(viewModel))
                 PageViewModels.Add(viewModel);
@@ -76,12 +76,10 @@ namespace VR_Project
         {
             ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(LoginBikeVRVM).FullName));
         }
-
         public ViewModel()
         {
             this.vrManager = new VrManager();
             this.client = new ClientHandler();
-
             this.equipment = new EquipmentMain();
 
             updater += this.vrManager.Update;
@@ -97,13 +95,17 @@ namespace VR_Project
             Mediator.Subscribe("Connected", OnGoToConnected);
 
             OnGoToLoginBikeVR();
-        
+            //OnGoToConnected();
         }
 
         public void Window_Closed(object sender, EventArgs e)
         {
 
             client.Stop();
+            for (int i = 0; i < PageViewModels.Count; i++)
+            {
+                PageViewModels[i].Dispose();
+            }
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();

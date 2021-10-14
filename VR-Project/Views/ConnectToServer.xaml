@@ -8,14 +8,20 @@
     <Grid>
         <StackPanel Visibility="{Binding ServerSelect}" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border BorderBrush="Black" BorderThickness="1">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Width="100" Content="IP Address:"/>
-                        <TextBox Width="100" Text="{Binding IPAddress}"/>
+
+                <StackPanel Orientation="Vertical" Margin="20">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                        <Label Content="Name:" Width="100"/>
+                        <TextBox Width="100" Text="{Binding Client.PatientName}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Label Width="100" Content="Port nummer:"/>
-                        <TextBox Width="100" Text="{Binding PortNummer}"/>
+                        <Label Width="100" Content="IP Address:"/>
+                        <TextBox Width="100" Text="{Binding IPAddress}" Margin="0,0,5,0"/>
+
+                        <Label Width="100" Content="Port nummer:" Margin="5,0,0,0"/>
+                        <TextBox Width="100" Text="{Binding PortNumber}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                     </StackPanel>
 
                 </StackPanel>

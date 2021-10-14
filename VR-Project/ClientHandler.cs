@@ -4,8 +4,10 @@ using CommunicationObjects.util;
 using DataStructures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
@@ -19,7 +21,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    class ClientHandler
+    class ClientHandler : BindableBase, INotifyPropertyChanged
     {
         private ReadWrite rw;
         private TcpClient client;
@@ -28,10 +30,14 @@ namespace VR_Project
 		private bool isSessionRunning;
 		public ViewModel.RequestResistance resistanceUpdater { get; set; }
 
+        public string PatientName { get; set; } = "Patient Name";
+		
 		private PriorityQueue<Message> queue;
-        public async void StartConnection()
+        public async void StartConnection(string ip, int port)
         {
-            this.client = new TcpClient("localhost", 5005);
+            if (this.client != null)
+                throw new ArgumentException("The Client is already connected dispose this first");
+            this.client = new TcpClient(ip, port);
 
             SslStream stream = new SslStream(
                 this.client.GetStream(),
