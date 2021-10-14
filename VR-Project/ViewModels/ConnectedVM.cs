@@ -1,12 +1,13 @@
 ﻿using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class ConnectedVM : BindableBase, IDisposable
+    class ConnectedVM : BindableBase, IDisposable, INotifyPropertyChanged
     {
         public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
         {
@@ -19,9 +20,10 @@ namespace VR_Project.ViewModels
         public VrManager VrManager { get; }
         public EquipmentMain Equipment { get; }
 
+
+
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
     }
 }

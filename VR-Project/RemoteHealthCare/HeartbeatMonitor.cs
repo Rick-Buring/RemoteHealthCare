@@ -11,7 +11,7 @@ namespace Vr_Project.RemoteHealthcare
     public class HeartBeatMonitor : Sensor, IDisposable
     {
         private BLE bleHeart;
-        protected HeartBeatData heartBeatData;
+        public HeartBeatData heartBeatData { get; private set; }
         private IDataListener[] listeners;
 
         public HeartBeatMonitor(params IDataListener[] listener)

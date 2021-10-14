@@ -1,12 +1,14 @@
 ﻿using Avans.TI.BLE;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public abstract class Sensor
+    public abstract class Sensor : BindableBase, INotifyPropertyChanged
     {
         /// <summary>
         /// Deze methode zal worden gebruikt om te verbinden met een sensor.

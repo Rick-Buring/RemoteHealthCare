@@ -13,19 +13,44 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TabControl>
-                <TabItem Header="Name" >
-                    <Label>heartbeat: 145</Label>
-                </TabItem>
-                <TabItem Header="VR Engine">
-
-                    <Label>Status: Connected</Label>
-                </TabItem>
-            </TabControl>
-            <Button Content="Disconnect" Grid.Row="1"/>
+            <Label Grid.Row="0" Content="{Binding Client.PatientName}" />
+            <Grid Grid.Row="1">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Heardbeat: " />
+                        <Label Content="{Binding Equipment.HeartBeatMonitor.HeartBeatData.HeartRate}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Accumulated watt: " />
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.AccumulatedPower}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Current watt: " />
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.InstantaneousPower}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="RPM: " />
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.Cadence}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Speed: " />
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.InstantaneousSpeed}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Distance"/>
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.DistanceTraveled}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Time: "/>
+                        <Label Content="{Binding Equipment.ergometer.ergometerData.ElapsedTime}" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Button Content="Disconnect" Grid.Row="2"/>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

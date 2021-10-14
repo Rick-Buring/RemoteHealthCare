@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,12 +9,12 @@ using VR_Project;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class EquipmentMain : IDataListener, System.IDisposable
+    public class EquipmentMain : BindableBase, INotifyPropertyChanged, IDataListener, System.IDisposable
     {
         private DataIO dataIO;
 
         public Ergometer ergometer { get; private set; }
-        private HeartBeatMonitor heartBeatMonitor;
+        public HeartBeatMonitor heartBeatMonitor { get; private set; }
 
         // starts the application
         public async Task start(string bikeName, bool simulationChecked)

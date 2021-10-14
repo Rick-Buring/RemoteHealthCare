@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class ErgometerData : IData
+    public class ErgometerData : BindableBase, INotifyPropertyChanged, IData
     {
         //0x19 data page variables
         public int ID { get; set; }

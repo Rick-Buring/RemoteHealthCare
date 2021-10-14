@@ -14,7 +14,7 @@ namespace Vr_Project.RemoteHealthcare
 
         private IDataListener[] listeners;
         private BLE bleBike;
-        protected ErgometerData ergometerData;
+        public ErgometerData ergometerData { get; private set; }
         private bool connected;
 
         /// <summary>

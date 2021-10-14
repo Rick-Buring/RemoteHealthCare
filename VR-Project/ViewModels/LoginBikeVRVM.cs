@@ -64,7 +64,7 @@ namespace VR_Project.ViewModels
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+
         }
 
     }
