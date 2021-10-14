@@ -21,12 +21,15 @@ namespace Server
         private Server server;
         private bool active;
 
-        /// <summary>
-        /// Handles connecting clients
-        /// </summary>
-        /// <param name="tcpClient">The connecting client</param>
-        /// <param name="server">The server the client is connecting too</param>
-        public ClientHandler(TcpClient tcpClient, Server server)
+        private Server.AddToList addToList;
+        private Server.RemoveFromList removeFromList;
+
+		/// <summary>
+		/// Handles connecting clients
+		/// </summary>
+		/// <param name="tcpClient">The connecting client</param>
+		/// <param name="server">The server the client is connecting too</param>
+		public ClientHandler(TcpClient tcpClient, Server server, Server.AddToList add, Server.RemoveFromList remove)
         {
             this.Client = tcpClient;
 
@@ -34,7 +37,8 @@ namespace Server
             stream.AuthenticateAsServer(server.Certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
             this.rw = new ReadWrite(stream);
             this.server = server;
-
+            this.addToList = add;
+            this.removeFromList = remove;
             
 
             new Thread(Run).Start();
@@ -54,6 +58,8 @@ namespace Server
                 (jsonObject.Data as JObject).ToObject<Connection>().connect)
             {
                 name = jsonObject.Sender;
+                Name = name;
+                this.addToList(this);
             }
             else
             {
