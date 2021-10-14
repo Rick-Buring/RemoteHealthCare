@@ -74,7 +74,7 @@ namespace DoktersApplicatie
 
                 this.MaxValue = 30.00;
                 this.Values = new ChartValues<ValueTime>();
-                LiveCharts.Charting.For<ValueTime>(dayConfig);
+                Charting.For<ValueTime>(dayConfig);
 
                 Random random = new Random();
 
@@ -89,7 +89,6 @@ namespace DoktersApplicatie
                     }
                 }).Start();
 
-
                 Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
 
             }
@@ -101,14 +100,11 @@ namespace DoktersApplicatie
                     this.MinValue = valueTime.SecondsSinceStart - 30;
                     this.MaxValue = valueTime.SecondsSinceStart;
                 }
-                if (Values.Count > 100) Values.RemoveAt(0);
+                if (Values.Count > 65) Values.RemoveAt(0);
 
                 this.Values.Add(valueTime);
 
             }
-
-
-
 
             public class ValueTime
             {
@@ -122,11 +118,7 @@ namespace DoktersApplicatie
                     Value = value;
                 }
             }
-
-
-
         }
-
     }
 
 
