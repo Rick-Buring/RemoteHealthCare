@@ -9,39 +9,18 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class Client : IDisposable
+    public class ReadWrite
     {
-        private const string certificateName = "testCertificaat";
+        public const string certificateName = "testCertificaat";
 
 
         // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
         private SslStream stream;
 
-        public Client(SslStream stream)
+        public ReadWrite(SslStream stream)
         {
             this.stream = stream;
         }
-
-        //private TcpClient client;
-        //private SslStream stream;
-        //public Client(TcpClient client)
-        //{
-        //    this.client = client;
-        //    this.stream = new SslStream(
-        //        this.client.GetStream(),
-        //        false,
-        //        new RemoteCertificateValidationCallback(ValidateServerCertificate),
-        //        null
-        //    );
-        //    stream.AuthenticateAsClient(certificateName);
-        //}
-
-        //public Client(TcpClient client, X509Certificate certificate)
-        //{
-        //    this.client = client;
-        //    this.stream = new SslStream(client.GetStream(), false);
-        //    stream.AuthenticateAsServer(certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
-        //}
 
         public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
@@ -107,11 +86,13 @@ namespace CommunicationObjects
         }
 
 
-        
-		public void Dispose ()
-		{
+        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
+        public void terminate()
+        {
             this.stream.Close();
             this.stream.Dispose();
         }
-	}
+
+       
+    }
 }

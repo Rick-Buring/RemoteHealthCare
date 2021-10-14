@@ -2,8 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VR_Project"
-             >
+             xmlns:views="clr-namespace:VR_Project.Views"
+             xmlns:viewModels="clr-namespace:VR_Project.ViewModels">
     <Application.Resources>
-         
+    <DataTemplate DataType="{x:Type viewModels:ConnectedVM}">
+        <views:Connected/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:ConnectToServerVM}">
+        <views:ConnectToServer/>
+    </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:LoginBikeVRVM}">
+            <views:LoginBikeVR/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

@@ -6,9 +6,16 @@
     <RootNamespace>VR_Project</RootNamespace>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
+    <ItemGroup>
+<Compile Remove="viewModel\**" />
+    <EmbeddedResource Remove="viewModel\**" />
+    <None Remove="viewModel\**" />
+    <Page Remove="viewModel\**" />
+  </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
@@ -16,6 +23,10 @@
     <Reference Include="BLELibrary">
       <HintPath>..\RemoteHealthCare\lib\BLELibrary.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <Import Project="..\CommunicationObjects\CommunicationObjects.projitems" Label="Shared" />

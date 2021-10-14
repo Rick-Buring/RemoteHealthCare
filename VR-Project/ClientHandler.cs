@@ -1,12 +1,19 @@
 ﻿using CommunicationObjects;
 using CommunicationObjects.DataObjects;
+using CommunicationObjects.util;
+using DataStructures;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
+using System.IO;
+using System.Media;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Vr_Project.RemoteHealthcare;
 
@@ -14,51 +21,174 @@ namespace VR_Project
 {
     class ClientHandler
     {
-        private Client client;
+        private ReadWrite rw;
+        private TcpClient client;
+		private bool active;
+		private bool connected;
+		private bool isSessionRunning;
+		public ViewModel.RequestResistance resistanceUpdater { get; set; }
 
-        public void StartConnection()
+		private PriorityQueue<Message> queue;
+        public async void StartConnection()
         {
+            this.client = new TcpClient("localhost", 5005);
 
-            this.client = new Client(new TcpClient("localhost", 5005));
-            HealthData data = new HealthData() { AccWatt = 100, CurWatt = 50, Heartbeat = 120, RPM = 95, Speed = 5.02 };
-            Root connectRoot = new Root() { Type = typeof(Connection).FullName, data = new Connection() { connect = true }, sender = "Henk", target = "server" };
+            SslStream stream = new SslStream(
+                this.client.GetStream(),
+                false,
+                new RemoteCertificateValidationCallback(ReadWrite.ValidateServerCertificate),
+                null
+            );
+            stream.AuthenticateAsClient(ReadWrite.certificateName);
+            
+            this.rw = new ReadWrite(stream);
+            
+			this.resistanceUpdater = ViewModel.requestResistance;
+			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+			Parse(await this.rw.Read());
 
-            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-      
-        }
+			if (this.active) {
+				Run();
+			} else {
 
-        public void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+			}
+
+		}
+        
+        private async void Run()
         {
-
-            if (this.client != null)
+            this.active = true;
+			
+			//await this.rw.Read();
+			//this.isSessionRunning = true;
+			while (active)
             {
-
-                Root healthData = new Root()
+                try
                 {
-                    Type = typeof(HealthData).FullName,
-                    data = new HealthData()
-                    {
-                        RPM = ergometer.GetErgometerData().Cadence,
-                        AccWatt = ergometer.GetErgometerData().AccumulatedPower,
-                        CurWatt = ergometer.GetErgometerData().InstantaneousPower,
-                        Speed = ergometer.GetErgometerData().InstantaneousSpeed,
-                        Heartbeat = heartBeatMonitor.GetHeartBeat()
-                    },
-                    sender = "Henk",
-                    target = "Hank"
-                };
+                    string result = await rw.Read();
+                    Console.WriteLine(result);
+                    Parse(result);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    //todo disconnect client
+                    this.active = false;
 
-                this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                }
             }
-
         }
+		private SoundPlayer soundPlayer = new SoundPlayer(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "mixkit-alert-alarm-1005.wav"));
+		private void StopSound (Object source, ElapsedEventArgs e) {
+			soundPlayer.Stop();
+		}
 
+		private void Parse(string toParse)
+		{
+			Root root = JsonConvert.DeserializeObject<Root>(toParse);
+
+			Type type = Type.GetType(root.Type);
+
+			if (type == typeof(Setting))
+			{
+				Setting data = (root.Data as JObject).ToObject<Setting>();
+
+				//TODO notify vrclient dat de session start of stopt 
+				if (data.sesionchange == SessionType.START)
+				{
+					this.isSessionRunning = true;
+				}
+				else if (data.sesionchange == SessionType.STOP)
+				{
+					this.isSessionRunning = false;
+				}
+
+				if (data.emergencystop){
+					this.resistanceUpdater(0);
+					new Thread(async () => {
+						soundPlayer.Load();
+						soundPlayer.PlayLooping();
+						
+						System.Timers.Timer timer = new System.Timers.Timer(5000);
+						timer.Elapsed += StopSound;
+						timer.AutoReset = false;
+						timer.Enabled = true;
+						timer.Start();
+					}).Start();
+					//TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
+				} else {
+					float targetResistance = data.res;
+					this.resistanceUpdater(targetResistance);
+					
+					
+				}
+        
+			}
+			else if (type == typeof(Chat))
+			{
+				Chat data = (root.Data as JObject).ToObject<Chat>();
+				string message = data.message;
+            }
+			else if (type == typeof(Acknowledge))
+			{
+				Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
+				Type ackType = Type.GetType(ack.subtype);
+                if (ackType == typeof(Connection))
+				{
+					this.isSessionRunning = !this.isSessionRunning;
+					this.connected = !this.connected;
+					if (!this.connected) {
+						this.active = false;
+					}
+				}
+                
+            }
+        
+
+			
+		}
+
+		private bool isLocked = false;
+		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+		{
+			
+			if (this.client != null && this.isSessionRunning && !this.isLocked)
+			{
+				this.isLocked = true;
+				ErgometerData data = ergometer.GetErgometerData();
+				Root healthData = new Root()
+				{
+					Type = typeof(HealthData).FullName,
+					Data = new HealthData()
+					{
+						RPM = data.Cadence,
+						AccWatt = data.AccumulatedPower,
+						CurWatt = data.InstantaneousPower,
+						Speed = data.InstantaneousSpeed,
+						Heartbeat = heartBeatMonitor.GetHeartBeat(),
+						ElapsedTime = data.ElapsedTime,
+						DistanceTraveled = data.DistanceTraveled
+					},
+					Sender = "Henk",
+					Target = "Hank"
+				};
+				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+				this.isLocked = false;
+            }
+        }
         public void Stop()
         {
-            this.client.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-            { Type = typeof(Connection).FullName, data = new Connection() { connect = false }, sender = "Henk", target = "server" })));
-            this.client.terminate();
+            //TODO nullpointer afhandelen.
+            if (this.rw != null)
+            {
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
+                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "Henk", Target = "server" })));
+                this.rw.terminate();
+            }
         }
 
-    }
+
+
+	}
 }
