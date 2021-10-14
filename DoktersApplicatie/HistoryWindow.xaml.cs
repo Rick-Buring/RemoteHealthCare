@@ -24,7 +24,7 @@ namespace DoktersApplicatie
             var chart = (LiveCharts.Wpf.CartesianChart) sender;
             HistoryData.HistoryValueTimeChart currentChart = (HistoryData.HistoryValueTimeChart) chart.DataContext;
 
-            currentChart.onMouseWheelScroll(e);
+            currentChart.OnMouseWheelScroll(e);
         }
 
         private void UIElement_OnDragOver(object sender, DragEventArgs e)

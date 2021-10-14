@@ -78,7 +78,7 @@ namespace DoktersApplicatie
                     Debug.WriteLine(p);
                 }
 
-                public void onMouseWheelScroll(MouseWheelEventArgs e)
+                public void OnMouseWheelScroll(MouseWheelEventArgs e)
                 {
                     Debug.WriteLine(e.Delta);
                     this.MaxValue -= e.Delta / 5.00;
