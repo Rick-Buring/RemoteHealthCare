@@ -21,18 +21,18 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    class ClientHandler : BindableBase, INotifyPropertyChanged
+    public class ClientHandler : BindableBase, INotifyPropertyChanged
     {
         private ReadWrite rw;
         private TcpClient client;
-		private bool active;
-		private bool connected;
-		private bool isSessionRunning;
-		public ViewModel.RequestResistance resistanceUpdater { get; set; }
+        private bool active;
+        private bool connected;
+        private bool isSessionRunning;
+        public ViewModel.RequestResistance resistanceUpdater { get; set; }
 
         public string PatientName { get; set; } = "Patient Name";
-		
-		private PriorityQueue<Message> queue;
+
+        private PriorityQueue<CommunicationObjects.util.Message> queue;
         public async void StartConnection(string ip, int port)
         {
             if (this.client != null)
@@ -46,29 +46,32 @@ namespace VR_Project
                 null
             );
             stream.AuthenticateAsClient(ReadWrite.certificateName);
-            
+
             this.rw = new ReadWrite(stream);
-            
-			this.resistanceUpdater = ViewModel.requestResistance;
-			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-			Parse(await this.rw.Read());
 
-			if (this.active) {
-				Run();
-			} else {
+            this.resistanceUpdater = ViewModel.requestResistance;
+            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            Parse(await this.rw.Read());
 
-			}
+            if (this.active)
+            {
+                Run();
+            }
+            else
+            {
 
-		}
-        
+            }
+
+        }
+
         private async void Run()
         {
             this.active = true;
-			
-			//await this.rw.Read();
-			//this.isSessionRunning = true;
-			while (active)
+
+            //await this.rw.Read();
+            //this.isSessionRunning = true;
+            while (active)
             {
                 try
                 {
@@ -85,102 +88,109 @@ namespace VR_Project
                 }
             }
         }
-		private SoundPlayer soundPlayer = new SoundPlayer(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "mixkit-alert-alarm-1005.wav"));
-		private void StopSound (Object source, ElapsedEventArgs e) {
-			soundPlayer.Stop();
-		}
+        private SoundPlayer soundPlayer = new SoundPlayer(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, "mixkit-alert-alarm-1005.wav"));
+        private void StopSound(Object source, ElapsedEventArgs e)
+        {
+            soundPlayer.Stop();
+        }
 
-		private void Parse(string toParse)
-		{
-			Root root = JsonConvert.DeserializeObject<Root>(toParse);
+        private void Parse(string toParse)
+        {
+            Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-			Type type = Type.GetType(root.Type);
+            Type type = Type.GetType(root.Type);
 
-			if (type == typeof(Setting))
-			{
-				Setting data = (root.Data as JObject).ToObject<Setting>();
+            if (type == typeof(Setting))
+            {
+                Setting data = (root.Data as JObject).ToObject<Setting>();
 
-				//TODO notify vrclient dat de session start of stopt 
-				if (data.sesionchange == SessionType.START)
-				{
-					this.isSessionRunning = true;
-				}
-				else if (data.sesionchange == SessionType.STOP)
-				{
-					this.isSessionRunning = false;
-				}
+                //TODO notify vrclient dat de session start of stopt 
+                if (data.sesionchange == SessionType.START)
+                {
+                    this.isSessionRunning = true;
+                }
+                else if (data.sesionchange == SessionType.STOP)
+                {
+                    this.isSessionRunning = false;
+                }
 
-				if (data.emergencystop){
-					this.resistanceUpdater(0);
-					new Thread(async () => {
-						soundPlayer.Load();
-						soundPlayer.PlayLooping();
-						
-						System.Timers.Timer timer = new System.Timers.Timer(5000);
-						timer.Elapsed += StopSound;
-						timer.AutoReset = false;
-						timer.Enabled = true;
-						timer.Start();
-					}).Start();
-					//TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
-				} else {
-					float targetResistance = data.res;
-					this.resistanceUpdater(targetResistance);
-					
-					
-				}
-        
-			}
-			else if (type == typeof(Chat))
-			{
-				Chat data = (root.Data as JObject).ToObject<Chat>();
-				string message = data.message;
+                if (data.emergencystop)
+                {
+                    this.resistanceUpdater(0);
+                    new Thread(async () =>
+                    {
+                        soundPlayer.Load();
+                        soundPlayer.PlayLooping();
+
+                        System.Timers.Timer timer = new System.Timers.Timer(5000);
+                        timer.Elapsed += StopSound;
+                        timer.AutoReset = false;
+                        timer.Enabled = true;
+                        timer.Start();
+                    }).Start();
+                    //TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
+                }
+                else
+                {
+                    float targetResistance = data.res;
+                    this.resistanceUpdater(targetResistance);
+
+
+                }
+
             }
-			else if (type == typeof(Acknowledge))
-			{
-				Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
-				Type ackType = Type.GetType(ack.subtype);
+            else if (type == typeof(Chat))
+            {
+                Chat data = (root.Data as JObject).ToObject<Chat>();
+                string message = data.message;
+                ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
+            }
+            else if (type == typeof(Acknowledge))
+            {
+                Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
+                Type ackType = Type.GetType(ack.subtype);
                 if (ackType == typeof(Connection))
-				{
-					this.isSessionRunning = !this.isSessionRunning;
-					this.connected = !this.connected;
-					if (!this.connected) {
-						this.active = false;
-					}
-				}
-                
+                {
+                    this.isSessionRunning = !this.isSessionRunning;
+                    this.connected = !this.connected;
+                    if (!this.connected)
+                    {
+                        this.active = false;
+                    }
+                }
+
             }
-        
 
-			
-		}
 
-		private bool isLocked = false;
-		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-		{
-			
-			if (this.client != null && this.isSessionRunning && !this.isLocked)
-			{
-				this.isLocked = true;
-				ErgometerData data = ergometer.GetErgometerData();
-				Root healthData = new Root()
-				{
-					Type = typeof(HealthData).FullName,
-					Data = new HealthData()
-					{
-						RPM = data.Cadence,
-						AccWatt = data.AccumulatedPower,
-						CurWatt = data.InstantaneousPower,
-						Speed = data.InstantaneousSpeed,
-						Heartbeat = heartBeatMonitor.GetHeartBeat(),
-						ElapsedTime = data.ElapsedTime,
-						DistanceTraveled = data.DistanceTraveled
-					},
-					Sender = "Henk",
-					Target = "Hank"
-				};
-				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
-				this.isLocked = false;
+
+        }
+
+        private bool isLocked = false;
+        public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+        {
+
+            if (this.client != null && this.isSessionRunning && !this.isLocked)
+            {
+                this.isLocked = true;
+                ErgometerData data = ergometer.GetErgometerData();
+                Root healthData = new Root()
+                {
+                    Type = typeof(HealthData).FullName,
+                    Data = new HealthData()
+                    {
+                        RPM = data.Cadence,
+                        AccWatt = data.AccumulatedPower,
+                        CurWatt = data.InstantaneousPower,
+                        Speed = data.InstantaneousSpeed,
+                        Heartbeat = heartBeatMonitor.GetHeartBeat(),
+                        ElapsedTime = data.ElapsedTime,
+                        DistanceTraveled = data.DistanceTraveled
+                    },
+                    Sender = "Henk",
+                    Target = "Hank"
+                };
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                this.isLocked = false;
             }
         }
         public void Stop()
@@ -196,5 +206,5 @@ namespace VR_Project
 
 
 
-	}
+    }
 }

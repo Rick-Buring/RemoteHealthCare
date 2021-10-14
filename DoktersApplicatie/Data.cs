@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunicationObjects.DataObjects;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -119,15 +120,4 @@ namespace DoktersApplicatie
             }
         }
     }
-
-
-
-
-    public class Message
-    {
-        public string Sender { get; set; }
-        public string Receiver { get; set; }
-        public string Text { get; set; }
-    }
-
 }
