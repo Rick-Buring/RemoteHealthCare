@@ -30,7 +30,7 @@ namespace VR_Project
 		private float[] oldPos;
 		
 		private float requestedResistance = 50;
-		public float resistanceMultiplier { get; } = 5f;
+		public float resistanceMultiplier { get; } = 200f;
 
 
 		public async Task<List<Data>> GetEngineData()
@@ -338,10 +338,10 @@ namespace VR_Project
 			float angle = 0;
 			if (distance != 0 || Heightdifference != 0)
 			{
-				angle = (float)Math.Tan(distance / Heightdifference);
+				angle = (float)((Math.PI / 180) * Math.Atan(Heightdifference / distance));
 			}
-			Debug.WriteLine($"calculated height dif: {Heightdifference} with the distance of: {distance} makes the angle of: {angle}");
-			float resistance = (float)Math.Round(Math.Clamp(1 + angle/this.resistanceMultiplier, 0, 2), 2);
+			Debug.WriteLine($"calculated height dif: {Heightdifference} \nwith the distance of: {distance} \nmakes the angle of: {angle}");
+			float resistance = (float)Math.Round(Math.Clamp(1 + angle * this.resistanceMultiplier, 0, 2), 2);
 			Debug.WriteLine($"resistance: {resistance}");
 			this.oldPos = position;
 			return resistance;
