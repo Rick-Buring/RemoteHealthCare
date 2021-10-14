@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Threading;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
@@ -15,10 +16,12 @@ namespace VR_Project.ViewModels
         public delegate void addMessageDelegate(Message m);
         public static addMessageDelegate AddMessage;
 
-        public DelegateCommand DisconnectCommand{ get; set; }
+        public DelegateCommand DisconnectCommand { get; set; }
         public ObservableCollection<Message> Messages { get; private set; }
+        private Dispatcher dispatcher;
         public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
         {
+            this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Messages = new ObservableCollection<Message>();
             this.DisconnectCommand = new DelegateCommand(Disconnect);
             AddMessage = addMessage;
@@ -39,7 +42,7 @@ namespace VR_Project.ViewModels
 
         public void addMessage(Message m)
         {
-            this.Messages.Add(m);
+            this.dispatcher.Invoke(() => this.Messages.Add(m));
         }
 
         public void Dispose() { }
