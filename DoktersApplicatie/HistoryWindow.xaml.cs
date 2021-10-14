@@ -18,5 +18,22 @@ namespace DoktersApplicatie
         {
             InitializeComponent();
         }
+
+        private void UIElement_OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var chart = (LiveCharts.Wpf.CartesianChart) sender;
+            HistoryData.HistoryValueTimeChart currentChart = (HistoryData.HistoryValueTimeChart) chart.DataContext;
+
+            currentChart.onMouseWheelScroll(e);
+        }
+
+        private void UIElement_OnDragOver(object sender, DragEventArgs e)
+        {
+            var chart = (LiveCharts.Wpf.CartesianChart) sender;
+            HistoryData.HistoryValueTimeChart currentChart = (HistoryData.HistoryValueTimeChart) chart.DataContext;
+
+            currentChart.OnDragOver(e.GetPosition(chart), e);
+            
+        }
     }
 }

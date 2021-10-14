@@ -26,6 +26,8 @@ namespace DoktersApplicatie
         public ObservableCollection<Client> Clients { get; private set; }
         public ObservableCollection<Message> Messages { get; private set; }
 
+       
+
         public string TextToSend { get; set; }
         public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
@@ -37,6 +39,8 @@ namespace DoktersApplicatie
 
             this.Clients = data.clients;
             this.Messages = data.messages;
+
+           
 
             cStartStopSession = new DelegateCommand(StartStopSession);
             cSoloEmergencyStop = new DelegateCommand(SoloEmergencyStop);

@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoktersApplicatie"
+        xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" d:DataContext="{d:DesignInstance Type=local:HistoryVM}"
         mc:Ignorable="d"
         Title="Client History"
         Height="450"
         Width="800"
         ResizeMode="CanMinimize">
+
+
     <StackPanel>
         <TextBlock Text="{Binding SelectedClient.Name}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
         <StackPanel Orientation="Horizontal">
@@ -28,7 +31,23 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <wpf:CartesianChart MouseWheel="UIElement_OnMouseWheel" PreviewDragEnter="UIElement_OnDragOver" DataContext="{Binding HistoryData.HistoryChart}"  Grid.Row="0" Grid.Column="1"  Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From , Mode=TwoWay}" MaxValue="{Binding To , Mode=TwoWay}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="10"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="rpm" MinValue="{Binding MinValue , Mode=TwoWay}" MaxValue="{Binding MaxValue , Mode=TwoWay}">
+
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
         </Grid>
     </StackPanel>
-
 </Window>
