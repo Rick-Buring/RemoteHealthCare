@@ -5,6 +5,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -14,9 +15,8 @@ using VR_Project.ViewModels;
 
 namespace VR_Project
 {
-    public class ViewModel : BindableBase
+    public class ViewModel : BindableBase, INotifyPropertyChanged
     {
-
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public delegate void SendResistance(float resistance);
         public static Update updater;
@@ -91,8 +91,8 @@ namespace VR_Project
             Mediator.Subscribe("LoginBikeVR", OnGoToLoginBikeVR);
             Mediator.Subscribe("Connected", OnGoToConnected);
 
-            //OnGoToLoginBikeVR();
-            OnGoToConnected();
+            OnGoToLoginBikeVR();
+            //OnGoToConnected();
         }
 
         public void Window_Closed(object sender, EventArgs e)

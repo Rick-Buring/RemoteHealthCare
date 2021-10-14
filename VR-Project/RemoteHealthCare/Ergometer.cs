@@ -21,10 +21,10 @@ namespace Vr_Project.RemoteHealthcare
         /// </summary>
         /// <param name="name">de naam van de fiets waarmee word verbonden</param>
         /// <param name="listener"> een lijst met classes die genotificeert willen worden op nieuwe data</param>
-        public Ergometer(string name, params IDataListener[] listener)
+        public Ergometer(string bikeName, params IDataListener[] listener)
         {
+            this.Name = bikeName;
             this.ergometerData = new ErgometerData();
-            this.Name = name;
             this.bleBike = new BLE();
             this.listeners = listener;
 

@@ -3,17 +3,19 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class LoginBikeVRVM : BindableBase, IDisposable
+    class LoginBikeVRVM : BindableBase, IDisposable, INotifyPropertyChanged
     {
         public DelegateCommand Refresh { get; }
         public ObservableCollection<Data> Engines { get; }
-
         public DelegateCommand SelectEngine { get; }
+
+        public string BikeName { get; set; } = "Tacx Flux 01249";
 
         private VrManager vr;
         private EquipmentMain eq;
@@ -26,7 +28,7 @@ namespace VR_Project.ViewModels
             this.Refresh = new DelegateCommand(GetOnlineEngines);
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.Engines = new ObservableCollection<Data>();
-
+            GetOnlineEngines();
         }
 
         private async void GetOnlineEngines()
@@ -41,40 +43,13 @@ namespace VR_Project.ViewModels
             if (SelectClient == null)
                 return;
             Mediator.Notify("ConnectToServer");
-            await this.eq.start();
+            await this.eq.start(BikeName);
             await this.vr.ConnectToTunnel(SelectClient.id);
         }
 
         public void Dispose()
         {
             throw new NotImplementedException();
-        }
-
-        private string _BikeName;
-        public string BikeName
-        {
-            get { return _BikeName; }
-            set
-            {
-                if (value != _BikeName)
-                {
-                    _BikeName = value;
-                    RaisePropertyChanged(nameof(BikeName));
-                }
-            }
-        }
-        private string _patientName;
-        public string PatientName
-        {
-            get { return _patientName; }
-            set
-            {
-                if (value != _patientName)
-                {
-                    _patientName = value;
-                    RaisePropertyChanged(nameof(PatientName));
-                }
-            }
         }
 
     }

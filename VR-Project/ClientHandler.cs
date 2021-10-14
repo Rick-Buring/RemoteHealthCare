@@ -2,8 +2,10 @@
 using CommunicationObjects.DataObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -12,11 +14,12 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    class ClientHandler
+    class ClientHandler : BindableBase, INotifyPropertyChanged
     {
         private ReadWrite rw;
         private TcpClient client;
 
+        public string PatientName { get; set; } = "Patient Name";
         public void StartConnection(string ip, int port)
         {
             if (this.client != null)

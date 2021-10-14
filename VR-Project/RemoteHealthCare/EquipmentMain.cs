@@ -15,12 +15,14 @@ namespace Vr_Project.RemoteHealthcare
         private HeartBeatMonitor heartBeatMonitor;
 
         // starts the application
-        public async Task start()
+        public async Task start(string bikeName)
         {
             dataIO = new DataIO();
-            //ergometer = new Ergometer("Tacx Flux 01249", this, dataIO);
-            ergometer = new ErgoSimulator(this);
+
+            ergometer = new Ergometer(bikeName, this, dataIO);
+            //ergometer = new ErgoSimulator(this);
             //this.gui = new GUI();
+           
             await ergometer.Connect();
 
 
