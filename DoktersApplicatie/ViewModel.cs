@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Prism.Mvvm;
 using Prism.Commands;
 using System.Collections.ObjectModel;
+using CommunicationObjects.DataObjects;
 
 namespace DoktersApplicatie
 {
@@ -128,7 +129,15 @@ namespace DoktersApplicatie
         public void OpenHistory()
         {
 
-            HistoryVM historyVM = new HistoryVM();
+            List<HealthData> HistoryData = new List<HealthData>();
+
+            HistoryData.Add(new HealthData { Heartbeat = 52, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 });
+            HistoryData.Add(new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 });
+            HistoryData.Add(new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 });
+            HistoryData.Add(new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 });
+            HistoryData.Add(new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 104, DistanceTraveled = 45 });
+
+            HistoryVM historyVM = new HistoryVM(HistoryData, SelectedClient);
             var window = new HistoryWindow();
 
             window.DataContext = historyVM;

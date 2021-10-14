@@ -5,15 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoktersApplicatie"
         mc:Ignorable="d"
-        Title="HistoryWindow" Height="450" Width="800">
+        Title="Client History"
+        Height="450"
+        Width="800"
+        ResizeMode="CanMinimize">
     <StackPanel>
+        <TextBlock Text="{Binding SelectedClient.Name}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Session Time: " Margin="5,0,0,0"/>
-            <TextBlock Text="{Binding SessionTime}" Margin="5,0,0,0"/>
-            <TextBlock Text="Distance: " Margin="5,0,0,0"/>
-            <TextBlock Text="{Binding Distance}" Margin="5,0,0,0"/>
-            <TextBlock Text="Total Wattage: " Margin="5,0,0,0"/>
-            <TextBlock Text="{Binding AccWatt}" Margin="5,0,0,0"/>
+            <TextBlock Text="Session Time: " Margin="5,0,0,0" FontWeight="Bold"/>
+            <TextBlock Text="{Binding LastHealthData.ElapsedTime}"/>
+            <TextBlock Text="Distance: " Margin="10,0,0,0" FontWeight="Bold"/>
+            <TextBlock Text="{Binding LastHealthData.DistanceTraveled}"/>
+            <TextBlock Text="Total Wattage: " Margin="10,0,0,0" FontWeight="Bold"/>
+            <TextBlock Text="{Binding LastHealthData.AccWatt}"/>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
