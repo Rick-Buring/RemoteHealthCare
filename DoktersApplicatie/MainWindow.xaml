@@ -6,9 +6,9 @@
         mc:Ignorable="d"
         MinHeight="470"
         MinWidth="850"
-        Title="Dokters Applicatie"
+        Title="Doctors Application"
         Height="450"
-        Width="1330"
+        Width="1345"
         ResizeMode="CanMinimize">
 
     <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -58,8 +58,8 @@
                 <TextBlock Text="Resistance: " Margin="5,0,0,0"/>
                 <TextBlock Text="{Binding SelectedClient.Resistance}" Width="20"/>
                 <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding SelectedClient.Resistance}" Width="200" Margin="5,0,0,0" />
-                <Button x:Name="ResistanceButton" Command="{Binding cSetResistance}" Content="Set Resistance" Margin="5,0,5,0"/>
-                <Button x:Name="HistoryButton" Command="{Binding cOpenHistory}" Content="History" Margin="5,0,0,0"/>
+                <Button x:Name="ResistanceButton" Command="{Binding cSetResistance}" Content="Set Resistance" Margin="5,0,0,0"/>
+                <Button x:Name="HistoryButton" Command="{Binding cOpenHistory}" Content="History" Margin="5,0,5,0"/>
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>

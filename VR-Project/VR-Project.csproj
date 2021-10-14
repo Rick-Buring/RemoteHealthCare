@@ -6,9 +6,20 @@
     <RootNamespace>VR_Project</RootNamespace>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
+    <ItemGroup>
+<Compile Remove="Models\**" />
+<Compile Remove="viewModel\**" />
+<EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="viewModel\**" />
+    <None Remove="Models\**" />
+    <None Remove="viewModel\**" />
+    <Page Remove="Models\**" />
+    <Page Remove="viewModel\**" />
+  </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 

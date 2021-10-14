@@ -5,37 +5,45 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class Client
+    public class Client : IDisposable
     {
         private const string certificateName = "testCertificaat";
 
 
         // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
-        private TcpClient client;
         private SslStream stream;
-        public Client(TcpClient client)
+
+        public Client(SslStream stream)
         {
-            this.client = client;
-            this.stream = new SslStream(
-                this.client.GetStream(),
-                false,
-                new RemoteCertificateValidationCallback(ValidateServerCertificate),
-                null
-            );
-            stream.AuthenticateAsClient(certificateName);
+            this.stream = stream;
         }
 
-        public Client(TcpClient client, X509Certificate certificate)
-        {
-            this.client = client;
-            this.stream = new SslStream(client.GetStream(), false);
-            stream.AuthenticateAsServer(certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
-        }
+        //private TcpClient client;
+        //private SslStream stream;
+        //public Client(TcpClient client)
+        //{
+        //    this.client = client;
+        //    this.stream = new SslStream(
+        //        this.client.GetStream(),
+        //        false,
+        //        new RemoteCertificateValidationCallback(ValidateServerCertificate),
+        //        null
+        //    );
+        //    stream.AuthenticateAsClient(certificateName);
+        //}
 
-        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        //public Client(TcpClient client, X509Certificate certificate)
+        //{
+        //    this.client = client;
+        //    this.stream = new SslStream(client.GetStream(), false);
+        //    stream.AuthenticateAsServer(certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+        //}
+
+        public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (sslPolicyErrors == SslPolicyErrors.None)
                 return true;
@@ -78,7 +86,7 @@ namespace CommunicationObjects
         /// Reads incomming messages
         /// </summary>
         /// <returns>message in form of a string</returns>
-        public string Read()
+        public async Task<string> Read()
         {
             byte[] length = new byte[4];
             this.stream.Read(length, 0, 4);
@@ -90,7 +98,7 @@ namespace CommunicationObjects
             int bytesRead = 0;
             while (bytesRead < size)
             {
-                int read = this.stream.Read(received, bytesRead, received.Length - bytesRead);
+                int read = await this.stream.ReadAsync(received, bytesRead, received.Length - bytesRead);
                 bytesRead += read;
                 //Console.WriteLine("ReadMessage: " + read);
             }
@@ -99,15 +107,11 @@ namespace CommunicationObjects
         }
 
 
-        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
-        public void terminate()
-        {
+        
+		public void Dispose ()
+		{
             this.stream.Close();
             this.stream.Dispose();
-            this.client.Close();
-            this.client.Dispose();
         }
-
-       
-    }
+	}
 }

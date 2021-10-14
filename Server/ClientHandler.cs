@@ -3,46 +3,63 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CommunicationObjects.DataObjects;
 using CommunicationObjects;
+using System.Net.Security;
 
 namespace Server
 {
     public class ClientHandler
     {
-        public string Name { get; }
-        private Client Client { get; }
+        public string Name { get; set; }
+        private TcpClient Client { get; }
+        private ReadWrite rw;
 
         private Server server;
         private bool active;
 
-        /// <summary>
-        /// Handles connecting clients
-        /// </summary>
-        /// <param name="tcpClient">The connecting client</param>
-        /// <param name="server">The server the client is connecting too</param>
-        public ClientHandler(TcpClient tcpClient, Server server)
-        {
-            this.Client = new Client(tcpClient, server.Certificate);
-            this.server = server;
+        private Server.AddToList addToList;
+        private Server.RemoveFromList removeFromList;
 
-            this.Name = getName();
+		/// <summary>
+		/// Handles connecting clients
+		/// </summary>
+		/// <param name="tcpClient">The connecting client</param>
+		/// <param name="server">The server the client is connecting too</param>
+		public ClientHandler(TcpClient tcpClient, Server server, Server.AddToList add, Server.RemoveFromList remove)
+        {
+            this.Client = tcpClient;
+
+            SslStream stream = new SslStream(this.Client.GetStream(), false);
+            stream.AuthenticateAsServer(server.Certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+            this.rw = new ReadWrite(stream);
+            this.server = server;
+            this.addToList = add;
+            this.removeFromList = remove;
+            
 
             new Thread(Run).Start();
         }
 
-        private string getName()
+        /// <summary>
+        /// method for getting the client's name from the client
+        /// </summary>
+        /// <returns>the client's name</returns>
+        private async Task<string> getName()
         {
-            string message = Client.Read();
+            string message = await rw.Read();
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
             if (jsonObject.Type == typeof(Connection).FullName &&
-                (jsonObject.data as JObject).ToObject<Connection>().connect)
+                (jsonObject.Data as JObject).ToObject<Connection>().connect)
             {
-                name = jsonObject.sender;
+                name = jsonObject.Sender;
+                Name = name;
+                this.addToList(this);
             }
             else
             {
@@ -51,37 +68,51 @@ namespace Server
             return name;
         }
 
-        private void disconnect()
+        /// <summary>
+        /// used to disconnect a this client from the server
+        /// </summary>
+        public void disconnect()
         {
             this.server.OnDisconnect(this);
             this.active = false;
-            this.Client.terminate();
+            this.rw.terminate();
         }
 
         internal void send(Root message)
         {
             byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
-            Client.Write(toSend);
+            rw.Write(toSend);
         }
 
         /// <summary>
         /// function to handle incoming messages
         /// </summary>
-        private void Run()
+        private async void Run()
         {
+            this.Name = await getName();
+            send(new Root
+            {
+                Type = typeof(Acknowledge).FullName,
+                Sender = "server",
+                Target = this.Name,
+                Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+            });
+            //send acknowledgement
+            //Temporary doctor command
+            send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
             this.active = true;
             while (active)
             {
                 try
                 {
-                    string result = Client.Read();
+                    string result = await rw.Read();
                     Console.WriteLine(result);
                     Parse(result);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    //todo disconnect client
+                    this.disconnect();
                 }
             }
         }
@@ -96,10 +127,12 @@ namespace Server
 
             Type type = Type.GetType(root.Type);
 
+            bool errorFound = false;
+
             if (type == typeof(HealthData))
             {
-                HealthData data = (root.data as JObject).ToObject<HealthData>();
-                this.server.manager.write(root.sender, data);
+                HealthData data = (root.Data as JObject).ToObject<HealthData>();
+                this.server.manager.write(root.Sender, data);
             }
             else if (type == typeof(Selection))
             {
@@ -107,22 +140,55 @@ namespace Server
             }
             else if (type == typeof(Connection))
             {
-                if (!(root.data as JObject).ToObject<Connection>().connect)
+                if (!(root.Data as JObject).ToObject<Connection>().connect)
                 {
-                    string sender = root.sender;
-                    root.target = root.sender;
-                    root.sender = sender;
-
-                    send(root);
-
+                    this.server.SendAcknowledge(root, 200, "terminating connection");
                     this.disconnect();
+                }
+                else
+                {
+                    this.server.SendAcknowledge(root, 403, "already connected");
+                    errorFound = true;
+                }
+            }
+            else if (type == typeof(History))
+            {
+                string sender = root.Sender;
+                root.Target = root.Sender;
+                root.Sender = sender;
+
+                History data = (root.Data as JObject).ToObject<History>();
+
+                data.clientHistory = this.server.manager.GetHistory(data.clientName);
+
+                root.Data = data;
+            }
+            else if (type == typeof(Setting))
+            {
+                Setting data = (root.Data as JObject).ToObject<Setting>();
+                if ((data.res > 100 || data.res < 0) && !data.emergencystop)
+                {
+                    this.server.SendAcknowledge(root, 412, "invalid resistance value");
+                    errorFound = true;
+                }
+            }
+            else if (type == typeof(Chat))
+            {
+                if (root.Sender == root.Target)
+                {
+                    this.server.SendAcknowledge(root, 409, "sender can't be target");
+                    errorFound = true;
+                }
+
+                Chat data = (root.Data as JObject).ToObject<Chat>();
+                if (data.message == "" && !errorFound)
+                {
+                    this.server.SendAcknowledge(root, 412, "empty messages are not allowed");
+                    errorFound = true;
                 }
             }
 
-            this.server.send(root);
+            if (this.active && !errorFound) this.server.send(root);
         }
-
-
     }
-
 }

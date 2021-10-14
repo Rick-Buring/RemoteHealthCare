@@ -10,8 +10,6 @@ namespace Vr_Project.RemoteHealthcare
 
     public class ErgoSimulator : Ergometer
     {
-
-        private string Name;
         private IDataListener listener;
 
         private int baseline;
@@ -34,7 +32,6 @@ namespace Vr_Project.RemoteHealthcare
             this.distanceTraveled = 0;
 
             this.listener = listener[0];
-            this.Name = base.Name;
 
         }
 
@@ -75,7 +72,7 @@ namespace Vr_Project.RemoteHealthcare
                 listener.notify(base.ergometerData);
                 Thread.Sleep(1000);
             }
-            Debug.WriteLine("Ending Ergo Sim");
+            
         }
 
         //Verandert de waardes in de data klasse met een random waarde rond de baseline plus een random waarde tussen 0 en een aantal % van de baseline.

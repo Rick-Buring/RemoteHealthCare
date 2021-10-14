@@ -9,7 +9,8 @@
     <Import_RootNamespace>CommunicationObjects</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Client.cs" />
+    <Compile Include="..\CommunicationObjects\ReadWrite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Acknowledge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Chat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\HealthData.cs" />
@@ -17,5 +18,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Selection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Setting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Test.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataObjects\History.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)util\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)util\MessageComparer.cs" />
   </ItemGroup>
 </Project>

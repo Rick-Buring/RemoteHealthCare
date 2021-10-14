@@ -1,117 +1,153 @@
 ﻿
+using Newtonsoft.Json.Linq;
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
-using System.Windows.Input;
+using System.Windows;
 using Vr_Project.RemoteHealthcare;
-using VR_Project.Util;
-
+using VR_Project.ViewModels;
 
 namespace VR_Project
 {
-    public class ViewModel : ObservableObject, EngineCallback
+    public class ViewModel : BindableBase
     {
 
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
-        public Update updater;
+        public delegate void SendResistance(float resistance);
+        public static Update updater;
+        public static SendResistance resistanceUpdater;
+        public delegate void RequestResistance (float resistance);
+       
+        public static RequestResistance requestResistance;
 
         private VrManager vrManager;
-        private EquipmentManager equipment;
+        private EquipmentMain equipment;
         private ClientHandler client;
-        private Thread serverConnectionThread;
 
+        private BindableBase _currentPageViewModel;
+        private List<BindableBase> _pageViewModels;
 
+        public List<BindableBase> PageViewModels
+        {
+            get
+            {
+                if (_pageViewModels == null)
+                    _pageViewModels = new List<BindableBase>();
 
+                return _pageViewModels;
+            }
+        }
+
+        public BindableBase CurrentPageViewModel
+        {
+            get
+            {
+                return _currentPageViewModel;
+            }
+            set
+            {
+                _currentPageViewModel = value;
+                RaisePropertyChanged("CurrentPageViewModel");
+            }
+        }
+
+        private void ChangeViewModel(BindableBase viewModel)
+        {
+            if (!PageViewModels.Contains(viewModel))
+                PageViewModels.Add(viewModel);
+
+            CurrentPageViewModel = PageViewModels
+                .FirstOrDefault(vm => vm == viewModel);
+        }
+        private void onGoToConnectToServer()
+        {
+            ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectToServerVM).FullName));
+        }
+        private void OnGoToConnected()
+        {
+            ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(ConnectedVM).FullName));
+        }
+        private void OnGoToLoginBikeVR()
+        {
+            ChangeViewModel(PageViewModels.Find(m => m.GetType().FullName == typeof(LoginBikeVRVM).FullName));
+        }
 
         public ViewModel()
         {
-            this.vrManager = new VrManager(this);
-
-            updater = NotifyData;
-            this.equipment = new EquipmentManager(updater);
+            this.vrManager = new VrManager();
             this.client = new ClientHandler();
-            
-        }
 
-        private ICommand _selectEngine;
-        public ICommand SelectEngine
-        {
-            get
-            {
+            this.equipment = new EquipmentMain();
 
-                if (_selectEngine == null)
-                {
-                    _selectEngine = new RelayCommand(param => this.engageEngine());
-                }
+            updater += this.vrManager.Update;
+            updater += this.client.Update;
 
-                return _selectEngine;
-            }
-        }
-
-        private ICommand connectToServer;
-        public ICommand ConnectToServer
-        {
-            get
-            {
-
-                if (connectToServer == null)
-                {
-                    connectToServer = new RelayCommand(param => this.EngageConnection());
-                }
-
-                return connectToServer;
-            }
-        }
-
-        private void EngageConnection()
-        {
-            this.serverConnectionThread = new Thread(client.StartConnection);
-            this.serverConnectionThread.Start();
-        }
+            PageViewModels.Add(new LoginBikeVRVM(vrManager, equipment));
+            PageViewModels.Add(new ConnectToServerVM(client, equipment));
+            PageViewModels.Add(new ConnectedVM(client, vrManager, equipment));
 
 
-        private VrManager.Data selectClient;
+            Mediator.Subscribe("ConnectToServer", onGoToConnectToServer);
+            Mediator.Subscribe("LoginBikeVR", OnGoToLoginBikeVR);
+            Mediator.Subscribe("Connected", OnGoToConnected);
 
-        public VrManager.Data SelectClient
-        {
-            get { return selectClient; }
-            set
-            {
-                selectClient = value;
-            }
-        }
-        private void engageEngine()
-        {
-            if (SelectClient == null)
-                return;
-            this.vrManager.ConnectToTunnel(SelectClient.id);
-            this.equipment.startEquipment();
-
-        }
-        public ObservableCollection<VrManager.Data> ob { get; set; }
-        public void notify(ObservableCollection<VrManager.Data> ob)
-        {
-            this.ob = ob;
-        }
-
-        public void NotifyData(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        {
-            Debug.WriteLine("From: ViewModel");
-            Debug.WriteLine($"{ergometer.GetHeartBeat()}\n{heartBeatMonitor.GetHeartBeat()}");
-            this.client.Update(ergometer, heartBeatMonitor);
-            this.vrManager.WriteToPanel(ergometer.GetErgometerData().Cadence);
+            OnGoToLoginBikeVR();
+        
         }
 
         public void Window_Closed(object sender, EventArgs e)
         {
 
             client.Stop();
-            if (serverConnectionThread != null)
-            serverConnectionThread.Join();
 
             Debug.WriteLine("Closing and disposing client.");
             this.vrManager.CloseConnection();
+            this.equipment.Dispose();
         }
     }
+
+
+    public static class Mediator
+    {
+        private static IDictionary<string, List<Action>> pl_dict =
+           new Dictionary<string, List<Action>>();
+
+        public static void Subscribe(string token, Action callback)
+        {
+            if (!pl_dict.ContainsKey(token))
+            {
+                var list = new List<Action>();
+                list.Add(callback);
+                pl_dict.Add(token, list);
+            }
+            else
+            {
+                bool found = false;
+                foreach (var item in pl_dict[token])
+                    if (item.Method.ToString() == callback.Method.ToString())
+                        found = true;
+                if (!found)
+                    pl_dict[token].Add(callback);
+            }
+        }
+
+        public static void Unsubscribe(string token, Action callback)
+        {
+            if (pl_dict.ContainsKey(token))
+                pl_dict[token].Remove(callback);
+        }
+
+        public static void Notify(string token)
+        {
+            if (pl_dict.ContainsKey(token))
+                foreach (var callback in pl_dict[token])
+                    callback();
+        }
+    }
+
 }
