@@ -28,7 +28,7 @@ namespace VR_Project
 		private string bikeUuid;
 		private string cameraID;
 		private float[] oldPos;
-		public SendResistance ResistanceUpdater { get; set; }
+		
 		private float requestedResistance = 50;
 		public float resistanceMultiplier { get; } = 5f;
 
@@ -106,6 +106,7 @@ namespace VR_Project
 			await StickCameraToPlayer();
 			this.oldPos = await getPosition();
 			this.ready = true;
+			Mediator.Notify("ConnectToServer");
 		}
 
 		public async Task<string> MakeBikeObject()
@@ -150,7 +151,7 @@ namespace VR_Project
 				await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
 				float r = await getHeightDependantResistance();
 				
-				ResistanceUpdater(CalculateResistance(r));
+				ViewModel.resistanceUpdater(CalculateResistance(r));
 				
 				this.running = false;
 			}

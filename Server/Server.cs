@@ -68,7 +68,7 @@ namespace Server
 
         public void send(Root message)
         {
-            string target = message.target;
+            string target = message.Target;
             bool found = false;
 
             // __CR__ [PSMG] Eventueel omzetten naar enum
@@ -77,7 +77,7 @@ namespace Server
                 found = true;
                 foreach (ClientHandler client in clients)
                 {
-                    if (target != message.sender)
+                    if (target != message.Sender)
                         client.send(message);
                 }
             }
@@ -93,7 +93,7 @@ namespace Server
                 }
             }
 
-            if (!(message.type == typeof(Acknowledge).FullName) && !(message.type == typeof(HealthData).FullName))
+            if (!(message.Type == typeof(Acknowledge).FullName) && !(message.Type == typeof(HealthData).FullName))
             {
                 if (!found)
                 {
@@ -111,22 +111,22 @@ namespace Server
             List<string> clients = new List<string>();
             foreach (ClientHandler client in this.clients)
             {
-                if (client.Name != root.sender)
+                if (client.Name != root.Sender)
                 {
                     clients.Add(client.Name);
                 }
             }
-            root.data = new Selection() { selection = clients };
+            root.Data = new Selection() { selection = clients };
         }
 
         public void SendAcknowledge(Root root, int status, string message)
         {
             this.send(new Root()
             {
-                sender = "server",
-                target = root.sender,
-                type = typeof(Acknowledge).FullName,
-                data = new Acknowledge() { subtype = root.type, status = status, statusmessage = message }
+                Sender = "server",
+                Target = root.Sender,
+                Type = typeof(Acknowledge).FullName,
+                Data = new Acknowledge() { subtype = root.Type, status = status, statusmessage = message }
             });
         }
 

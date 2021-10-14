@@ -50,10 +50,10 @@ namespace Server
             string name = "";
             Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
-            if (jsonObject.type == typeof(Connection).FullName &&
-                (jsonObject.data as JObject).ToObject<Connection>().connect)
+            if (jsonObject.Type == typeof(Connection).FullName &&
+                (jsonObject.Data as JObject).ToObject<Connection>().connect)
             {
-                name = jsonObject.sender;
+                name = jsonObject.Sender;
             }
             else
             {
@@ -86,13 +86,14 @@ namespace Server
             this.Name = await getName();
             send(new Root
             {
-                type = typeof(Acknowledge).FullName,
-                sender = "server",
-                target = this.Name,
-                data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+                Type = typeof(Acknowledge).FullName,
+                Sender = "server",
+                Target = this.Name,
+                Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
             });
             //send acknowledgement
-            send(new Root { type = typeof(Setting).FullName, sender = "server", target = this.Name, data = new Setting { emergencystop = false, res = 50 } });
+            //Temporary doctor command
+            send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
             this.active = true;
             while (active)
             {
@@ -118,14 +119,14 @@ namespace Server
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-            Type type = Type.GetType(root.type);
+            Type type = Type.GetType(root.Type);
 
             bool errorFound = false;
 
             if (type == typeof(HealthData))
             {
-                HealthData data = (root.data as JObject).ToObject<HealthData>();
-                this.server.manager.write(root.sender, data);
+                HealthData data = (root.Data as JObject).ToObject<HealthData>();
+                this.server.manager.write(root.Sender, data);
             }
             else if (type == typeof(Selection))
             {
@@ -133,7 +134,7 @@ namespace Server
             }
             else if (type == typeof(Connection))
             {
-                if (!(root.data as JObject).ToObject<Connection>().connect)
+                if (!(root.Data as JObject).ToObject<Connection>().connect)
                 {
                     this.server.SendAcknowledge(root, 200, "terminating connection");
                     this.disconnect();
@@ -146,19 +147,19 @@ namespace Server
             }
             else if (type == typeof(History))
             {
-                string sender = root.sender;
-                root.target = root.sender;
-                root.sender = sender;
+                string sender = root.Sender;
+                root.Target = root.Sender;
+                root.Sender = sender;
 
-                History data = (root.data as JObject).ToObject<History>();
+                History data = (root.Data as JObject).ToObject<History>();
 
                 data.clientHistory = this.server.manager.GetHistory(data.clientName);
 
-                root.data = data;
+                root.Data = data;
             }
             else if (type == typeof(Setting))
             {
-                Setting data = (root.data as JObject).ToObject<Setting>();
+                Setting data = (root.Data as JObject).ToObject<Setting>();
                 if ((data.res > 100 || data.res < 0) && !data.emergencystop)
                 {
                     this.server.SendAcknowledge(root, 412, "invalid resistance value");
@@ -167,13 +168,13 @@ namespace Server
             }
             else if (type == typeof(Chat))
             {
-                if (root.sender == root.target)
+                if (root.Sender == root.Target)
                 {
                     this.server.SendAcknowledge(root, 409, "sender can't be target");
                     errorFound = true;
                 }
 
-                Chat data = (root.data as JObject).ToObject<Chat>();
+                Chat data = (root.Data as JObject).ToObject<Chat>();
                 if (data.message == "" && !errorFound)
                 {
                     this.server.SendAcknowledge(root, 412, "empty messages are not allowed");
