@@ -17,9 +17,11 @@ namespace VR_Project
         private ReadWrite rw;
         private TcpClient client;
 
-        public void StartConnection()
+        public void StartConnection(string ip, int port)
         {
-            this.client = new TcpClient("localhost", 5005);
+            if (this.client != null)
+                throw new ArgumentException("The Client is already connected dispose this first");
+            this.client = new TcpClient(ip, port);
 
             SslStream stream = new SslStream(
                 this.client.GetStream(),

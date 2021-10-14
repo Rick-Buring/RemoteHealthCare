@@ -22,37 +22,12 @@ namespace VR_Project.ViewModels
             this.ConnectToServer = new DelegateCommand(EngageConnection);
         }
 
-        private string _portNumber;
-        public string PortNumber
-        {
-            get { return _portNumber; }
-            set
-            {
-                if (value != _portNumber)
-                {
-                    _portNumber = value;
-                    RaisePropertyChanged(nameof(PortNumber));
-                }
-            }
-        }
-        private string _IPAddress;
-        public string IPAddress
-        {
-            get { return _IPAddress; }
-            set
-            {
-                if (value != _IPAddress)
-                {
-                    _IPAddress = value;
-                    RaisePropertyChanged(nameof(_IPAddress));
-                }
-            }
-        }
-
+        public string PortNumber { get; set; }
+        public string IPAddress { get; set; }
 
         private void EngageConnection()
         {
-            this.serverConnectionThread = new Thread(client.StartConnection);
+            this.serverConnectionThread = new Thread(() => client.StartConnection(this.IPAddress, Int32.Parse(this.IPAddress)));
             this.serverConnectionThread.Start();
             ViewModel.resistanceUpdater += this.eq.ergometer.SendResistance;
             Mediator.Notify("Connected");
