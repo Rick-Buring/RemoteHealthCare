@@ -13,8 +13,8 @@ namespace Vr_Project.RemoteHealthcare
     {
         private DataIO dataIO;
 
-        public Ergometer ergometer { get; private set; }
-        public HeartBeatMonitor heartBeatMonitor { get; private set; }
+        public Ergometer Ergometer { get; private set; }
+        public HeartBeatMonitor HeartBeatMonitor { get; private set; }
 
         // starts the application
         public async Task start(string bikeName, bool simulationChecked)
