@@ -34,7 +34,7 @@ namespace VR_Project.ViewModels
             this.Refresh = new DelegateCommand(GetOnlineEngines);
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.Engines = new ObservableCollection<Data>();
-            //GetOnlineEngines();
+            GetOnlineEngines();
         }
 
         private async void GetOnlineEngines()
@@ -46,13 +46,13 @@ namespace VR_Project.ViewModels
         public Data SelectClient { get; set; }
         private async void engageEngine()
         {
-            //if (SelectClient == null)
-            //    return;
+            if (SelectClient == null)
+                return;
 
-            //this.equipmentThread = new Thread(async () => await this.eq.start(BikeName, this.SimulationChecked));
-            //this.vrThread = new Thread(async () => await vr.ConnectToTunnel(SelectClient.id));
-            //this.equipmentThread.Start();
-            //this.vrThread.Start();
+            this.equipmentThread = new Thread(async () => await this.eq.start(BikeName, this.SimulationChecked));
+            this.vrThread = new Thread(async () => await vr.ConnectToTunnel(SelectClient.id));
+            this.equipmentThread.Start();
+            this.vrThread.Start();
 
             navigate(new ConnectToServerVM(new ClientHandler(), eq, vr, navigate));
         }
