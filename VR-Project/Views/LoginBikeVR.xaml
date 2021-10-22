@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VR_Project.Views"
         mc:Ignorable="d">
     <Grid>
-        <StackPanel Visibility="{Binding EngineSelect}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Margin="10">

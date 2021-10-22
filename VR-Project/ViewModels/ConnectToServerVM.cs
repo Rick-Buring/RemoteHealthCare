@@ -9,17 +9,22 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class ConnectToServerVM : BindableBase, IDisposable, INotifyPropertyChanged
+    class ConnectToServerVM : BaseViewModel
     {
         private Thread serverConnectionThread;
+        private VrManager vr;
+
         public ClientHandler Client { get; private set; }
         private EquipmentMain eq;
-        public DelegateCommand ConnectToServer { get; }
+        private ViewModel.NavigateViewModel navigateView;
+        public DelegateCommand ConnectToServer{ get; }
 
-        public ConnectToServerVM(ClientHandler client, EquipmentMain equipment)
+        public ConnectToServerVM(ClientHandler client, EquipmentMain equipment,VrManager vr, ViewModel.NavigateViewModel navigate)
         {
+            this.vr = vr;
             this.Client = client;
             this.eq = equipment;
+            this.navigateView = navigate;
             this.ConnectToServer = new DelegateCommand(EngageConnection);
         }
 
@@ -28,15 +33,20 @@ namespace VR_Project.ViewModels
 
         private void EngageConnection()
         {
-            this.serverConnectionThread = new Thread(() => Client.StartConnection(this.IPAddress, Int32.Parse(this.PortNumber)));
-            this.serverConnectionThread.Start();
-            ViewModel.resistanceUpdater += this.eq.Ergometer.SendResistance;
-            Mediator.Notify("Connected");
+            //this.serverConnectionThread = new Thread(() => Client.StartConnection(this.IPAddress, Int32.Parse(this.PortNumber)));
+            //this.serverConnectionThread.Start();
+            //ViewModel.resistanceUpdater += this.eq.Ergometer.SendResistance;
+            navigateView(new ConnectedVM(Client, vr, eq, navigateView));
         }
 
-        public void Dispose()
+
+        public override void Dispose()
         {
-            throw new NotImplementedException();
+            if (serverConnectionThread != null && serverConnectionThread.IsAlive)
+            {
+                serverConnectionThread.Abort();
+            }
+
         }
     }
 }

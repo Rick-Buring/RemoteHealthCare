@@ -11,19 +11,23 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    public class ConnectedVM : BindableBase, IDisposable, INotifyPropertyChanged
+    public class ConnectedVM : BaseViewModel
     {
         public delegate void addMessageDelegate(Message m);
         public static addMessageDelegate AddMessage;
 
         public DelegateCommand DisconnectCommand { get; set; }
+
+        private ViewModel.NavigateViewModel navigate;
+
         public ObservableCollection<Message> Messages { get; private set; }
         private Dispatcher dispatcher;
-        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
+        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment, ViewModel.NavigateViewModel navigateView)
         {
             this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Messages = new ObservableCollection<Message>();
             this.DisconnectCommand = new DelegateCommand(Disconnect);
+            this.navigate = navigateView;
             AddMessage = addMessage;
             Client = client;
             VrManager = vrManager;
@@ -33,7 +37,7 @@ namespace VR_Project.ViewModels
         private void Disconnect()
         {
             Console.WriteLine("TODOOO Disconnect client and bike");
-            Mediator.Notify("LoginBikeVR");
+            navigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain(), navigate));
         }
 
         public ClientHandler Client { get; }
@@ -45,6 +49,13 @@ namespace VR_Project.ViewModels
             this.dispatcher.Invoke(() => this.Messages.Add(m));
         }
 
-        public void Dispose() { }
+        public override void Dispose()
+        {
+            this.Client.Dispose();
+            this.VrManager.Dispose();
+            this.Equipment.Dispose();
+            ViewModel.resistanceUpdater = null;
+            ViewModel.updater = null;
+        }
     }
 }

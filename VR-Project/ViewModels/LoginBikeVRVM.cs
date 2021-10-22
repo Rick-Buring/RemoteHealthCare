@@ -10,11 +10,12 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project.ViewModels
 {
-    class LoginBikeVRVM : BindableBase, IDisposable, INotifyPropertyChanged
+    class LoginBikeVRVM : BaseViewModel
     {
         public DelegateCommand Refresh { get; }
         public ObservableCollection<Data> Engines { get; }
         public DelegateCommand SelectEngine { get; }
+        private readonly ViewModel.NavigateViewModel navigate;
 
         public string BikeName { get; set; } = "Tacx Flux 01249";
 
@@ -24,15 +25,16 @@ namespace VR_Project.ViewModels
         private EquipmentMain eq;
         private Thread equipmentThread;
 
-        public LoginBikeVRVM(VrManager vr, EquipmentMain equipment)
+        public LoginBikeVRVM(VrManager vr, EquipmentMain eq, ViewModel.NavigateViewModel changeViewModel)
         {
             this.vr = vr;
-            this.eq = equipment;
-            
+            this.eq = eq;
+            this.navigate = changeViewModel;
+
             this.Refresh = new DelegateCommand(GetOnlineEngines);
             this.SelectEngine = new DelegateCommand(engageEngine);
             this.Engines = new ObservableCollection<Data>();
-            GetOnlineEngines();
+            //GetOnlineEngines();
         }
 
         private async void GetOnlineEngines()
@@ -44,28 +46,18 @@ namespace VR_Project.ViewModels
         public Data SelectClient { get; set; }
         private async void engageEngine()
         {
-            if (SelectClient == null)
-                return;
-            
-            this.equipmentThread = new Thread(async () => await this.eq.start(BikeName, this.SimulationChecked));
-            this.vrThread = new Thread(async () => await vr.ConnectToTunnel(SelectClient.id));
-            this.equipmentThread.Start();
-            this.vrThread.Start();
+            //if (SelectClient == null)
+            //    return;
 
-		}
-        //private async void engageEngine()
-        //{
-        //if (SelectClient == null)
-        //return;
-        //await this.equipment.start();
-        //await this.vrManager.ConnectToTunnel(SelectClient.id);
-        //this.resistanceUpdater += this.equipment.ergometer.SendResistance;
-        //this.vrManager.ResistanceUpdater = this.resistanceUpdater;
+            //this.equipmentThread = new Thread(async () => await this.eq.start(BikeName, this.SimulationChecked));
+            //this.vrThread = new Thread(async () => await vr.ConnectToTunnel(SelectClient.id));
+            //this.equipmentThread.Start();
+            //this.vrThread.Start();
 
-        public void Dispose()
-        {
-
+            navigate(new ConnectToServerVM(new ClientHandler(), eq, vr, navigate));
         }
+
+        public override void Dispose() { }
 
     }
 }
