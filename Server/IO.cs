@@ -16,7 +16,7 @@ namespace Server
         /// </summary>
         /// <param name="client">the name of the client</param>
         /// <param name="data">the data to write</param>
-        internal void writeToFile(string client, HealthData data)
+        public void writeToFile(string client, HealthData data)
         {
             if (lastSesionTime(client) > data.ElapsedTime)
             {
@@ -50,7 +50,9 @@ namespace Server
         {
             string[] content = File.ReadAllLines($"{Environment.CurrentDirectory}/{client}.txt");
             string[] lastInput = content[content.Length - 1].Split(",");
-            return int.Parse(lastInput[5]);
+            int result;
+            if (int.TryParse(lastInput[5], out result)) return result;
+            else return -1;
         }
     }
 }
