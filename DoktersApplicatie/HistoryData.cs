@@ -16,11 +16,17 @@ namespace DoktersApplicatie
 {
     class HistoryData 
     {
-        public HistoryValueTimeChart HistoryChart { get; set; }
+        public HistoryValueTimeChart WattHistoryChart { get; set; }
+        public HistoryValueTimeChart RpmHistoryChart { get; set; }
+        public HistoryValueTimeChart BpmHistoryChart { get; set; }
+        public HistoryValueTimeChart KmhHistoryChart { get; set; }
 
         public HistoryData()
         {
-            this.HistoryChart = new HistoryValueTimeChart();
+            this.WattHistoryChart = new HistoryValueTimeChart();
+            this.RpmHistoryChart = new HistoryValueTimeChart();
+            this.BpmHistoryChart = new HistoryValueTimeChart();
+            this.KmhHistoryChart = new HistoryValueTimeChart();
         }
 
         public class HistoryValueTimeChart : INotifyPropertyChanged
@@ -33,11 +39,12 @@ namespace DoktersApplicatie
 
                 public event PropertyChangedEventHandler PropertyChanged;
 
-                public double MinValue { get; set; }
-                public double MaxValue { get; set; }
-
                 public double From { get; set; }
                 public double To { get; set; }
+
+                private double maxValue { get; set; }
+
+                public int Step { get; set; }
 
 
                 public HistoryValueTimeChart()
@@ -47,11 +54,12 @@ namespace DoktersApplicatie
                         .Y(dayModel => dayModel.Value);
                     this.Values = new ChartValues<ValueTime>();
                     Charting.For<ValueTime>(dayConfig);
-
-                    this.MinValue = 0;
-                    this.MaxValue = 200;
                     this.From = 0;
                     this.To = 30;
+
+                    this.Step = 10;
+
+                    this.maxValue = this.Values[^1].SecondsSinceStart;
 
                     Random random = new Random();
 
@@ -70,28 +78,41 @@ namespace DoktersApplicatie
 
                 }
 
-                private void UIElement_OnMouseMove(object sender, MouseEventArgs e)
+                private void updateStep()
                 {
-                    var chart = (LiveCharts.Wpf.CartesianChart) sender;
-                    var mouseCoordinate = e.GetPosition(chart);
-                    var p = chart.ConvertToChartValues(mouseCoordinate);
-                    Debug.WriteLine(p);
+                    this.Step = (int) (this.To - this.From) / 3;
                 }
+
 
                 public void OnMouseWheelScroll(MouseWheelEventArgs e)
                 {
                     Debug.WriteLine(e.Delta);
-                    this.MaxValue -= e.Delta / 5.00;
+                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                    {
+                        this.To -= e.Delta / 20.00;
+                        this.updateStep();
+                    }
+                    else
+                    {
+
+                    double changeValue = e.Delta / 20.00;
+                    
+                    if (this.To - changeValue > 0 ) {
+                        this.To -= e.Delta / 20.00;
+                    } else {
+                        this.To = 0;
+                    }
+
+                    if (this.From - changeValue < maxValue)
+                    {
+                        this.From -= e.Delta / 20.00;
+                    } else {
+                        this.From = maxValue;
+                    }
+
+                    }
                 } 
 
-                public void OnDragOver(Point mousePoint, DragEventArgs e)
-                {
-                    this.From += mousePoint.Y;
-                    this.To += mousePoint.Y;
-
-                    Debug.WriteLine(mousePoint.Y);
-
-                }
 
                 public class ValueTime
             {

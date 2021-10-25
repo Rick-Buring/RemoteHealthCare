@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,13 +28,6 @@ namespace DoktersApplicatie
             currentChart.OnMouseWheelScroll(e);
         }
 
-        private void UIElement_OnDragOver(object sender, DragEventArgs e)
-        {
-            var chart = (LiveCharts.Wpf.CartesianChart) sender;
-            HistoryData.HistoryValueTimeChart currentChart = (HistoryData.HistoryValueTimeChart) chart.DataContext;
 
-            currentChart.OnDragOver(e.GetPosition(chart), e);
-            
-        }
     }
 }
