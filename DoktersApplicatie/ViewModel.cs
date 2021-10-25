@@ -153,15 +153,20 @@ namespace DoktersApplicatie
 			SendMessage(TextToSend, "All");
 		}
 
-		public async void OpenHistory() => await this.clientHandler.RequestHistory(SelectedClient);
+		public async void OpenHistory()
+		{
+			if (SelectedClient == null)
+				return; await this.clientHandler.RequestHistory(SelectedClient);
+		}
 
 
-		public void InsertHistory(History history) {
-			if (SelectedClient == null) return;
+
+		public void InsertHistory(History history)
+		{
 			List<HealthData> HistoryData = GetHealthHistory(history);
 
 			HistoryVM historyVM = new HistoryVM(HistoryData, SelectedClient);
-			this.dispatcher.Invoke(() => 
+			this.dispatcher.Invoke(() =>
 			{
 				var window = new HistoryWindow();
 
@@ -170,14 +175,17 @@ namespace DoktersApplicatie
 			});
 		}
 
-		private List<HealthData> GetHealthHistory(History history) {
+		private List<HealthData> GetHealthHistory(History history)
+		{
 			List<HealthData> HistoryData = new List<HealthData>();
 
 			string[] array = history.clientHistory.Split("\n");
-			
-			for (int i = 0; i < array.Length - 1; i+= 7) {
+
+			for (int i = 0; i < array.Length - 1; i += 7)
+			{
 				string[] data = new string[7];
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < 7; j++)
+				{
 					data[j] = array[i + j];
 				}
 				int hb = int.Parse(data[0].Substring(data[0].IndexOf(" ")));
@@ -188,17 +196,26 @@ namespace DoktersApplicatie
 				int time = int.Parse(data[5].Substring(data[5].LastIndexOf(" ")));
 				int distance = 0;
 				string d = data[6];
-				if (d.Contains("\r")) 
+				if (d.Contains("\r"))
 				{
 					int distanceLenght = data[6].IndexOf("\r") - data[6].LastIndexOf(" ");
 					distance = int.Parse(data[6].Substring(data[6].LastIndexOf(" "), distanceLenght));
-				} else 
+				}
+				else
 				{
 					distance = int.Parse(data[6].Substring(data[6].LastIndexOf(" ")));
 				}
-				
-				HealthData healthData = new HealthData() { Heartbeat = hb, RPM = rpm, Speed = speed,
-				CurWatt = currWatt, AccWatt = accWatt, ElapsedTime = time, DistanceTraveled = distance};
+
+				HealthData healthData = new HealthData()
+				{
+					Heartbeat = hb,
+					RPM = rpm,
+					Speed = speed,
+					CurWatt = currWatt,
+					AccWatt = accWatt,
+					ElapsedTime = time,
+					DistanceTraveled = distance
+				};
 				HistoryData.Add(healthData);
 
 			}
