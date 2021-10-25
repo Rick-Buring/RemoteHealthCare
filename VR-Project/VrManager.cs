@@ -62,6 +62,9 @@ namespace VR_Project
 
             //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
+            if (size == 0)
+                return null;
+
             byte[] received = new byte[size];
 
 
@@ -80,8 +83,9 @@ namespace VR_Project
             EngineRoot = JsonConvert.DeserializeObject<EngineRoot>(test);
 
             List<Data> OnlineEngines = new List<Data>();
+            
 
-            foreach (Data d in EngineRoot.data)
+            foreach (Data d in EngineRoot?.data)
                 OnlineEngines.Add(d);
 
             return OnlineEngines;
