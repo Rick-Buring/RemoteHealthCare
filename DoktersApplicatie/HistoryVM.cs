@@ -9,16 +9,23 @@ namespace DoktersApplicatie
 {
     class HistoryVM : BindableBase, INotifyPropertyChanged
     {
+        
 
         public List<HealthData> HealthData { get; set; }
         public HealthData LastHealthData { get; set; }
         public Client SelectedClient { get; }
+
+        public HistoryData HistoryData { get; set; }
+
+        
 
         public HistoryVM(List<HealthData> healthData, Client selectedClient)
         {
             this.HealthData = healthData;
             this.LastHealthData = this.HealthData[this.HealthData.Count - 1];
             this.SelectedClient = selectedClient;
+
+            this.HistoryData = new HistoryData();
         }
 
     }
