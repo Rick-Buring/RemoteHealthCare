@@ -67,7 +67,7 @@ namespace VR_Project.ViewModels
             Task equipment = this.eq.start(BikeName, this.SimulationChecked);
             Task virtualReality = vr.ConnectToTunnel(SelectClient.id);
             
-            Task.WaitAll(equipment,virtualReality);
+            await Task.WhenAll(equipment,virtualReality);
             navigate(new ConnectToServerVM(new ClientHandler(), eq, vr, navigate));
             isConnecting = false;
         }

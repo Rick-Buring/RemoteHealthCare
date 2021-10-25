@@ -32,7 +32,7 @@ namespace Vr_Project.RemoteHealthcare
             HeartBeatMonitor = new HBSimulator(this);
             Task heartBeatConnect = HeartBeatMonitor.Connect();
 
-            Task.WaitAll(ergoConnect, heartBeatConnect);
+            await Task.WhenAll(ergoConnect, heartBeatConnect);
         }
 
         /// <summary>
