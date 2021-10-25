@@ -3,10 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VR_Project.Views"
+            
+        xmlns:local="clr-namespace:VR_Project"
+             
         mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:TwoBooleanConverter x:Key="MyCustomConvertor"/>
+    </UserControl.Resources>
+    
     <Grid>
-        <StackPanel Visibility="{Binding EngineSelect}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Margin="10">
@@ -15,13 +21,21 @@
                     </StackPanel>
 
                     <StackPanel  Margin="10">
-                        <Button Margin="10" Content="Refresh" Command="{Binding Refresh}"/>
+                        <Button Margin="10" Content="Refresh" Command="{Binding Refresh}" IsEnabled="{Binding isRefresheble}"/>
                         <ComboBox Margin="10" Width="150" ItemsSource="{Binding Engines}" DisplayMemberPath="clientinfo.host" SelectedItem="{Binding SelectClient}"/>
 						<CheckBox Name ="Simulation" IsChecked="{Binding SimulationChecked}"/>
 					</StackPanel>
                 </StackPanel>
             </Border>
-            <Button Margin="10" Content="Start Client Functions" Command="{Binding Path=SelectEngine}"/>
+
+            <Button Margin="10" Content="Start Client Functions" Command="{Binding Path=SelectEngine}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource MyCustomConvertor}">
+                        <Binding Path="isConnecting"/>
+                        <Binding Path="selectedAClient"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
 
         </StackPanel>
 

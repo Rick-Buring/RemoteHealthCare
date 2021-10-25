@@ -25,19 +25,14 @@ namespace Vr_Project.RemoteHealthcare
             else
                 Ergometer = new ErgoSimulator(this);
             ViewModel.resistanceUpdater += Ergometer.SendResistance;
-            //ergometer = new ErgoSimulator(this);
-
-            //this.gui = new GUI();
-           
-            await Ergometer.Connect();
-
+          
+            Task ergoConnect = Ergometer.Connect();
 
             //heartBeatMonitor = new HeartBeatMonitor(this, dataIO);
             HeartBeatMonitor = new HBSimulator(this);
-            await HeartBeatMonitor.Connect();
+            Task heartBeatConnect = HeartBeatMonitor.Connect();
 
-
-            Console.Read();
+            await Task.WhenAll(ergoConnect, heartBeatConnect);
         }
 
         /// <summary>

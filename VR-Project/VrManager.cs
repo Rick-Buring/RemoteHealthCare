@@ -18,7 +18,7 @@ using static VR_Project.ViewModel;
 
 namespace VR_Project
 {
-    public class VrManager
+    public class VrManager : IDisposable
     {
 
         private TcpClient client = new TcpClient("145.48.6.10", 6666);
@@ -35,6 +35,11 @@ namespace VR_Project
 
         private float requestedResistance = 50;
         public float resistanceMultiplier { get; } = 200f;
+
+        public VrManager()
+        {
+            updater += Update;
+        }
 
         public async Task<List<Data>> GetEngineData()
         {
@@ -57,6 +62,9 @@ namespace VR_Project
 
             //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
+            if (size == 0)
+                return null;
+
             byte[] received = new byte[size];
 
 
@@ -75,8 +83,9 @@ namespace VR_Project
             EngineRoot = JsonConvert.DeserializeObject<EngineRoot>(test);
 
             List<Data> OnlineEngines = new List<Data>();
+            
 
-            foreach (Data d in EngineRoot.data)
+            foreach (Data d in EngineRoot?.data)
                 OnlineEngines.Add(d);
 
             return OnlineEngines;
@@ -107,7 +116,6 @@ namespace VR_Project
             await StickCameraToPlayer();
             this.oldPos = await getPosition();
             this.ready = true;
-            Mediator.Notify("ConnectToServer");
         }
         public async Task<string> MakeBikeObject()
         {
@@ -406,6 +414,12 @@ namespace VR_Project
         public void CloseConnection()
         {
             this.client.Close();
+            this.client.Dispose();
+        }
+
+        public void Dispose()
+        {
+            this.stream.Dispose();
             this.client.Dispose();
         }
     }

@@ -21,7 +21,7 @@ using Vr_Project.RemoteHealthcare;
 
 namespace VR_Project
 {
-    public class ClientHandler : BindableBase, INotifyPropertyChanged
+    public class ClientHandler : BindableBase, INotifyPropertyChanged, IDisposable
     {
         private ReadWrite rw;
         private TcpClient client;
@@ -29,6 +29,12 @@ namespace VR_Project
         private bool connected;
         private bool isSessionRunning;
         public ViewModel.RequestResistance resistanceUpdater { get; set; }
+
+        public ClientHandler()
+        {
+            ViewModel.updater += Update;
+        }
+
 
         public string PatientName { get; set; } = "Patient Name";
 
@@ -204,7 +210,10 @@ namespace VR_Project
             }
         }
 
-
-
+        public void Dispose()
+        {
+            this.rw.terminate();
+            this.client.Dispose();
+        }
     }
 }
