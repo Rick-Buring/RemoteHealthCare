@@ -13,14 +13,30 @@
 
 
     <StackPanel>
-        <TextBlock Text="{Binding SelectedClient.Name}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Session Time: " Margin="5,0,0,0" FontWeight="Bold"/>
-            <TextBlock Text="{Binding LastHealthData.ElapsedTime}"/>
-            <TextBlock Text="Distance: " Margin="10,0,0,0" FontWeight="Bold"/>
-            <TextBlock Text="{Binding LastHealthData.DistanceTraveled}"/>
-            <TextBlock Text="Total Wattage: " Margin="10,0,0,0" FontWeight="Bold"/>
-            <TextBlock Text="{Binding LastHealthData.AccWatt}"/>
+            <ComboBox IsEditable="True" IsReadOnly="True" Text="Select Client" DisplayMemberPath="clientName" SelectedValue="{Binding SelectedClientHistory}"  ItemsSource="{Binding ClientHistories}"  Margin="5,5,0,5"/>
+            <Button Content="Retrieve history" Margin="5,0,0,0" Command="{Binding cRetrieveHistory}"/>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="{Binding SelectedClientHistory[SelectedClientHistory.Count-1].Heartbeat}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Session Time: " Margin="5,0,0,0" FontWeight="Bold"/>
+                <TextBlock Text="{Binding LastHealthData.ElapsedTime}"/>
+                <TextBlock Text="Distance: " Margin="10,0,0,0" FontWeight="Bold"/>
+                <TextBlock Text="{Binding LastHealthData.DistanceTraveled}"/>
+                <TextBlock Text="Total Wattage: " Margin="10,0,0,0" FontWeight="Bold"/>
+                <TextBlock Text="{Binding LastHealthData.AccWatt}"/>
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+            </Grid>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
