@@ -44,6 +44,7 @@ namespace DoktersApplicatie
             this.RpmHistoryChart = new HistoryValueTimeChart(rpms);
             this.BpmHistoryChart = new HistoryValueTimeChart(bpms);
             this.KmhHistoryChart = new HistoryValueTimeChart(speeds);
+
         }
 
         public class HistoryValueTimeChart : INotifyPropertyChanged
@@ -94,7 +95,7 @@ namespace DoktersApplicatie
                 double changeValue = e.Delta / 20.00;
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                 {
-                    if (this.To - changeValue > 0)
+                    if (this.To - changeValue > maxValue)
                     {
                         this.To -= e.Delta / 20.00;
                     } else {
@@ -102,14 +103,14 @@ namespace DoktersApplicatie
                     }
                     this.updateStep();
                 } else {
-                    if (this.To - changeValue > 0)
+                    if (this.To - changeValue > maxValue)
                     {
                         this.To -= e.Delta / 20.00;
                     } else {
                         this.To = 0;
                     }
 
-                    if (this.From - changeValue < maxValue)
+                    if (this.From - changeValue < 0)
                     {
                         this.From -= e.Delta / 20.00;
                     } else {

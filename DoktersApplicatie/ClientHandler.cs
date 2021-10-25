@@ -58,7 +58,8 @@ namespace DoktersApplicatie
 			this.active = true;
 			Root selectionRoot = new Root { Target = this.name, Sender = this.name, Type = typeof(Selection).FullName, Data = new Selection() };
 			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
-			
+
+           
 			//await this.rw.Read();
 			//this.isSessionRunning = true;
 			while (active)
@@ -108,8 +109,12 @@ namespace DoktersApplicatie
 			{
 				History history = (root.Data as JObject).ToObject<History>();
 				this.updateHistory(history);
-			}
-			else if (type == typeof(HealthData))
+			} else if (type == typeof(ClientsHistory))
+            {
+				ClientsHistory clientsHistory = (root.Data as JObject).ToObject<ClientsHistory>();
+				Debug.WriteLine(clientsHistory.clients.ToString());
+            }
+            else if (type == typeof(HealthData))
 			{
 				HealthData healthData = (root.Data as JObject).ToObject<HealthData>();
 				this.updateClient(new Client(root.Sender), healthData);
@@ -131,5 +136,10 @@ namespace DoktersApplicatie
 			Root historyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(History).FullName, Data = new History { clientName = client.Name } };
 			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
 		}
+
+        public async Task RequestClientsHistory() {
+            Root clientsHistory = new Root { Sender = name, Target = name, Type = typeof(ClientsHistory).FullName, Data = new ClientsHistory() };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(clientsHistory)));
+        }
 	}
 }

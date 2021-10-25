@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -118,7 +119,7 @@ namespace Server
         }
 
         /// <summary>
-        /// methot used to parse and react on messages
+        /// method used to parse and react on messages
         /// </summary>
         /// <param name="toParse">message to be parsed must be of a json object type from the Root object</param>
         private void Parse(string toParse)
@@ -162,6 +163,34 @@ namespace Server
                 data.clientHistory = this.server.manager.GetHistory(data.clientName);
 
                 root.Data = data;
+            }
+            else if (type == typeof(ClientsHistory))
+            {
+                string sender = root.Sender;
+                root.Sender = sender;
+
+                ClientsHistory data = new ClientsHistory();
+
+                string esketit = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName +
+                                 @"\ClientsInfo";
+
+                String[] filesInDirectory = Directory.GetFiles(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + @"\ClientsInfo");
+                List<String> fileNameHolder = new List<string>();
+                foreach (var directoryFile in filesInDirectory)
+                {
+                    //TODO change
+                    if (directoryFile.EndsWith(".txt"))
+                    {
+                        string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\"));
+                        fileNameHolder.Add(file.Remove(directoryFile.Length - 4));
+
+                            
+                    }
+                }
+
+                data.clients = fileNameHolder.ToArray();
+                root.Data = data;
+
             }
             else if (type == typeof(Setting))
             {

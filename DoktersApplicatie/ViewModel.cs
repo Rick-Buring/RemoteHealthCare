@@ -155,8 +155,8 @@ namespace DoktersApplicatie
 
 		public async void OpenHistory()
 		{
-			if (SelectedClient == null)
-				return; await this.clientHandler.RequestHistory(SelectedClient);
+            await this.clientHandler.RequestClientsHistory();
+			
 		}
 
 
