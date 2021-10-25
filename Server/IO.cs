@@ -18,7 +18,7 @@ namespace Server
         /// <param name="data">the data to write</param>
         public void writeToFile(string client, HealthData data)
         {
-            if (lastSesionTime(client) > data.ElapsedTime)
+            if (File.Exists($"{Environment.CurrentDirectory}/{client}.txt") && lastSesionTime(client) > data.ElapsedTime)
             {
                 File.WriteAllText($"{Environment.CurrentDirectory}/{client}.txt", "");
             }
