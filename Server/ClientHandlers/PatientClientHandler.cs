@@ -12,36 +12,11 @@ using System.Net.Security;
 
 namespace Server
 {
-    public class ClientHandler
+    public class PatientClientHandler : ClientHandlerBase
     {
-        public string Name { get; set; }
-        private TcpClient Client { get; }
-        private ReadWrite rw;
-
-        private Server server;
-        private bool active;
-
-        private Server.AddToList addToList;
-        private Server.RemoveFromList removeFromList;
-
-		/// <summary>
-		/// Handles connecting clients
-		/// </summary>
-		/// <param name="tcpClient">The connecting client</param>
-		/// <param name="server">The server the client is connecting too</param>
-		public ClientHandler(TcpClient tcpClient, Server server, Server.AddToList add, Server.RemoveFromList remove)
+        public PatientClientHandler(TcpClient tcpClient, Server server, Server.AddToList add, Server.RemoveFromList remove) : base(tcpClient, server, add, remove)
         {
-            this.Client = tcpClient;
-
-            SslStream stream = new SslStream(this.Client.GetStream(), false);
-            stream.AuthenticateAsServer(server.Certificate, clientCertificateRequired: false, checkCertificateRevocation: true);
-            this.rw = new ReadWrite(stream);
-            this.server = server;
-            this.addToList = add;
-            this.removeFromList = remove;
-            
-
-            new Thread(Run).Start();
+            start();
         }
 
         /// <summary>
@@ -68,60 +43,12 @@ namespace Server
             return name;
         }
 
-        /// <summary>
-        /// used to disconnect a this client from the server
-        /// </summary>
-        public void disconnect()
-        {
-            this.server.OnDisconnect(this);
-            this.active = false;
-            this.rw.terminate();
-        }
-
-        internal void send(Root message)
-        {
-            byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
-            rw.Write(toSend);
-        }
-
-        /// <summary>
-        /// function to handle incoming messages
-        /// </summary>
-        private async void Run()
-        {
-            this.Name = await getName();
-            send(new Root
-            {
-                Type = typeof(Acknowledge).FullName,
-                Sender = "server",
-                Target = this.Name,
-                Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
-            });
-            //send acknowledgement
-            //Temporary doctor command
-            send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
-            this.active = true;
-            while (active)
-            {
-                try
-                {
-                    string result = await rw.Read();
-                    Console.WriteLine(result);
-                    Parse(result);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    this.disconnect();
-                }
-            }
-        }
 
         /// <summary>
         /// methot used to parse and react on messages
         /// </summary>
         /// <param name="toParse">message to be parsed must be of a json object type from the Root object</param>
-        private void Parse(string toParse)
+        internal override void Parse(string toParse)
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
@@ -189,6 +116,18 @@ namespace Server
             }
 
             if (this.active && !errorFound) this.server.send(root);
+        }
+
+        internal override async void start()
+        {
+            await getName();
+            if (!active)
+            {
+                Console.WriteLine("Client Failed protocol");
+                return;
+            }
+            Console.WriteLine("Client connected");
+            new Thread(base.Run).Start();
         }
     }
 }

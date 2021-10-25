@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class ReadWrite
+    public class ReadWrite : IDisposable
     {
         public const string certificateName = "testCertificaat";
 
@@ -93,6 +93,9 @@ namespace CommunicationObjects
             this.stream.Dispose();
         }
 
-       
+        public void Dispose()
+        {
+            this.stream.Dispose();
+        }
     }
 }

@@ -7,6 +7,7 @@ using CommunicationObjects.DataObjects;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Server
 {
@@ -14,14 +15,16 @@ namespace Server
     // __CR__ [PSMG] Implementeer hier ook de IDisposable interface
     public class Server : IDisposable
     {
-        private TcpListener listener;
-        private Dictionary<string,ClientHandler> clients;
+        private TcpListener patientListener;
+        private TcpListener doctorListener;
+
+        private Dictionary<string, ClientHandlerBase> clients;
         public DataManager manager { get; private set; }
         internal X509Certificate Certificate { get; private set; }
 
-        public delegate void AddToList(ClientHandler client);
+        public delegate void AddToList(ClientHandlerBase client);
         private AddToList addToList;
-        public delegate void RemoveFromList(ClientHandler client);
+        public delegate void RemoveFromList(ClientHandlerBase client);
         private RemoveFromList removeFromList;
 
         private IConfiguration config;
@@ -30,15 +33,15 @@ namespace Server
         {
             //new Test();
             new Server();
-            
+
         }
 
 
         public Server()
         {
-            this.clients = new Dictionary<string, ClientHandler>();
+            this.clients = new Dictionary<string, ClientHandlerBase>();
             // __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
-            this.listener = new TcpListener(System.Net.IPAddress.Any, 5005);
+
             this.manager = new DataManager();
             this.addToList += AddClient;
             this.removeFromList += RemoveClient;
@@ -49,40 +52,49 @@ namespace Server
             config = builder.Build();
 
             this.Certificate = new X509Certificate(config["CertificatePath"], config["CertificatePassword"]);
+            this.patientListener = new TcpListener(IPAddress.Any, 5005);
+
+            patientListener.Start();
+            patientListener.BeginAcceptTcpClient((ar) => OnConnect(ar, true), null);
+            Console.WriteLine($"Listening for Patient connections on port: 5005");
+
+            this.doctorListener = new TcpListener(IPAddress.Any, 6006);
+            this.doctorListener.Start();
+            this.doctorListener.BeginAcceptTcpClient((ar) => OnConnect(ar, false), null);
+            Console.WriteLine($"Listening for Doctor connections on port: 6006");
 
 
-            listener.Start();
-            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
 
             Console.Read();
         }
 
-        public async void AddClient(ClientHandler client) {
-            this.clients.Add(client.Name , client);
-		}
-
-        public async void RemoveClient(ClientHandler client) {
-            this.clients.Remove(client.Name);
-		}
-
-        private void OnConnect(IAsyncResult ar)
+        public void AddClient(ClientHandlerBase client)
         {
-            var tcpClient = listener.EndAcceptTcpClient(ar);
-            listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
-            Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
-            //clients.Add(new ClientHandler(tcpClient, this));
-            new ClientHandler(tcpClient, this, addToList, removeFromList);
+            this.clients.Add(client.Name, client);
         }
 
-        public void OnDisconnect(ClientHandler client)
+        public void RemoveClient(ClientHandlerBase client)
         {
-			// __CR__ [PSMG] Hier krijg je mogelijk een fout met multithreading!
-			//if (this.clients.Contains(client))
-			//{
-			//	this.clients.Remove(client);
-			//}
+            this.clients.Remove(client.Name);
+        }
 
-		}
+        private void OnConnect(IAsyncResult ar, bool isPatient)
+        {
+            TcpClient tcpClient = null;
+            if (isPatient)
+            {
+                tcpClient = patientListener.EndAcceptTcpClient(ar);
+                patientListener.BeginAcceptTcpClient((ar) => OnConnect(ar, isPatient), null);
+            }
+            else
+            {
+                tcpClient = doctorListener.EndAcceptTcpClient(ar);
+                doctorListener.BeginAcceptTcpClient((ar) => OnConnect(ar, isPatient), null);
+            }
+            Console.WriteLine($"Client connected from {tcpClient.Client.RemoteEndPoint}");
+            new PatientClientHandler(tcpClient, this, addToList, removeFromList);
+        }
+
 
         public void send(Root message)
         {
@@ -93,32 +105,25 @@ namespace Server
             if (target == "all")
             {
                 found = true;
-                foreach (ClientHandler client in clients.Values)
+                foreach (ClientHandlerBase client in clients.Values)
                 {
-                //TODO kijken dat het niet naar dokter wordt gestuurd
+                    //TODO kijken dat het niet naar dokter wordt gestuurd
                     if (target != message.Sender)
                         client.send(message);
                 }
             }
             else
             {
-                ClientHandler client = null;
+                ClientHandlerBase client = null;
                 clients.TryGetValue(target, out client);
-                if (client != null) {
+                if (client != null)
+                {
                     clients[target].send(message);
-                } else {
+                }
+                else
+                {
                     Console.WriteLine("Could not find client");
-				}
-                  
-
-                //foreach (ClientHandler client in clients.Values)
-                //{
-                //    if (target == client.Name)
-                //    {
-                //        client.send(message);
-                //        found = true;
-                //    }
-                //}
+                }
             }
 
             if (!(message.Type == typeof(Acknowledge).FullName) && !(message.Type == typeof(HealthData).FullName))
@@ -137,7 +142,7 @@ namespace Server
         public void recieveClients(ref Root root)
         {
             List<string> clients = new List<string>();
-            foreach (ClientHandler client in this.clients.Values)
+            foreach (PatientClientHandler client in this.clients.Values)
             {
                 if (client.Name != root.Sender)
                 {
@@ -160,12 +165,12 @@ namespace Server
 
         public void Dispose()
         {
-            foreach (ClientHandler client in this.clients.Values)
+            foreach (PatientClientHandler client in this.clients.Values)
             {
                 client.disconnect();
             }
             this.clients.Clear();
-            this.listener.Stop();
+            this.patientListener.Stop();
         }
     }
 }
