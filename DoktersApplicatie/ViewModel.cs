@@ -107,7 +107,8 @@ namespace DoktersApplicatie
             if(!String.IsNullOrEmpty(text))
             {
 
-                if(receiver == "All")
+                //Use ^.*(?=(\ =>)) with regex to only get sender
+                if (receiver == "All")
                 {
                     Messages.Add(new Message { Sender = "Doctor => All", Text = text, Receiver = receiver });
                     Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
