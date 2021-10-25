@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CommunicationObjects.DataObjects;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -21,12 +22,26 @@ namespace DoktersApplicatie
         public HistoryValueTimeChart BpmHistoryChart { get; set; }
         public HistoryValueTimeChart KmhHistoryChart { get; set; }
 
-        public HistoryData()
-        {
-            this.WattHistoryChart = new HistoryValueTimeChart();
-            this.RpmHistoryChart = new HistoryValueTimeChart();
-            this.BpmHistoryChart = new HistoryValueTimeChart();
-            this.KmhHistoryChart = new HistoryValueTimeChart();
+        public HistoryData(List<HealthData> healthData) => FillCharts(healthData);
+        
+
+        private void FillCharts (List<HealthData> healthData) {
+            List<HistoryValueTimeChart.ValueTime> watts = new List<HistoryValueTimeChart.ValueTime>();
+            List<HistoryValueTimeChart.ValueTime> rpms = new List<HistoryValueTimeChart.ValueTime>();
+            List<HistoryValueTimeChart.ValueTime> bpms = new List<HistoryValueTimeChart.ValueTime>();
+            List<HistoryValueTimeChart.ValueTime> speeds = new List<HistoryValueTimeChart.ValueTime>();
+
+            foreach (HealthData h in healthData) {
+                watts.Add(new HistoryValueTimeChart.ValueTime(h.CurWatt, h.ElapsedTime));
+                rpms.Add(new HistoryValueTimeChart.ValueTime(h.RPM, h.ElapsedTime));
+                bpms.Add(new HistoryValueTimeChart.ValueTime(h.Heartbeat, h.ElapsedTime));
+                speeds.Add(new HistoryValueTimeChart.ValueTime(h.Speed, h.ElapsedTime));
+            }
+
+            this.WattHistoryChart = new HistoryValueTimeChart(watts);
+            this.RpmHistoryChart = new HistoryValueTimeChart(rpms);
+            this.BpmHistoryChart = new HistoryValueTimeChart(bpms);
+            this.KmhHistoryChart = new HistoryValueTimeChart(speeds);
         }
 
         public class HistoryValueTimeChart : INotifyPropertyChanged
@@ -47,12 +62,12 @@ namespace DoktersApplicatie
                 public int Step { get; set; }
 
 
-                public HistoryValueTimeChart()
+                public HistoryValueTimeChart(List<ValueTime> chart)
                 {
                     var dayConfig = new CartesianMapper<ValueTime>()
                         .X(dayModel => dayModel.SecondsSinceStart)
                         .Y(dayModel => dayModel.Value);
-                    this.Values = new ChartValues<ValueTime>();
+                    this.Values = new ChartValues<ValueTime>(chart);
                     Charting.For<ValueTime>(dayConfig);
                     this.From = 0;
                     this.To = 30;
@@ -60,19 +75,6 @@ namespace DoktersApplicatie
                     this.Step = 10;
 
                     this.maxValue = this.Values[^1].SecondsSinceStart;
-
-                    Random random = new Random();
-
-                    new Thread(async () =>
-                    {
-                        while (true)
-                        {
-                            ValueTime dayModel = new ValueTime(random.NextDouble() * 400, time);
-                            Values.Add(dayModel);
-
-                            await Task.Delay(500);
-                        }
-                    }).Start();
 
                     Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
 
@@ -119,9 +121,9 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, DateTime startTime)
+                public ValueTime(double value, int elapsedTime)
                 {
-                    SecondsSinceStart = ((double)DateTime.Now.Ticks - startTime.Ticks) / TimeSpan.TicksPerSecond;
+                    SecondsSinceStart = elapsedTime;
                     //Debug.WriteLine(SecondsSinceStart);
                     Value = value;
                 }

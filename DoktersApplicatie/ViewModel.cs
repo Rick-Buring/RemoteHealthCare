@@ -181,29 +181,25 @@ namespace DoktersApplicatie
 
 			string[] array = history.clientHistory.Split("\n");
 
-			for (int i = 0; i < array.Length - 1; i += 7)
+			for (int i = 0; i < array.Length; i++)
 			{
-				string[] data = new string[7];
-				for (int j = 0; j < 7; j++)
-				{
-					data[j] = array[i + j];
-				}
-				int hb = int.Parse(data[0].Substring(data[0].IndexOf(" ")));
-				int rpm = int.Parse(data[1].Substring(data[1].IndexOf(" ")));
-				double speed = double.Parse(data[2].Substring(data[2].IndexOf(" ")));
-				int currWatt = int.Parse(data[3].Substring(data[3].IndexOf(" ")));
-				int accWatt = int.Parse(data[4].Substring(data[4].IndexOf(" ")));
-				int time = int.Parse(data[5].Substring(data[5].LastIndexOf(" ")));
+				string[] data = array[i].Split(",");
+				int hb = int.Parse(data[0]);
+				int rpm = int.Parse(data[1]);
+				double speed = double.Parse(data[2]);
+				int currWatt = int.Parse(data[3]);
+				int accWatt = int.Parse(data[4]);
+				int time = int.Parse(data[5]);
 				int distance = 0;
 				string d = data[6];
 				if (d.Contains("\r"))
 				{
-					int distanceLenght = data[6].IndexOf("\r") - data[6].LastIndexOf(" ");
-					distance = int.Parse(data[6].Substring(data[6].LastIndexOf(" "), distanceLenght));
+					int distanceLenght = d.Length - d.IndexOf("\r");
+					distance = int.Parse(d.Substring(0, distanceLenght));
 				}
 				else
 				{
-					distance = int.Parse(data[6].Substring(data[6].LastIndexOf(" ")));
+					distance = int.Parse(d);
 				}
 
 				HealthData healthData = new HealthData()

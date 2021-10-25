@@ -106,20 +106,12 @@ namespace Server
                 ClientHandler client = null;
                 clients.TryGetValue(target, out client);
                 if (client != null) {
+                    found = true;
                     client.send(message);
                 } else {
                     Console.WriteLine("Could not find client");
 				}
-                  
 
-                //foreach (ClientHandler client in clients.Values)
-                //{
-                //    if (target == client.Name)
-                //    {
-                //        client.send(message);
-                //        found = true;
-                //    }
-                //}
             }
 
             if (!(message.Type == typeof(Acknowledge).FullName) && !(message.Type == typeof(HealthData).FullName))

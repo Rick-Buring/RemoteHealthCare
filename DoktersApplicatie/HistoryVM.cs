@@ -25,7 +25,7 @@ namespace DoktersApplicatie
             this.LastHealthData = this.HealthData[this.HealthData.Count - 1];
             this.SelectedClient = selectedClient;
 
-            this.HistoryData = new HistoryData();
+            this.HistoryData = new HistoryData(healthData);
         }
 
     }
