@@ -45,15 +45,14 @@ namespace DoktersApplicatie
             cSetResistance = new DelegateCommand(SetResistance);
             cOpenHistory = new DelegateCommand(OpenHistory);
 
-            SelectedClient = Clients[0];
+            if(Clients.Count != 0)
+            {
+                SelectedClient = Clients[0];
+            }
+
             SessionButtonText = "Start Session";
 
         }
-
-        //public bool canSubmit(object parameter)
-        //{
-        //    return true;
-        //}
 
         //TODO Send message to server
         public void StartStopSession()
