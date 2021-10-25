@@ -1,5 +1,6 @@
 ﻿using CommunicationObjects;
 using CommunicationObjects.DataObjects;
+using DoktersApplicatie.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

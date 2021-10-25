@@ -13,9 +13,9 @@ using System.Threading;
 using System.Windows.Threading;
 using System.IO;
 
-namespace DoktersApplicatie
+namespace DoktersApplicatie.ViewModels
 {
-	public class ViewModel : BindableBase, INotifyPropertyChanged
+	public class ViewModel : ViewModelBase
 	{
 
 		public DelegateCommand cStartStopSession { get; private set; }
