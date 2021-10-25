@@ -15,14 +15,14 @@ namespace VRClientTest
 		[TestMethod]
 		public void TestPriorityQueue ()
 		{
-			PriorityQueue<Message> queue = new PriorityQueue<Message>(new MessageComparer());
+			PriorityQueue<PriortyQueueMessage> queue = new PriorityQueue<PriortyQueueMessage>(new MessageComparer());
 			List<string> resultList = new List<string>();
-			queue.Add(new Message(new Action(() => SayOne()), Priority.HIGH));
-			queue.Add(new Message(new Action(() => SayTwo()), Priority.LOW));
-			queue.Add(new Message(new Action(() => SayThree()), Priority.HIGH));
+			queue.Add(new PriortyQueueMessage(new Action(() => SayOne()), Priority.HIGH));
+			queue.Add(new PriortyQueueMessage(new Action(() => SayTwo()), Priority.LOW));
+			queue.Add(new PriortyQueueMessage(new Action(() => SayThree()), Priority.HIGH));
 			//je kan waarde terug krijgen met func en toch nog in een lijst zetten;
 			
-			foreach (Message m in queue) {
+			foreach (PriortyQueueMessage m in queue) {
 				m.action.Invoke();
 				
 			}

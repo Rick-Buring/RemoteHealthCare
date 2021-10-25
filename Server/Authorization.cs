@@ -9,14 +9,14 @@ namespace Server
 {
     public class Authorization
     {
-        private static readonly string PASSWORDFILE = "Passwords";
+        internal static readonly string PASSWORDFILE = "Passwords.txt";
         public static bool Authorized(string userName, string password)
         {
             foreach (string line in File.ReadLines(PASSWORDFILE))
             {
-                if (line.StartsWith(userName)) ;
+                if (line.StartsWith(userName));
                 {
-                    string p = line.Substring(userName.Length);
+                    string p = line.Substring(userName.Length + 1);
                     return p.Equals(password);
 
                 }

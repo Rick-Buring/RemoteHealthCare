@@ -42,7 +42,6 @@ namespace Server
         {
             removeFromList(this);
             this.active = false;
-            this.rw.terminate();
             Dispose();
         }
 
@@ -57,7 +56,7 @@ namespace Server
         /// </summary>
         internal async void Run()
         {   //Temporary doctor command
-            send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
+            //send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
             while (active)
             {
                 try

@@ -1,28 +1,25 @@
-﻿using CommunicationObjects;
+﻿
+using CommunicationObjects;
 using CommunicationObjects.DataObjects;
-using CommunicationObjects.util;
 using DataStructures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
 
 namespace VR_Project
 {
-    public class ClientHandler : BindableBase, INotifyPropertyChanged, IDisposable
+	public class ClientHandler : BindableBase, INotifyPropertyChanged, IDisposable
     {
         private ReadWrite rw;
         private TcpClient client;
@@ -31,12 +28,13 @@ namespace VR_Project
 		private bool isSessionRunning;
 		public ConnectToServerVM.RequestResistance resistanceUpdater { get; set; }
 
-        }
-            ViewModel.updater += Update;
-        {
         public ClientHandler()
+        {
+            ViewModel.updater += Update;
+        }
+
 		public string PatientName { get; set; } = "Patient Name";
-        private PriorityQueue<CommunicationObjects.util.Message> queue;
+        private PriorityQueue<CommunicationObjects.util.PriortyQueueMessage> queue;
         public async void StartConnection(string ip, int port)
         {
             if (this.client != null)
@@ -53,7 +51,7 @@ namespace VR_Project
 
             this.rw = new ReadWrite(stream);
 
-            this.resistanceUpdater = ViewModel.requestResistance;
+            this.resistanceUpdater = ConnectToServerVM.requestResistance;
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Parse(await this.rw.Read());
@@ -202,13 +200,13 @@ namespace VR_Project
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
                 { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "henk", Target = "server" })));
-                this.rw.terminate();
+                this.rw.Dispose();
             }
         }
 
         public void Dispose()
         {
-            this.rw.terminate();
+            this.rw.Dispose();
             this.client.Dispose();
         }
     }

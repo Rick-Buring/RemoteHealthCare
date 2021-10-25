@@ -44,7 +44,7 @@ namespace DoktersApplicatie
 				);
 			stream.AuthenticateAsClient(ReadWrite.certificateName);
 			this.rw = new ReadWrite(stream);
-			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = this.name, Target = "server" };
+			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = "test" }, Sender = this.name, Target = "server" };
 			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
 			Parse(await this.rw.Read());
 

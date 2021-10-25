@@ -6,9 +6,9 @@ using System.Text;
 
 namespace CommunicationObjects
 {
-	public class MessageComparer : IComparer<Message>
+	public class MessageComparer : IComparer<PriortyQueueMessage>
 	{
-		public int Compare([AllowNull] Message x, [AllowNull] Message y)
+		public int Compare([AllowNull] PriortyQueueMessage x, [AllowNull] PriortyQueueMessage y)
 		{
 
 			if (x.priority == y.priority) return 0;

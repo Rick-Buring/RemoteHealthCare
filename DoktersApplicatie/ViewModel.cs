@@ -39,9 +39,6 @@ namespace DoktersApplicatie
 		public delegate void UpdateHistory(History history);
 		public UpdateHistory updateHistory;
 
-		public string TextToSend { get; set; }
-		public string SessionButtonText { get; set; }
-		public Client SelectedClient { get; set; }
 		public int TempResistance { get; set; }
 
 		private ClientHandler clientHandler;
@@ -79,7 +76,7 @@ namespace DoktersApplicatie
 			this.updateClient += this.data.UpdateClient;
 			this.updateHistory += this.InsertHistory;
 			this.clientHandler = new ClientHandler(this.clientReceived, this.updateClient, this.updateHistory, "hank");
-			this.clientThread = new Thread(async () => await clientHandler.StartConnection("localhost", 5005));
+			this.clientThread = new Thread(async () => await clientHandler.StartConnection("localhost", 6006));
 			this.clientThread.Start();
 		}
 
@@ -179,7 +176,9 @@ namespace DoktersApplicatie
 		public async void OpenHistory()
 		{
 			if (SelectedClient == null)
-				return; await this.clientHandler.RequestHistory(SelectedClient);
+				return;
+			await this.clientHandler.RequestHistory(SelectedClient);
+			
 		}
 
 

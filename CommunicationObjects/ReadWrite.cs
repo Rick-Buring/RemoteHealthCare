@@ -85,16 +85,9 @@ namespace CommunicationObjects
             return Encoding.ASCII.GetString(received);
         }
 
-
-        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
-        public void terminate()
-        {
-            this.stream.Close();
-            this.stream.Dispose();
-        }
-
         public void Dispose()
         {
+            this.stream.Close();
             this.stream.Dispose();
         }
     }
