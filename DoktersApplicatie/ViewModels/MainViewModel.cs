@@ -8,7 +8,7 @@ namespace DoktersApplicatie.ViewModels
 {
     class MainViewModel : ViewModelBase
     {
-		public ViewModelBase CurrentUserControl { get; set; } = new ViewModel();
+		public ViewModelBase CurrentUserControl { get; set; } = new LoginVM();
 
 	}
 }

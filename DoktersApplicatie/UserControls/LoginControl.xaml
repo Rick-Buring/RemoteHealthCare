@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:DoktersApplicatie.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+	<StackPanel>
+		<TextBox Text="{Binding Name}"/>
+		<TextBox Text="{Binding Password}"/>
+		<Button Content="login" Command="{Binding LoginCommand}"/>
+	</StackPanel>
 </UserControl>
