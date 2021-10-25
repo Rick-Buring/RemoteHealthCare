@@ -21,14 +21,16 @@ namespace DoktersApplicatie
 		private bool active;
 		private ViewModel.ClientReceived addClient;
 		private ViewModel.UpdateClient updateClient;
+		private ViewModel.UpdateHistory updateHistory;
 
-		public ClientHandler(ViewModel.ClientReceived addClient, ViewModel.UpdateClient updateClient, string name)
+		public ClientHandler(ViewModel.ClientReceived addClient, ViewModel.UpdateClient updateClient, ViewModel.UpdateHistory updateHistory, string name)
 		{
 			this.name = name;
 			this.connected = false;
 			this.active = false;
 			this.addClient = addClient;
 			this.updateClient = updateClient;
+			this.updateHistory = updateHistory;
 		}
 
 		public async Task StartConnection(string ip, int port)
@@ -99,9 +101,13 @@ namespace DoktersApplicatie
 					//{
 					//	this.active = false;
 					//}
-				}
+				} 
 
 
+			} else if (type == typeof(History)) 
+			{
+				History history = (root.Data as JObject).ToObject<History>();
+				this.updateHistory(history);
 			}
 			else if (type == typeof(HealthData))
 			{
@@ -119,6 +125,11 @@ namespace DoktersApplicatie
 		{
 			Root resistanceRoot = new Root { Sender = name, Target = client.Name, Type = typeof(Setting).FullName, Data = new Setting { res = resistance } };
 			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
+		}
+
+		public async Task RequestHistory(Client client) {
+			Root historyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(History).FullName, Data = new History { clientName = client.Name } };
+			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
 		}
 	}
 }

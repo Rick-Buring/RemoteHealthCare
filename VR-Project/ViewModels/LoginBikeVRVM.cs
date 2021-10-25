@@ -38,7 +38,9 @@ namespace VR_Project.ViewModels
         private async void GetOnlineEngines()
         {
             this.Engines.Clear();
-            this.Engines.AddRange(await vr.GetEngineData());
+            List<Data> list = await vr.GetEngineData();
+            if (list != null)
+            this.Engines.AddRange(list);
         }
 
         public Data SelectClient { get; set; }
