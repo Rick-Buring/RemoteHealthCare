@@ -36,7 +36,7 @@ namespace DoktersApplicatie
 
 
 
-    public class Client
+    public class Client : INotifyPropertyChanged
     {
         public string Name { get; set; }
         public int BPM { get; set; }
@@ -48,11 +48,14 @@ namespace DoktersApplicatie
         public int SessionTime { get; set; }
         public int Resistance { get; set; }
 
+        public int TempResistance { get; set; } = 50;
+
         public ValueTimeChart WattChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart BpmChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart RpmChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart KmhChart { get; set; } = new ValueTimeChart();
 
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public class ValueTimeChart : INotifyPropertyChanged
         {

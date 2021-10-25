@@ -29,7 +29,6 @@ namespace DoktersApplicatie
         public string TextToSend { get; set; }
         public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
-        public int TempResistance { get; set; }
 
         public ViewModel()
         {
@@ -48,7 +47,6 @@ namespace DoktersApplicatie
 
             SelectedClient = Clients[0];
             SessionButtonText = "Start Session";
-            TempResistance = 50;
 
         }
 
@@ -99,6 +97,7 @@ namespace DoktersApplicatie
         //TODO Send message to server
         public void SetResistance()
         {
+            SelectedClient.Resistance = SelectedClient.TempResistance;
             Debug.WriteLine("Set resistance to: " + SelectedClient.Resistance);
         }
 
@@ -108,10 +107,19 @@ namespace DoktersApplicatie
 
             if(!String.IsNullOrEmpty(text))
             {
-                Messages.Add(new Message { Sender = "Doctor", Text = text, Receiver = receiver });
-                Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
+
+                if(receiver == "All")
+                {
+                    Messages.Add(new Message { Sender = "Doctor => All", Text = text, Receiver = receiver });
+                    Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
+                } else
+                {
+                    Messages.Add(new Message { Sender = $"Doctor => {receiver}", Text = text, Receiver = receiver });
+                    Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
+                }
 
                 TextToSend = "";
+
             }
 
         }
