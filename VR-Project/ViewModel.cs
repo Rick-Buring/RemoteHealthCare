@@ -22,9 +22,7 @@ namespace VR_Project
         public delegate void NavigateViewModel(BaseViewModel vm);
         public static Update updater;
         public static SendResistance resistanceUpdater;
-        public delegate void RequestResistance (float resistance);
-       
-        public static RequestResistance requestResistance;
+        
 
         public BaseViewModel CurrentPageViewModel { get; private set; }
 

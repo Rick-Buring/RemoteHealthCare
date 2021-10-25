@@ -20,12 +20,15 @@ namespace VR_Project.ViewModels
         public DelegateCommand ConnectToServer{ get; }
 
         public ConnectToServerVM(ClientHandler client, EquipmentMain equipment,VrManager vr, ViewModel.NavigateViewModel navigate)
+        public static RequestResistance requestResistance;
+        public delegate void RequestResistance(float resistance);
         {
             this.vr = vr;
             this.Client = client;
             this.eq = equipment;
             this.navigateView = navigate;
             this.ConnectToServer = new DelegateCommand(EngageConnection);
+            //requestResistance += this.eq.ergometer.SendResistance;
         }
 
         public string PortNumber { get; set; } = "5005";

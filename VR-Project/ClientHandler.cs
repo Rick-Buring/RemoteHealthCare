@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Vr_Project.RemoteHealthcare;
+using VR_Project.ViewModels;
 
 namespace VR_Project
 {
@@ -25,19 +26,16 @@ namespace VR_Project
     {
         private ReadWrite rw;
         private TcpClient client;
-        private bool active;
-        private bool connected;
-        private bool isSessionRunning;
-        public ViewModel.RequestResistance resistanceUpdater { get; set; }
+		private bool active;
+		private bool connected;
+		private bool isSessionRunning;
+		public ConnectToServerVM.RequestResistance resistanceUpdater { get; set; }
 
-        public ClientHandler()
-        {
-            ViewModel.updater += Update;
         }
-
-
-        public string PatientName { get; set; } = "Patient Name";
-
+            ViewModel.updater += Update;
+        {
+        public ClientHandler()
+		public string PatientName { get; set; } = "Patient Name";
         private PriorityQueue<CommunicationObjects.util.Message> queue;
         public async void StartConnection(string ip, int port)
         {
@@ -168,35 +166,33 @@ namespace VR_Project
             }
 
 
-
         }
-
-        private bool isLocked = false;
-        public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-        {
-
-            if (this.client != null && this.isSessionRunning && !this.isLocked)
-            {
-                this.isLocked = true;
-                ErgometerData data = ergometer.GetErgometerData();
-                Root healthData = new Root()
-                {
-                    Type = typeof(HealthData).FullName,
-                    Data = new HealthData()
-                    {
-                        RPM = data.Cadence,
-                        AccWatt = data.AccumulatedPower,
-                        CurWatt = data.InstantaneousPower,
-                        Speed = data.InstantaneousSpeed,
-                        Heartbeat = heartBeatMonitor.GetHeartBeat(),
-                        ElapsedTime = data.ElapsedTime,
-                        DistanceTraveled = data.DistanceTraveled
-                    },
-                    Sender = "Henk",
-                    Target = "Hank"
-                };
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
-                this.isLocked = false;
+		private bool isLocked = false;
+		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+		{
+			
+			if (this.client != null && this.isSessionRunning && !this.isLocked)
+			{
+				this.isLocked = true;
+				ErgometerData data = ergometer.GetErgometerData();
+				Root healthData = new Root()
+				{
+					Type = typeof(HealthData).FullName,
+					Data = new HealthData()
+					{
+						RPM = data.Cadence,
+						AccWatt = data.AccumulatedPower,
+						CurWatt = data.InstantaneousPower,
+						Speed = data.InstantaneousSpeed,
+						Heartbeat = heartBeatMonitor.GetHeartBeat(),
+						ElapsedTime = data.ElapsedTime,
+						DistanceTraveled = data.DistanceTraveled
+					},
+					Sender = "henk",
+					Target = "hank"
+				};
+				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+				this.isLocked = false;
             }
         }
         public void Stop()
@@ -205,7 +201,7 @@ namespace VR_Project
             if (this.rw != null)
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "Henk", Target = "server" })));
+                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "henk", Target = "server" })));
                 this.rw.terminate();
             }
         }

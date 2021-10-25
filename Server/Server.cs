@@ -68,10 +68,10 @@ namespace Server
             Console.Read();
         }
 
-        public void AddClient(ClientHandlerBase client)
-        {
-            this.clients.Add(client.Name, client);
-        }
+        public void AddClient(ClientHandler client) {
+        if (!this.clients.ContainsKey(client.Name))
+            this.clients.Add(client.Name , client);
+		}
 
         public void RemoveClient(ClientHandlerBase client)
         {
@@ -116,14 +116,13 @@ namespace Server
             {
                 ClientHandlerBase client = null;
                 clients.TryGetValue(target, out client);
-                if (client != null)
-                {
-                    clients[target].send(message);
-                }
-                else
-                {
+                if (client != null) {
+                    found = true;
+                    client.send(message);
+                } else {
                     Console.WriteLine("Could not find client");
-                }
+				}
+
             }
 
             if (!(message.Type == typeof(Acknowledge).FullName) && !(message.Type == typeof(HealthData).FullName))

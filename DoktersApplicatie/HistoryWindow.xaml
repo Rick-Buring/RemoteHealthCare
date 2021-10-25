@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoktersApplicatie"
+        xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" d:DataContext="{d:DesignInstance Type=local:HistoryVM}"
         mc:Ignorable="d"
         Title="Client History"
-        Height="450"
+        Height="550"
         Width="800"
         ResizeMode="CanMinimize">
+
+
     <StackPanel>
         <TextBlock Text="{Binding SelectedClient.Name}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
         <StackPanel Orientation="Horizontal">
@@ -23,12 +26,78 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <wpf:CartesianChart Grid.Row="0" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.WattHistoryChart}"  AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="{Binding Step}"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="Watt" MinValue="0" MaxValue="700"/>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
+
+            <wpf:CartesianChart Grid.Row="0" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.BpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="{Binding Step}"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="bpm" MinValue="0" MaxValue="220"/>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
+
+            <wpf:CartesianChart Grid.Row="1" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.RpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="{Binding Step}"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="rpm" MinValue="0" MaxValue="200"/>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
+
+            <wpf:CartesianChart Grid.Row="1" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.KmhHistoryChart}"  AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="{Binding Step}"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="km/h" MinValue="0" MaxValue="60"/>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
         </Grid>
     </StackPanel>
-
 </Window>
