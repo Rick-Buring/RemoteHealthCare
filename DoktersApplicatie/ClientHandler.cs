@@ -13,129 +13,135 @@ using System.Threading.Tasks;
 
 namespace DoktersApplicatie
 {
-	public class ClientHandler
-	{
-		private string name;
-		private ReadWrite rw;
-		private TcpClient client;
-		private bool connected;
-		private bool active;
-		private HomeVM.ClientReceived addClient;
-		private HomeVM.UpdateClient updateClient;
-		private HomeVM.UpdateHistory updateHistory;
-        private string password;
+    public class ClientHandler
+    {
+        private string name;
+        private ReadWrite rw;
+        private TcpClient client;
+        private bool connected;
+        private bool active;
+        private HomeVM.ClientReceived addClient;
+        private HomeVM.UpdateClient updateClient;
+        private HomeVM.UpdateHistory updateHistory;
+        private bool loggedIn;
 
-        public ClientHandler(HomeVM.ClientReceived addClient, HomeVM.UpdateClient updateClient, HomeVM.UpdateHistory updateHistory, string name, string password)
-		{
-			this.name = name;
-			this.connected = false;
-			this.active = false;
-			this.addClient = addClient;
-			this.updateClient = updateClient;
-			this.updateHistory = updateHistory;
-			this.password = password;
-		}
+        public ClientHandler()
+        {
+            loggedIn = false;
+        }
 
-		public async Task StartConnection(string ip, int port)
-		{
-			this.client = new TcpClient(ip, port);
-			SslStream stream = new SslStream(
-					this.client.GetStream(),
-					false,
-					new RemoteCertificateValidationCallback(ReadWrite.ValidateServerCertificate),
-					null
-				);
-			stream.AuthenticateAsClient(ReadWrite.certificateName);
-			this.rw = new ReadWrite(stream);
-		}
+        public void addDelegates(HomeVM.ClientReceived addClient, HomeVM.UpdateClient updateClient, HomeVM.UpdateHistory updateHistory)
+        {
+            this.connected = false;
+            this.active = false;
+            this.addClient = addClient;
+            this.updateClient = updateClient;
+            this.updateHistory = updateHistory;
+        }
 
-		public async Task<Acknowledge> Login()
-		{
-			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = this.password }, Sender = this.name, Target = "server" };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-			Root r = JsonConvert.DeserializeObject<Root>(await this.rw.Read());
+        public async Task StartConnection(string ip, int port)
+        {
+            this.client = new TcpClient(ip, port);
+            SslStream stream = new SslStream(
+                    this.client.GetStream(),
+                    false,
+                    new RemoteCertificateValidationCallback(ReadWrite.ValidateServerCertificate),
+                    null
+                );
+            stream.AuthenticateAsClient(ReadWrite.certificateName);
+            this.rw = new ReadWrite(stream);
+        }
 
-			return (r.Data as JObject).ToObject<Acknowledge>();
-		}
+        public async Task<bool> Login(string name, string password)
+        {
+            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = password }, Sender = name, Target = "server" };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            Root r = JsonConvert.DeserializeObject<Root>(await this.rw.Read());
+            this.loggedIn = (r.Data as JObject).ToObject<Acknowledge>().status == 200;
 
-		public async Task Run()
-		{
+            return loggedIn;
+        }
 
-			this.active = true;
-			Root selectionRoot = new Root { Target = this.name, Sender = this.name, Type = typeof(Selection).FullName, Data = new Selection() };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
-			
-			//await this.rw.Read();
-			//this.isSessionRunning = true;
-			while (active)
-			{
-				try
-				{
-					string result = await rw.Read();
-					Console.WriteLine(result);
-					Parse(result);
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e);
-					//todo disconnect client
-					this.active = false;
+        public async Task Run()
+        {
 
-				}
-			}
-		}
+            this.active = true;
+            Root selectionRoot = new Root { Target = this.name, Sender = this.name, Type = typeof(Selection).FullName, Data = new Selection() };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
 
-		private void Parse(string toParse)
-		{
-			Root root = JsonConvert.DeserializeObject<Root>(toParse);
+            //await this.rw.Read();
+            //this.isSessionRunning = true;
+            while (active)
+            {
+                try
+                {
+                    string result = await rw.Read();
+                    Console.WriteLine(result);
+                    Parse(result);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    //todo disconnect client
+                    this.active = false;
 
-			Type type = Type.GetType(root.Type);
+                }
+            }
+        }
 
-			if (type == typeof(Acknowledge))
-			{
-				Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
+        private void Parse(string toParse)
+        {
+            Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
-				Type ackType = Type.GetType(ack.subtype);
-				if (ackType == typeof(Connection))
-				{
-					if (ack.status == 200) this.connected = !this.connected;
-					Debug.WriteLine("Connected to server!!");
-					//this.addClient(new Client {Name = });
-					//this.isSessionRunning = !this.isSessionRunning;
-					//this.connected = !this.connected;
-					//if (!this.connected)
-					//{
-					//	this.active = false;
-					//}
-				} 
+            Type type = Type.GetType(root.Type);
+
+            if (type == typeof(Acknowledge))
+            {
+                Acknowledge ack = (root.Data as JObject).ToObject<Acknowledge>();
+
+                Type ackType = Type.GetType(ack.subtype);
+                if (ackType == typeof(Connection))
+                {
+                    if (ack.status == 200) this.connected = !this.connected;
+                    Debug.WriteLine("Connected to server!!");
+                    //this.addClient(new Client {Name = });
+                    //this.isSessionRunning = !this.isSessionRunning;
+                    //this.connected = !this.connected;
+                    //if (!this.connected)
+                    //{
+                    //	this.active = false;
+                    //}
+                }
 
 
-			} else if (type == typeof(History)) 
-			{
-				History history = (root.Data as JObject).ToObject<History>();
-				this.updateHistory(history);
-			}
-			else if (type == typeof(HealthData))
-			{
-				HealthData healthData = (root.Data as JObject).ToObject<HealthData>();
-				this.updateClient(new Client(root.Sender), healthData);
-			} 
-			else if (type == typeof(Selection)) 
-			{
-				Selection selection = (root.Data as JObject).ToObject<Selection>();
-				foreach (string s in selection.selection) this.addClient(new Client(s));
-			}
-		}
+            }
+            else if (type == typeof(History))
+            {
+                History history = (root.Data as JObject).ToObject<History>();
+                this.updateHistory(history);
+            }
+            else if (type == typeof(HealthData))
+            {
+                HealthData healthData = (root.Data as JObject).ToObject<HealthData>();
+                this.updateClient(new Client(root.Sender), healthData);
+            }
+            else if (type == typeof(Selection))
+            {
+                Selection selection = (root.Data as JObject).ToObject<Selection>();
+                foreach (string s in selection.selection) this.addClient(new Client(s));
+            }
+        }
 
-		public void SetResistance(Client client, int resistance)
-		{
-			Root resistanceRoot = new Root { Sender = name, Target = client.Name, Type = typeof(Setting).FullName, Data = new Setting { res = resistance } };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
-		}
+        public void SetResistance(Client client, int resistance)
+        {
+            Root resistanceRoot = new Root { Sender = name, Target = client.Name, Type = typeof(Setting).FullName, Data = new Setting { res = resistance } };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
+        }
 
-		public async Task RequestHistory(Client client) {
-			Root historyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(History).FullName, Data = new History { clientName = client.Name } };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
-		}
-	}
+        public async Task RequestHistory(Client client)
+        {
+            Root historyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(History).FullName, Data = new History { clientName = client.Name } };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
+        }
+    }
 }

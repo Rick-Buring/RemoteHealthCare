@@ -19,6 +19,7 @@ namespace DoktersApplicatie.ViewModels
         public bool MessageIsError { get; internal set; }
 
         public AsyncLoginCommand<HomeVM> LoginCommand { get; }
+        public string ServerAddres { get; set; } = "Localhost:6006";
 
         private NavigateDelegate navigate;
 

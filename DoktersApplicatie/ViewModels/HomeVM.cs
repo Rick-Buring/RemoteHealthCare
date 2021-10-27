@@ -41,26 +41,13 @@ namespace DoktersApplicatie.ViewModels
 
         public int TempResistance { get; set; }
 
-        internal void StartClientHandler()
-        {
-            if (clientThread != null)
-                return;
-            clientThread = new Thread(async () => await clientHandler.Run());
-            clientThread.Start();
-        }
-
         private ClientHandler clientHandler;
         private Thread clientThread;
         private Data data;
 
         private Dispatcher dispatcher;
 
-        internal void setClientHandler(ClientHandler client)
-        {
-            this.clientHandler = client;
-        }
-
-        public HomeVM(MainViewModel.NavigateDelegate navigate)
+        public HomeVM(MainViewModel.NavigateDelegate navigate, ClientHandler clientHandler)
         {
             this.data = new Data();
             this.dispatcher = Dispatcher.CurrentDispatcher;
@@ -88,6 +75,11 @@ namespace DoktersApplicatie.ViewModels
             this.clientReceived += this.data.AddClient;
             this.updateClient += this.data.UpdateClient;
             this.updateHistory += this.InsertHistory;
+            this.clientHandler = clientHandler;
+            this.clientHandler.addDelegates(clientReceived, updateClient, updateHistory);
+
+            clientThread = new Thread(async () => await clientHandler.Run());
+            clientThread.Start();
         }
 
         //public bool canSubmit(object parameter)

@@ -10,12 +10,15 @@ namespace DoktersApplicatie.Commands
     public class AsyncLoginCommand<T> : AsyncCommandBase where T : ViewModels.ViewModelBase
     {
         private MainViewModel.NavigateDelegate navigate;
+        private ClientHandler clientHandler;
         private LoginVM viewModel;
 
         public AsyncLoginCommand(MainViewModel.NavigateDelegate navigate, LoginVM viewModel, Action<Exception> onException) : base(onException)
         {
             this.navigate = navigate;
             this.viewModel = viewModel;
+            this.clientHandler= new ClientHandler();
+
         }
 
         protected async override Task ExecuteAsync(object parameter)
@@ -37,17 +40,23 @@ namespace DoktersApplicatie.Commands
             viewModel.MessageIsError = false;
             viewModel.Message = "Login succesfull!";
 
-            HomeVM homeVM = new HomeVM(navigate);
-            ClientHandler clientHandler = new ClientHandler(homeVM.clientReceived, homeVM.updateClient, homeVM.updateHistory, viewModel.Name, viewModel.Password);
-            homeVM.setClientHandler(clientHandler);
+            string[] serverAddres = viewModel.ServerAddres.Split(":");
 
-            await clientHandler.StartConnection("LocalHost", 6006);
-
-            Acknowledge a = await clientHandler.Login();
-            if (a.status == 200)
+            try
             {
-                homeVM.StartClientHandler();
-                navigate(homeVM);
+                await clientHandler.StartConnection(serverAddres[0], Int32.Parse(serverAddres[1]));
+
+            }catch(Exception ex)
+            {
+                viewModel.Message = "Server not found";
+                viewModel.MessageIsError = true;
+                return;
+            }
+
+
+            if (await clientHandler.Login(viewModel.Name, viewModel.Password))
+            {
+                navigate(new HomeVM(navigate, clientHandler));
             }
             else
             {
