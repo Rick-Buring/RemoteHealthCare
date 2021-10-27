@@ -10,7 +10,7 @@
 		<DataTemplate DataType="{x:Type ViewModels:LoginVM}">
 			<views:LoginControl/>
 		</DataTemplate>
-		<DataTemplate DataType="{x:Type ViewModels:ViewModel}">
+		<DataTemplate DataType="{x:Type ViewModels:HomeVM}">
 			<views:MainViewControl/>
 		</DataTemplate>
 

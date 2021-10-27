@@ -6,9 +6,21 @@ using System.Text;
 
 namespace DoktersApplicatie.ViewModels
 {
-    class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
-		public ViewModelBase CurrentUserControl { get; set; } = new LoginVM();
+        public delegate void NavigateDelegate(ViewModelBase view);
 
-	}
+        public ViewModelBase CurrentUserControl { get; set; }
+
+        public MainViewModel()
+        {
+            CurrentUserControl = new LoginVM(Navigate);
+        }
+
+        public void Navigate(ViewModelBase navigateTo)
+        {
+            this.CurrentUserControl = navigateTo;
+        }
+
+    }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationObjects.DataObjects
 {
-	class Acknowledge
+	public class Acknowledge
 	{
 		public string subtype { get; set; }
 		public int status { get; set; }

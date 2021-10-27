@@ -20,11 +20,12 @@ namespace DoktersApplicatie
 		private TcpClient client;
 		private bool connected;
 		private bool active;
-		private ViewModel.ClientReceived addClient;
-		private ViewModel.UpdateClient updateClient;
-		private ViewModel.UpdateHistory updateHistory;
+		private HomeVM.ClientReceived addClient;
+		private HomeVM.UpdateClient updateClient;
+		private HomeVM.UpdateHistory updateHistory;
+        private string password;
 
-		public ClientHandler(ViewModel.ClientReceived addClient, ViewModel.UpdateClient updateClient, ViewModel.UpdateHistory updateHistory, string name)
+        public ClientHandler(HomeVM.ClientReceived addClient, HomeVM.UpdateClient updateClient, HomeVM.UpdateHistory updateHistory, string name, string password)
 		{
 			this.name = name;
 			this.connected = false;
@@ -32,6 +33,7 @@ namespace DoktersApplicatie
 			this.addClient = addClient;
 			this.updateClient = updateClient;
 			this.updateHistory = updateHistory;
+			this.password = password;
 		}
 
 		public async Task StartConnection(string ip, int port)
@@ -45,12 +47,15 @@ namespace DoktersApplicatie
 				);
 			stream.AuthenticateAsClient(ReadWrite.certificateName);
 			this.rw = new ReadWrite(stream);
-			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = "test" }, Sender = this.name, Target = "server" };
-			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-			Parse(await this.rw.Read());
+		}
 
-			if (this.connected) await Run();
-			
+		public async Task<Acknowledge> Login()
+		{
+			Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = this.password }, Sender = this.name, Target = "server" };
+			this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+			Root r = JsonConvert.DeserializeObject<Root>(await this.rw.Read());
+
+			return (r.Data as JObject).ToObject<Acknowledge>();
 		}
 
 		public async Task Run()
