@@ -132,11 +132,13 @@ namespace DoktersApplicatie.ViewModels
                 if (receiver == "All")
                 {
                     Messages.Add(new Message { Sender = "Doctor => All", Text = text, Receiver = receiver });
+                    this.clientHandler.SendChat(true, text);
                     Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
                 }
                 else
                 {
                     Messages.Add(new Message { Sender = $"Doctor => {receiver}", Text = text, Receiver = receiver });
+                    this.clientHandler.SendChat(false, text, SelectedClient);
                     Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
                 }
 
