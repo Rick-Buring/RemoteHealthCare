@@ -22,6 +22,10 @@ namespace VR_Project.ViewModels
 
         public ObservableCollection<Message> Messages { get; private set; }
         private Dispatcher dispatcher;
+
+        public static RequestResistance requestResistance;
+        public delegate void RequestResistance(float resistance);
+
         public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment, ViewModel.NavigateViewModel navigateView)
         {
             this.dispatcher = Dispatcher.CurrentDispatcher;
@@ -31,6 +35,7 @@ namespace VR_Project.ViewModels
             AddMessage = addMessage;
             Client = client;
             VrManager = vrManager;
+            this.Client.resistanceUpdater += VrManager.RequestResistance;
             Equipment = equipment;
         }
 

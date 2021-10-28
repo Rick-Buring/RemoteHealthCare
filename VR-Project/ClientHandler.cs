@@ -26,7 +26,7 @@ namespace VR_Project
 		private bool active;
 		private bool connected;
 		private bool isSessionRunning;
-		public ConnectToServerVM.RequestResistance resistanceUpdater { get; set; }
+		public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
 
         public ClientHandler()
         {
@@ -51,8 +51,8 @@ namespace VR_Project
 
             this.rw = new ReadWrite(stream);
 
-            this.resistanceUpdater = ConnectToServerVM.requestResistance;
-            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+            
+            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Parse(await this.rw.Read());
 

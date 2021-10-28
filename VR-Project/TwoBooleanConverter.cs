@@ -11,9 +11,9 @@ namespace VR_Project
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             bool b1 = values[0].GetType() == typeof(bool) ? (bool) values[0] : false ;
-            bool b2 = values[1].GetType() == typeof(bool) ? (bool)values[0] : false;
+            bool b2 = values[1].GetType() == typeof(bool) ? (bool)values[1] : false;
 
-            return b1 && !b2;
+            return !b1 && b2;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

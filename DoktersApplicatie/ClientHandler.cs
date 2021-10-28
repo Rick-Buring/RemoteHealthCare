@@ -139,10 +139,23 @@ namespace DoktersApplicatie
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
         }
 
-        public async Task RequestHistory(Client client)
+        public void RequestHistory(Client client)
         {
             Root historyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(History).FullName, Data = new History { clientName = client.Name } };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
         }
+
+        public void EmergencyStop(bool all, Client client = null)
+		{
+            if (all)
+			{
+                Root emergencyRoot = new Root { Sender = name, Target = "all", Type = typeof(Setting).FullName, Data = new Setting { res = 0, emergencystop = true } };
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+			} else
+			{
+                Root emergencyRoot = new Root { Sender = name, Target = client.Name, Type = typeof(Setting).FullName, Data = new Setting { res = 0, emergencystop = true } };
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+            }
+		}
     }
 }
