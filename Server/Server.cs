@@ -72,7 +72,22 @@ namespace Server
 		public void AddClient(ClientHandlerBase client)
 		{
 			if (!this.clients.ContainsKey(client.Name))
+			{
 				this.clients.Add(client.Name, client);
+				if (client.GetType() == typeof(PatientClientHandler))
+				{
+					Root root = new Root { Target = "all", Sender = "server", Type = typeof(Selection).FullName};
+					ReceiveClients(ref root);
+					if (root == null) return;
+					foreach (ClientHandlerBase c in clients.Values)
+					{
+						if (c is DoctorClientHandler)
+						{
+							c.send(root);
+						}
+					}
+				}
+			}
 		}
 
 		public void RemoveClient(ClientHandlerBase client)
@@ -144,17 +159,17 @@ namespace Server
 			}
 		}
 
-		public void recieveClients(ref Root root)
+		public void ReceiveClients(ref Root root)
 		{
 			List<string> clients = new List<string>();
 			foreach (ClientHandlerBase client in this.clients.Values)
 			{
 				if (client is DoctorClientHandler)
 					continue;
-				if (client.Name != root.Sender)
-				{
+				//if (client.Name != root.Sender)
+				//{
 					clients.Add(client.Name);
-				}
+				//}
 			}
 			root.Data = new Selection() { selection = clients };
 		}
