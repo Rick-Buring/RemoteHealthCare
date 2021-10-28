@@ -97,7 +97,7 @@ namespace DoktersApplicatie
             this.CurrWatt = healthData.CurWatt;
             this.AccWatt = healthData.AccWatt;
             this.Distance = healthData.DistanceTraveled;
-            this.SessionTime = healthData.ElapsedTime;
+            this.SessionTime = healthData.ElapsedTime; 
 		}
 
         public int CompareTo(string other)
@@ -127,25 +127,13 @@ namespace DoktersApplicatie
                 this.Values = new ChartValues<ValueTime>();
                 Charting.For<ValueTime>(dayConfig);
 
-                Random random = new Random();
-
-                new Thread(async () =>
-                {
-                    while (true)
-                    {
-                        ValueTime dayModel = new ValueTime(random.NextDouble() * 400, time);
-                        add(dayModel);
-
-                        await Task.Delay(500);
-                    }
-                }).Start();
-
                 Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
 
             }
 
-            public void add(ValueTime valueTime)
+            public void add(double value)
             {
+                ValueTime valueTime = new ValueTime(value, time);
                 if (valueTime.SecondsSinceStart > 30)
                 {
                     this.MinValue = valueTime.SecondsSinceStart - 30;

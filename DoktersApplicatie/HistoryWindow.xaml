@@ -22,11 +22,11 @@
             <TextBlock Text="{Binding SelectedClientHistory[SelectedClientHistory.Count-1].Heartbeat}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Session Time: " Margin="5,0,0,0" FontWeight="Bold"/>
-                <TextBlock Text="{Binding LastHealthData.ElapsedTime}"/>
+                <TextBlock Text="{Binding HistoryData.ElapsedTime}"/>
                 <TextBlock Text="Distance: " Margin="10,0,0,0" FontWeight="Bold"/>
-                <TextBlock Text="{Binding LastHealthData.DistanceTraveled}"/>
+                <TextBlock Text="{Binding HistoryData.DistanceTraveled}"/>
                 <TextBlock Text="Total Wattage: " Margin="10,0,0,0" FontWeight="Bold"/>
-                <TextBlock Text="{Binding LastHealthData.AccWatt}"/>
+                <TextBlock Text="{Binding HistoryData.AccWatt}"/>
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -57,7 +57,7 @@
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
                 <wpf:CartesianChart.AxisX>
-                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
                         <wpf:Axis.Separator>
                             <wpf:Separator Step="{Binding Step}"/>
                         </wpf:Axis.Separator>
@@ -73,7 +73,7 @@
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
                 <wpf:CartesianChart.AxisX>
-                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
                         <wpf:Axis.Separator>
                             <wpf:Separator Step="{Binding Step}"/>
                         </wpf:Axis.Separator>
@@ -89,7 +89,7 @@
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
                 <wpf:CartesianChart.AxisX>
-                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
                         <wpf:Axis.Separator>
                             <wpf:Separator Step="{Binding Step}"/>
                         </wpf:Axis.Separator>
@@ -105,7 +105,7 @@
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
                 <wpf:CartesianChart.AxisX>
-                    <wpf:Axis Title="Seconds since start" MinValue="{Binding To}" MaxValue="{Binding From}" LabelFormatter="{Binding Formatter}">
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
                         <wpf:Axis.Separator>
                             <wpf:Separator Step="{Binding Step}"/>
                         </wpf:Axis.Separator>

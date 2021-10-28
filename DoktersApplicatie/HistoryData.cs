@@ -15,17 +15,25 @@ using LiveCharts.Wpf;
 
 namespace DoktersApplicatie
 {
-    class HistoryData
+    class HistoryData : INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int ElapsedTime { get; set; }
+        public int DistanceTraveled { get; set; }
+        public int AccWatt { get; set; }
+
+
         public HistoryValueTimeChart WattHistoryChart { get; set; }
         public HistoryValueTimeChart RpmHistoryChart { get; set; }
         public HistoryValueTimeChart BpmHistoryChart { get; set; }
         public HistoryValueTimeChart KmhHistoryChart { get; set; }
 
-        public HistoryData(History history) => FillCharts(GetHealthHistory(history));
+        public HistoryData(History history) => FillChartsAndData(GetHealthHistory(history));
 
 
-        private void FillCharts(List<HealthData> healthData)
+        private void FillChartsAndData(List<HealthData> healthData)
         {
             List<HistoryValueTimeChart.ValueTime> watts = new List<HistoryValueTimeChart.ValueTime>();
             List<HistoryValueTimeChart.ValueTime> rpms = new List<HistoryValueTimeChart.ValueTime>();
@@ -39,6 +47,10 @@ namespace DoktersApplicatie
                 bpms.Add(new HistoryValueTimeChart.ValueTime(h.Heartbeat, h.ElapsedTime));
                 speeds.Add(new HistoryValueTimeChart.ValueTime(h.Speed, h.ElapsedTime));
             }
+
+            this.ElapsedTime = healthData[healthData.Count - 1].ElapsedTime;
+            this.DistanceTraveled = healthData[healthData.Count - 1].DistanceTraveled;
+            this.AccWatt = healthData[healthData.Count - 1].AccWatt;
 
             this.WattHistoryChart = new HistoryValueTimeChart(watts);
             this.RpmHistoryChart = new HistoryValueTimeChart(rpms);
@@ -97,7 +109,6 @@ namespace DoktersApplicatie
 
             public Func<double, string> Formatter { get; set; }
             public ChartValues<ValueTime> Values { get; set; }
-            public DateTime time { get; set; } = DateTime.Now;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -114,8 +125,9 @@ namespace DoktersApplicatie
                 var dayConfig = new CartesianMapper<ValueTime>()
                     .X(dayModel => dayModel.SecondsSinceStart)
                     .Y(dayModel => dayModel.Value);
-                this.Values = new ChartValues<ValueTime>(chart);
                 Charting.For<ValueTime>(dayConfig);
+                this.Values = new ChartValues<ValueTime>(chart);
+
                 this.From = 0;
                 this.To = 30;
 
@@ -123,7 +135,7 @@ namespace DoktersApplicatie
 
                 this.maxValue = this.Values[^1].SecondsSinceStart;
 
-                Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
+                Formatter = value => TimeSpan.FromSeconds(value).ToString(@"mm\:ss");
 
             }
 
