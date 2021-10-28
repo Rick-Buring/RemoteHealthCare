@@ -31,6 +31,8 @@ namespace Vr_Project.RemoteHealthcare
             this.elapsedTime = 0;
             this.distanceTraveled = 0;
 
+            base.ergometerData = new ErgometerData();
+
             this.listener = listener[0];
 
         }
@@ -111,8 +113,6 @@ namespace Vr_Project.RemoteHealthcare
             this.elapsedTime++;
             this.distanceTraveled += 2;
         }
-
-
 
         public IData GetData()
         {

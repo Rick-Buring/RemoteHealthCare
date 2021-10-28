@@ -22,32 +22,32 @@
             <Border BorderBrush="Black" BorderThickness="1">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Heardbeat: " />
-                        <Label Content="{Binding Equipment.HeartBeatMonitor.HeartBeatData.HeartRate}" />
+                        <Label Content="Heartbeat: " />
+                        <Label Content="{Binding Equipment.HeartBeatMonitor.heartBeatData.HeartRate}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Accumulated watt: " />
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.AccumulatedPower}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.AccumulatedPower}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Current watt: " />
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.InstantaneousPower}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.InstantaneousPower}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="RPM: " />
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.Cadence}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.Cadence}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Speed: " />
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.InstantaneousSpeed}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.InstantaneousSpeed}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Distance"/>
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.DistanceTraveled}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.DistanceTraveled}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Time: "/>
-                        <Label Content="{Binding Equipment.ergometer.ergometerData.ElapsedTime}" />
+                        <Label Content="{Binding Equipment.Ergometer.ergometerData.ElapsedTime}" />
                     </StackPanel>
                 </StackPanel>
             </Border>

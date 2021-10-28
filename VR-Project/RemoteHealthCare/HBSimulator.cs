@@ -11,14 +11,19 @@ namespace Vr_Project.RemoteHealthcare
     {
 
         private IDataListener listener;
-
         private int baseline;
 
         public HBSimulator(IDataListener listener) : base(listener)
         {
 
+            base.heartBeatData = new HeartBeatData();
             this.listener = listener;
 
+        }
+
+        public override int GetHeartBeat()
+        {
+            return this.heartBeatData.HeartRate;
         }
 
         //Methode voor het verbinden met de simulator.
