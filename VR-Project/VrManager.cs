@@ -36,9 +36,12 @@ namespace VR_Project
         private float requestedResistance = 50;
         public float resistanceMultiplier { get; } = 200f;
 
+        private string lastMessage;
+
         public VrManager()
         {
             updater += Update;
+            lastMessage = "";
         }
 
         public async Task<List<Data>> GetEngineData()
@@ -148,9 +151,6 @@ namespace VR_Project
         }
         public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
         {
-            //Debug.WriteLine("From: ViewModel");
-            //Debug.WriteLine($"{ergometer.GetErgometerData()}\n{heartBeatMonitor.GetHeartBeat()}");
-            //Debug.WriteLine(ergometer.GetErgometerData().Cadence);
             if (this.ready && !this.running)
             {
                 this.running = true;
@@ -162,8 +162,12 @@ namespace VR_Project
 
                 this.running = false;
             }
-
         }
+
+        public void SetChatMessage(string message)
+		{
+            this.lastMessage = message;
+		}
         private float CalculateResistance(float heightResistance)
         {
             return this.requestedResistance * heightResistance;
@@ -226,6 +230,8 @@ namespace VR_Project
                 string min = Math.Floor((decimal)ergometerData.ElapsedTime / 60) + "";
                 string time = string.Format($"Elapsed Time: {min}:{sec}");
                 panel.drawText(this.panelUuid, time, new double[] { 10d, 240d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
+                panel.drawText(this.panelUuid, this.lastMessage, new double[] { 10d, 320d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                 panel.Swap(this.panelUuid);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));

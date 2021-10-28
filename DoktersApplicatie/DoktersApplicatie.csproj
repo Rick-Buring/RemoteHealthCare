@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>stethoscope.ico</ApplicationIcon>
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,9 @@
 
   <ItemGroup>
     <Resource Include="password.ttf" />
-    <Resource Include="stethoscope.ico" />
+    <Resource Include="stethoscope.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
