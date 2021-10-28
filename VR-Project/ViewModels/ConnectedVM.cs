@@ -25,6 +25,8 @@ namespace VR_Project.ViewModels
 
         public static RequestResistance requestResistance;
         public delegate void RequestResistance(float resistance);
+        public delegate void SendChatMessage(string message);
+        public static SendChatMessage sendChat;
 
         public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment, ViewModel.NavigateViewModel navigateView)
         {
@@ -36,6 +38,7 @@ namespace VR_Project.ViewModels
             Client = client;
             VrManager = vrManager;
             this.Client.resistanceUpdater += VrManager.RequestResistance;
+            this.Client.sendChat += VrManager.SetChatMessage;
             Equipment = equipment;
         }
 
