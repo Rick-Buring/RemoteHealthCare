@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 
 namespace DoktersApplicatie
 {
@@ -23,27 +24,34 @@ namespace DoktersApplicatie
 
         public ObservableCollection<HealthData> Clients { get; private set; }
 
-        public HistoryVM(List<HealthData> healthData, Client selectedClient)
+        private ClientHandler clientHandler { get; set; }
+
+        public HistoryVM(string[] clients, ClientHandler handler)
         {
             cRetrieveHistory = new DelegateCommand(RetrieveHistory);
 
-            this.HealthData = healthData;
-
-            this.LastHealthData = this.HealthData[this.HealthData.Count - 1];
-
             this.ClientHistories = new List<History>();
-            this.ClientHistories.Add(new History { clientName = "Shaun" });
-            this.ClientHistories.Add(new History { clientName = "Jope" });
-            this.ClientHistories.Add(new History { clientName = "Will" });
-            this.ClientHistories.Add(new History { clientName = "Shilling" });
-            this.ClientHistories.Add(new History { clientName = "Shaquille" });
+            this.clientHandler = handler;
 
-            this.HistoryData = new HistoryData(healthData);
+            foreach (string client in clients)
+            {
+                this.ClientHistories.Add(new History { clientName = client });
+            }
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var window = new HistoryWindow
+                {
+                    DataContext = this
+                };
+
+                window.Show();
+            });
         }
 
         public void RetrieveHistory()
         {
-
+            this.clientHandler.RequestHistory(SelectedClientHistory);
         }
 
     }

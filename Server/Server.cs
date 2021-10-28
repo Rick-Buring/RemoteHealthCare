@@ -42,8 +42,8 @@ namespace Server
 		{
             this.clients = new Dictionary<string, ClientHandlerBase>();
 			// __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
-			DataManager.initFoldersAndFilePath();
-			this.manager = new DataManager();
+            DataManager.initFoldersAndFilePath();
+            this.manager = new DataManager();
 			this.addToList += AddClient;
 			this.removeFromList += RemoveClient;
 			var builder = new ConfigurationBuilder()

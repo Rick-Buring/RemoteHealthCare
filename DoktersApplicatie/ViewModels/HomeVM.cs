@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DoktersApplicatie.ViewModels
 {
@@ -71,7 +72,6 @@ namespace DoktersApplicatie.ViewModels
 
             this.clientReceived += this.data.AddClient;
             this.updateClient += this.data.UpdateClient;
-            this.updateHistory += this.InsertHistory;
             this.clientHandler = clientHandler;
             this.clientHandler.addDelegates(clientReceived, updateClient, updateHistory);
 
@@ -168,73 +168,12 @@ namespace DoktersApplicatie.ViewModels
             SendMessage(TextToSend, "All");
         }
 
-        public void OpenHistory()
+        public async void OpenHistory()
         {
-            if (SelectedClient == null)
-                return;
-            this.clientHandler.RequestHistory(SelectedClient);
-
+            await this.clientHandler.RequestClientsHistory();
         }
 
 
-
-        public void InsertHistory(History history)
-        {
-            List<HealthData> HistoryData = GetHealthHistory(history);
-
-            HistoryVM historyVM = new HistoryVM(HistoryData, SelectedClient);
-            this.dispatcher.Invoke(() =>
-            {
-                var window = new HistoryWindow();
-
-                window.DataContext = historyVM;
-                window.Show();
-            });
-        }
-
-        private List<HealthData> GetHealthHistory(History history)
-        {
-            List<HealthData> HistoryData = new List<HealthData>();
-
-            string[] array = history.clientHistory.Split("\n");
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                string[] data = array[i].Split(",");
-                int hb = int.Parse(data[0]);
-                int rpm = int.Parse(data[1]);
-                double speed = double.Parse(data[2]);
-                int currWatt = int.Parse(data[3]);
-                int accWatt = int.Parse(data[4]);
-                int time = int.Parse(data[5]);
-                int distance = 0;
-                string d = data[6];
-                if (d.Contains("\r"))
-                {
-                    int distanceLenght = d.Length - d.IndexOf("\r");
-                    distance = int.Parse(d.Substring(0, distanceLenght));
-                }
-                else
-                {
-                    distance = int.Parse(d);
-                }
-
-                HealthData healthData = new HealthData()
-                {
-                    Heartbeat = hb,
-                    RPM = rpm,
-                    Speed = speed,
-                    CurWatt = currWatt,
-                    AccWatt = accWatt,
-                    ElapsedTime = time,
-                    DistanceTraveled = distance
-                };
-                HistoryData.Add(healthData);
-
-            }
-
-            return HistoryData;
-        }
 
     }
 }

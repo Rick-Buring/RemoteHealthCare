@@ -22,7 +22,7 @@ namespace DoktersApplicatie
         public HistoryValueTimeChart BpmHistoryChart { get; set; }
         public HistoryValueTimeChart KmhHistoryChart { get; set; }
 
-        public HistoryData(List<HealthData> healthData) => FillCharts(healthData);
+        public HistoryData(History history) => FillCharts(GetHealthHistory(history));
 
 
         private void FillCharts(List<HealthData> healthData)
@@ -45,6 +45,50 @@ namespace DoktersApplicatie
             this.BpmHistoryChart = new HistoryValueTimeChart(bpms);
             this.KmhHistoryChart = new HistoryValueTimeChart(speeds);
 
+        }
+
+        private List<HealthData> GetHealthHistory(History history)
+        {
+            List<HealthData> HistoryData = new List<HealthData>();
+
+            string[] array = history.clientHistory.Split("\n");
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                string[] data = array[i].Split(",");
+                int hb = int.Parse(data[0]);
+                int rpm = int.Parse(data[1]);
+                double speed = double.Parse(data[2]);
+                int currWatt = int.Parse(data[3]);
+                int accWatt = int.Parse(data[4]);
+                int time = int.Parse(data[5]);
+                int distance = 0;
+                string d = data[6];
+                if (d.Contains("\r"))
+                {
+                    int distanceLenght = d.Length - d.IndexOf("\r");
+                    distance = int.Parse(d.Substring(0, distanceLenght));
+                }
+                else
+                {
+                    distance = int.Parse(d);
+                }
+
+                HealthData healthData = new HealthData()
+                {
+                    Heartbeat = hb,
+                    RPM = rpm,
+                    Speed = speed,
+                    CurWatt = currWatt,
+                    AccWatt = accWatt,
+                    ElapsedTime = time,
+                    DistanceTraveled = distance
+                };
+                HistoryData.Add(healthData);
+
+            }
+
+            return HistoryData;
         }
 
         public class HistoryValueTimeChart : INotifyPropertyChanged

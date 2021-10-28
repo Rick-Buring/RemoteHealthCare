@@ -105,6 +105,17 @@ namespace Server
                     errorFound = true;
                 }
             }
+            else if (type == typeof(ClientsHistory))
+            {
+                string sender = root.Sender;
+                root.Sender = sender;
+
+                ClientsHistory data = new ClientsHistory();
+
+                data.clients = DataManager.ReturnClientsFromInfoFolder();
+                root.Data = data;
+
+            }
             else if (type == typeof(History))
             {
                 string sender = root.Sender;
