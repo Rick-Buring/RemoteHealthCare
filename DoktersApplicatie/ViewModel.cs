@@ -182,54 +182,55 @@ namespace DoktersApplicatie
 			await this.clientHandler.RequestHistory(SelectedClient);
 			
             List<List<HealthData>> HistoryData = new List<List<HealthData>>();
-            
-            List<HealthData> healthData1 = new List<HealthData>();
-            
-            healthData1.Add(new HealthData { Heartbeat = 1, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 });
-            healthData1.Add(new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 });
-            healthData1.Add(new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 });
-            healthData1.Add(new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 });
-            healthData1.Add(new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 104, DistanceTraveled = 45 });
 
-            List<HealthData> healthData2 = new List<HealthData>();
+            List<HealthData> healthData1 = new List<HealthData>
+            {
+                new HealthData { Heartbeat = 1, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 },
+                new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 },
+                new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 },
+                new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 },
+                new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 104, DistanceTraveled = 45 }
+            };
 
-            healthData2.Add(new HealthData { Heartbeat = 2, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 });
-            healthData2.Add(new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 });
-            healthData2.Add(new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 });
-            healthData2.Add(new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 });
-            healthData2.Add(new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1204, DistanceTraveled = 45 });
+            List<HealthData> healthData2 = new List<HealthData>
+            {
+                new HealthData { Heartbeat = 2, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 },
+                new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 },
+                new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 },
+                new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 },
+                new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1204, DistanceTraveled = 45 }
+            };
 
-            List<HealthData> healthData3 = new List<HealthData>();
+            List<HealthData> healthData3 = new List<HealthData>
+            {
+                new HealthData { Heartbeat = 3, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 },
+                new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 },
+                new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 },
+                new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 },
+                new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1014, DistanceTraveled = 45 }
+            };
 
-            healthData3.Add(new HealthData { Heartbeat = 3, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 });
-            healthData3.Add(new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 });
-            healthData3.Add(new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 });
-            healthData3.Add(new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 });
-            healthData3.Add(new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1014, DistanceTraveled = 45 });
-
-            List<HealthData> healthData4 = new List<HealthData>();
-
-            healthData4.Add(new HealthData { Heartbeat = 4, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 });
-            healthData4.Add(new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 });
-            healthData4.Add(new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 });
-            healthData4.Add(new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 });
-            healthData4.Add(new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1104, DistanceTraveled = 45 });
+            List<HealthData> healthData4 = new List<HealthData>
+            {
+                new HealthData { Heartbeat = 4, RPM = 60, Speed = 35.5, CurWatt = 200, AccWatt = 410, ElapsedTime = 100, DistanceTraveled = 41 },
+                new HealthData { Heartbeat = 60, RPM = 57, Speed = 33.0, CurWatt = 210, AccWatt = 430, ElapsedTime = 101, DistanceTraveled = 42 },
+                new HealthData { Heartbeat = 42, RPM = 67, Speed = 37.0, CurWatt = 220, AccWatt = 420, ElapsedTime = 102, DistanceTraveled = 43 },
+                new HealthData { Heartbeat = 56, RPM = 65, Speed = 32.0, CurWatt = 230, AccWatt = 410, ElapsedTime = 103, DistanceTraveled = 44 },
+                new HealthData { Heartbeat = 54, RPM = 78, Speed = 33.0, CurWatt = 220, AccWatt = 430, ElapsedTime = 1104, DistanceTraveled = 45 }
+            };
 
             HistoryData.Add(healthData1);
             HistoryData.Add(healthData2);
             HistoryData.Add(healthData3);
             HistoryData.Add(healthData4);
 
-            HistoryVM historyVM = new HistoryVM(HistoryData);
+            HistoryVM historyVM = new HistoryVM(healthData1, SelectedClient);
             var window = new HistoryWindow();
-            
-		}
-            
 
+			window.DataContext = historyVM;
+			window.Show();
 
-
-
-            
+		}   
 
 		public void InsertHistory(History history)
 		{

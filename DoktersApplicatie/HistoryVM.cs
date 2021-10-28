@@ -11,24 +11,25 @@ namespace DoktersApplicatie
 {
     class HistoryVM : BindableBase, INotifyPropertyChanged
     {
-        
 
         public DelegateCommand cRetrieveHistory { get; private set; }
 
-        public List<List<HealthData>> HealthData { get; set; }
+        public List<HealthData> HealthData { get; set; }
         public HealthData LastHealthData { get; set; }
 
         public HistoryData HistoryData { get; set; }
-        public HistoryVM(List<List<HealthData>> healthData)
         public List<History> ClientHistories { get; set; }
         public History SelectedClientHistory { get; set; }
+
         public ObservableCollection<HealthData> Clients { get; private set; }
+
+        public HistoryVM(List<HealthData> healthData, Client selectedClient)
         {
             cRetrieveHistory = new DelegateCommand(RetrieveHistory);
 
             this.HealthData = healthData;
 
-            this.LastHealthData = this.HealthData[0][this.HealthData[0].Count - 1];
+            this.LastHealthData = this.HealthData[this.HealthData.Count - 1];
 
             this.ClientHistories = new List<History>();
             this.ClientHistories.Add(new History { clientName = "Shaun" });
