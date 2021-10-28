@@ -18,6 +18,10 @@
     <Page Remove="Models\**" />
     <Page Remove="viewModel\**" />
   </ItemGroup>
+    <ItemGroup>
+      <None Remove="heartbeat.ico" />
+      <None Remove="stethoscope.ico" />
+    </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -30,6 +34,13 @@
     <Reference Include="BLELibrary">
       <HintPath>..\RemoteHealthCare\lib\BLELibrary.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="heartbeat.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="stethoscope.ico" />
   </ItemGroup>
 
   <Import Project="..\CommunicationObjects\CommunicationObjects.projitems" Label="Shared" />

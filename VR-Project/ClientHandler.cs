@@ -27,6 +27,7 @@ namespace VR_Project
 		private bool connected;
 		private bool isSessionRunning;
 		public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
+        public ConnectedVM.SendChatMessage sendChat { get; set; }
 
         public ClientHandler()
         {
@@ -145,7 +146,8 @@ namespace VR_Project
             {
                 Chat data = (root.Data as JObject).ToObject<Chat>();
                 string message = data.message;
-                ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
+                this.sendChat(message);
+                //ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
             }
             else if (type == typeof(Acknowledge))
             {

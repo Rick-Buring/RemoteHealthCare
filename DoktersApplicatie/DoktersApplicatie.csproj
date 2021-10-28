@@ -20,7 +20,9 @@
 
   <ItemGroup>
     <Resource Include="password.ttf" />
-    <Resource Include="stethoscope.ico" />
+    <Resource Include="stethoscope.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
