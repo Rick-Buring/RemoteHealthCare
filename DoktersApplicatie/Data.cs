@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CommunicationObjects.DataObjects;
-using CommunicationObjects.DataObjects;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -38,10 +37,11 @@ namespace DoktersApplicatie
             //clients.Add(new Client ("Henk") { BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
         }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		public void AddClient(Client client) {
-            if (!clients.Contains(client)) 
+        public void AddClient(Client client)
+        {
+            if (!clients.Contains(client))
             {
                 //this.clients.Add(client); 
 
@@ -50,23 +50,20 @@ namespace DoktersApplicatie
                     this.clients.Add(client);
                     Debug.WriteLine($"Adding new client: {client.Name}");
                 });
-            
-                
+
             }
-		}
+        }
 
 
         public void UpdateClient(Client client, HealthData healthData) {
             foreach(Client c in clients) {
                 if (client.Name.Equals(c.Name)) {
                     c.Update(healthData);
-				}
-			}
-		}
+                }
+            }
+        }
 
     }
-
-
 
     public class Client : IComparable<string>, INotifyPropertyChanged
     {
@@ -91,21 +88,27 @@ namespace DoktersApplicatie
         public Client(string name) => this.Name = name;
 
         public void Update (HealthData healthData) {
-            this.BPM = healthData.Heartbeat;
-            this.RPM = healthData.RPM;
-            this.KMH = healthData.Speed;
-            this.CurrWatt = healthData.CurWatt;
-            this.AccWatt = healthData.AccWatt;
-            this.Distance = healthData.DistanceTraveled;
-            this.SessionTime = healthData.ElapsedTime;
-		}
+            BPM = healthData.Heartbeat;
+            RPM = healthData.RPM;
+            KMH = healthData.Speed;
+            CurrWatt = healthData.CurWatt;
+            AccWatt = healthData.AccWatt;
+            Distance = healthData.DistanceTraveled;
+            SessionTime = healthData.ElapsedTime;
+
+            WattChart.add(CurrWatt);
+            BpmChart.add(BPM);
+            RpmChart.add(RPM);
+            KmhChart.add(KMH);
+
+        }
 
         public int CompareTo(string other)
-		{
+        {
             return this.Name.CompareTo(other);
-		}
+        }
 
-		public class ValueTimeChart : INotifyPropertyChanged
+        public class ValueTimeChart : INotifyPropertyChanged
         {
             public Func<double, string> Formatter { get; set; }
             public ChartValues<ValueTime> Values { get; set; }
@@ -127,26 +130,16 @@ namespace DoktersApplicatie
                 this.Values = new ChartValues<ValueTime>();
                 Charting.For<ValueTime>(dayConfig);
 
-                Random random = new Random();
-
-                new Thread(async () =>
-                {
-                    while (true)
-                    {
-                        ValueTime dayModel = new ValueTime(random.NextDouble() * 400, time);
-                        add(dayModel);
-
-                        await Task.Delay(500);
-                    }
-                }).Start();
-
                 Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
 
             }
 
-            public void add(ValueTime valueTime)
+            public void add(double value)
             {
-                if (valueTime.SecondsSinceStart > 30)
+
+                ValueTime valueTime = new ValueTime(value, time);
+
+                if(valueTime.SecondsSinceStart > 30)
                 {
                     this.MinValue = valueTime.SecondsSinceStart - 30;
                     this.MaxValue = valueTime.SecondsSinceStart;
