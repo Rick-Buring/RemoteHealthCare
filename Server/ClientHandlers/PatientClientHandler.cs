@@ -52,6 +52,11 @@ namespace Server
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
+            if (root == null)
+            {
+                return;
+            }
+
             Type type = Type.GetType(root.Type);
 
             bool errorFound = false;
