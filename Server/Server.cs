@@ -42,7 +42,7 @@ namespace Server
 		{
             this.clients = new Dictionary<string, ClientHandlerBase>();
 			// __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
-
+			DataManager.initFoldersAndFilePath();
 			this.manager = new DataManager();
 			this.addToList += AddClient;
 			this.removeFromList += RemoveClient;
@@ -64,7 +64,7 @@ namespace Server
 			this.doctorListener.BeginAcceptTcpClient((ar) => OnConnect(ar, false), null);
 			Console.WriteLine($"Listening for Doctor connections on port: 6006");
 
-            DataManager.initFoldersAndFilePath();
+            
 
 			Console.Read();
 		}
