@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:DoktersApplicatie.UserControls"
 			 xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-	<StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
+             d:DesignHeight="550" d:DesignWidth="1345">
+	<StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Background="White">
 		<ListView x:Name="MainListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" MinWidth="415">
 			<ListView.ItemTemplate>
 				<DataTemplate>
@@ -45,9 +45,9 @@
 				</DataTemplate>
 			</ListView.ItemTemplate>
 		</ListView>
-		<StackPanel x:Name="ClientPanel" Orientation="Vertical" >
+		<StackPanel x:Name="ClientPanel" Orientation="Vertical">
 			<StackPanel Orientation="Horizontal">
-				<RibbonSplitButton Label="Emergency Stop" Command="{Binding cSoloEmergencyStop}" BorderBrush="#FF707070" Background="#FFC1C1C1" FocusedBackground="#FF999999" FocusedBorderBrush="#FF666666" MouseOverBackground="#FFC1C1C1" MouseOverBorderBrush="#FF4F4F4F" PressedBackground="#FF999999" PressedBorderBrush="#FF4F4F4F" CheckedBackground="#FFC1C1C1" CheckedBorderBrush="#FF4F4F4F" Margin="5,0,0,0">
+                <RibbonSplitButton Label="Emergency Stop" Command="{Binding cSoloEmergencyStop}" BorderBrush="#FF707070" Background="#FFDDDDDD" FocusedBackground="#BEE6FD" FocusedBorderBrush="#FF666666" MouseOverBackground="#BEE6FD" MouseOverBorderBrush="#FF4F4F4F" PressedBackground="#CBE8F6" PressedBorderBrush="#FF4F4F4F" CheckedBackground="#FFC1C1C1" CheckedBorderBrush="#FF4F4F4F" Margin="5,0,0,0">
 					<Button x:Name="GlobalEmergencyStopButton" Command="{Binding cGlobalEmergencyStop}" Content="Global Emergency Stop"/>
 				</RibbonSplitButton>
 				<Button x:Name="SessionButton" Command="{Binding cStartStopSession}" Content="{Binding SessionButtonText}" Margin="5,0,0,0"/>

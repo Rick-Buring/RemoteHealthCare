@@ -5,24 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DoktersApplicatie.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-	<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto" MinWidth="100" MaxWidth="200"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="auto" MinHeight="20"/>
+                <RowDefinition Height="auto" MinHeight="20"/>
+                <RowDefinition Height="auto" MinHeight="20"/>
+                <RowDefinition Height="auto" MinHeight="20"/>
             </Grid.RowDefinitions>
-            <TextBox Grid.Row="0" Margin="10" MinWidth="100" MinHeight="20" Text="{Binding ServerAddres}"/>
-            <TextBox Grid.Row="1" Margin="10" MinWidth="100" MinHeight="20" Text="{Binding Name}"/>
-            <TextBox Grid.Row="2" Margin="10" MinWidth="100" MinHeight="20" Text="{Binding Password}"/>
-            <Button Grid.Row="3" Margin="1" Padding="15, 5" Content="login" Command="{Binding LoginCommand}"/>
+
+            <Label Grid.Row="0" Grid.Column="0" Content="Port Number:"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding ServerAddres}"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Username:"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding Name}"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Password:"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding Password}" FontFamily="Password">
+                <TextBox.InputBindings>
+                    <!--Disable CTRL+C-->
+                    <KeyBinding Command="ApplicationCommands.NotACommand" Key="C" Modifiers="Control" />
+                    <!--Disable CTRL+X-->
+                    <KeyBinding Command="ApplicationCommands.NotACommand" Key="X" Modifiers="Control" />
+                </TextBox.InputBindings>
+                <TextBox.ContextMenu>
+                    <!--Hide context menu-->
+                    <ContextMenu Visibility="Collapsed" />
+                </TextBox.ContextMenu>
+            </TextBox>
+            
+
+            <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Login" Command="{Binding LoginCommand}" Padding="2"/>
+
         </Grid>
-        <Label Grid.Row="1" Content="{Binding Message}" MinHeight="20" />
-    </Grid>
+
+        <Label Content="{Binding Message}" MinHeight="20" />
+        
+    </StackPanel>
+
 </UserControl>

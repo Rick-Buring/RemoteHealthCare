@@ -39,8 +39,6 @@ namespace DoktersApplicatie.ViewModels
         public delegate void UpdateHistory(History history);
         public UpdateHistory updateHistory;
 
-        public int TempResistance { get; set; }
-
         private ClientHandler clientHandler;
         private Thread clientThread;
         private Data data;
@@ -70,7 +68,6 @@ namespace DoktersApplicatie.ViewModels
 
             //SelectedClient = Clients[0];
             SessionButtonText = "Start Session";
-            TempResistance = 50;
 
             this.clientReceived += this.data.AddClient;
             this.updateClient += this.data.UpdateClient;
@@ -128,7 +125,7 @@ namespace DoktersApplicatie.ViewModels
         }
         public void SendMessage(string text, string receiver)
         {
-            if (!String.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
 
                 //Use ^.*(?=(\ =>)) with regex to only get sender
@@ -147,20 +144,13 @@ namespace DoktersApplicatie.ViewModels
 
             }
 
-            if (!string.IsNullOrEmpty(text))
-            {
-                Messages.Add(new Message { Sender = "Doctor", Text = text, Receiver = receiver });
-                Debug.WriteLine($"Text: \"{text}\" : Selected Client: {receiver}");
-
-                TextToSend = "";
-            }
-
         }
 
         public void SetResistance()
         {
             if (SelectedClient != null)
             {
+                SelectedClient.Resistance = SelectedClient.TempResistance;
                 Debug.WriteLine("Set resistance to: " + SelectedClient.Resistance);
                 this.clientHandler.SetResistance(SelectedClient, SelectedClient.Resistance);
             }
