@@ -27,7 +27,7 @@
             <Label Grid.Row="1" Grid.Column="0" Content="Username:"/>
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding Name}"/>
             <Label Grid.Row="2" Grid.Column="0" Content="Password:"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding Password}" FontFamily="Password">
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" MinWidth="100" Height="20" Text="{Binding Password}" FontFamily="{StaticResource Password}">
                 <TextBox.InputBindings>
                     <!--Disable CTRL+C-->
                     <KeyBinding Command="ApplicationCommands.NotACommand" Key="C" Modifiers="Control" />
