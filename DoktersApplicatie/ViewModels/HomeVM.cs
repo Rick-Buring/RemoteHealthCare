@@ -109,17 +109,22 @@ namespace DoktersApplicatie.ViewModels
 
         public void SoloEmergencyStop()
         {
-            Debug.WriteLine("Solo Emergency Stop");
-            List<Client> EmergencyList = new List<Client>();
-            EmergencyList.Add(SelectedClient);
-            EmergencyStop(EmergencyList);
+            if (SelectedClient == null) return;
+			Debug.WriteLine("Solo Emergency Stop");
+			//List<Client> EmergencyList = new List<Client>();
+			//EmergencyList.Add(SelectedClient);
+			//EmergencyStop(EmergencyList);
+
+			this.clientHandler.EmergencyStop(false, SelectedClient);
         }
 
         public void GlobalEmergencyStop()
         {
             Debug.WriteLine("Global Emergency Stop");
-            List<Client> EmergencyList = new List<Client>(Clients);
-            EmergencyStop(EmergencyList);
+            //List<Client> EmergencyList = new List<Client>(Clients);
+            //EmergencyStop(EmergencyList);
+
+            this.clientHandler.EmergencyStop(true, null);
         }
         public void SendMessage(string text, string receiver)
         {
@@ -171,11 +176,11 @@ namespace DoktersApplicatie.ViewModels
             SendMessage(TextToSend, "All");
         }
 
-        public async void OpenHistory()
+        public void OpenHistory()
         {
             if (SelectedClient == null)
                 return;
-            await this.clientHandler.RequestHistory(SelectedClient);
+            this.clientHandler.RequestHistory(SelectedClient);
 
         }
 

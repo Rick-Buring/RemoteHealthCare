@@ -120,6 +120,7 @@ namespace Server
             else if (type == typeof(Setting))
             {
                 Setting data = (root.Data as JObject).ToObject<Setting>();
+                
                 if ((data.res > 100 || data.res < 0) && !data.emergencystop)
                 {
                     this.server.SendAcknowledge(root, 412, "invalid resistance value");
