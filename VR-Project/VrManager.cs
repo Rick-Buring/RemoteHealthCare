@@ -231,7 +231,7 @@ namespace VR_Project
                 string time = string.Format($"Elapsed Time: {min}:{sec}");
                 panel.drawText(this.panelUuid, time, new double[] { 10d, 240d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
-                panel.drawText(this.panelUuid, this.lastMessage, new double[] { 10d, 280d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
+                panel.drawText(this.panelUuid, this.lastMessage, new double[] { 10d, 320d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                 panel.Swap(this.panelUuid);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
