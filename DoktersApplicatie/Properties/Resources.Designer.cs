@@ -69,5 +69,15 @@ namespace DoktersApplicatie.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] stethoscope {
+            get {
+                object obj = ResourceManager.GetObject("stethoscope", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

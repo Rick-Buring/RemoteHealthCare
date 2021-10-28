@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DoktersApplicatie"
         xmlns:vm="clr-namespace:DoktersApplicatie.ViewModels"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Icon="stethoscope.ico"
         mc:Ignorable="d"
         Title="Doctor Application"
         Height="550"

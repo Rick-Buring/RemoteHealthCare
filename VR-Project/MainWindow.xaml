@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VR_Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Icon="stethoscope.ico"
+        Title="Remote Healthcare" Height="450" Width="800">
     <Grid>
         <ContentControl Content="{Binding CurrentPageViewModel}" />
     </Grid>

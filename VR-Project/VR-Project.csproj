@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>VR_Project</RootNamespace>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>heartbeat.ico</ApplicationIcon>
+    <Win32Resource />
   </PropertyGroup>
     <ItemGroup>
 <Compile Remove="Models\**" />

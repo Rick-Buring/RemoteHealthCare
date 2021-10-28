@@ -4,7 +4,12 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>stethoscope.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="stethoscope.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
@@ -15,6 +20,7 @@
 
   <ItemGroup>
     <Resource Include="password.ttf" />
+    <Resource Include="stethoscope.ico" />
   </ItemGroup>
 
   <ItemGroup>
