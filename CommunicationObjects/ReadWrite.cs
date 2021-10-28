@@ -12,9 +12,6 @@ namespace CommunicationObjects
     public class ReadWrite : IDisposable
     {
         public const string certificateName = "testCertificaat";
-
-
-        // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
         private SslStream stream;
 
         public ReadWrite(SslStream stream)

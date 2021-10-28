@@ -1,14 +1,52 @@
 ﻿using CommunicationObjects.DataObjects;
 using System;
+using System.Collections.Generic;
+using System.IO;
+
 namespace Server
 {
     public class DataManager
     {
         private IO io;
+        private static string appDataFolder;
 
         public DataManager()
         {
-            this.io = new IO();
+            this.io = new IO(appDataFolder);
+        }
+
+        public static void initFoldersAndFilePath()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            appDataFolder = appDataPath + @"\RemoteHealthCare\ClientsInfo";
+
+            string appDataHealthCareDirectory = appDataPath + @"\RemoteHealthCare";
+            if (!Directory.Exists(appDataHealthCareDirectory))
+            {
+                Directory.CreateDirectory(appDataHealthCareDirectory);
+            }
+
+            if (!Directory.Exists(appDataFolder))
+            {
+                Directory.CreateDirectory(appDataFolder);
+            }
+        }
+
+        public static string[] ReturnClientsFromInfoFolder()
+        {
+            String[] filesInDirectory = Directory.GetFiles(appDataFolder);
+            List<String> fileNameHolder = new List<string>();
+            foreach (var directoryFile in filesInDirectory)
+            {
+                //TODO change
+                if (directoryFile.EndsWith(".txt"))
+                {
+                    string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\") + 1);
+                    fileNameHolder.Add(file.Remove(file.Length - 4));
+                }
+            }
+
+            return fileNameHolder.ToArray();
         }
 
         /// <summary>
@@ -30,5 +68,7 @@ namespace Server
         {
             return this.io.getText(clientName);
         }
+
+
     }
 }
