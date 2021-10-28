@@ -41,8 +41,8 @@ namespace Server
                 //TODO change
                 if (directoryFile.EndsWith(".txt"))
                 {
-                    string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\"));
-                    fileNameHolder.Add(file.Remove(directoryFile.Length - 4));
+                    string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\") + 1);
+                    fileNameHolder.Add(file.Remove(file.Length - 4));
                 }
             }
 

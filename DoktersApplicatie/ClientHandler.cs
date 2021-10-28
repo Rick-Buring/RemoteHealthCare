@@ -84,6 +84,11 @@ namespace DoktersApplicatie
 		{
 			Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
+            if (root == null)
+            {
+				return;
+            }
+
 			Type type = Type.GetType(root.Type);
 
 			if (type == typeof(Acknowledge))
@@ -112,7 +117,7 @@ namespace DoktersApplicatie
 			} else if (type == typeof(ClientsHistory))
             {
 				ClientsHistory clientsHistory = (root.Data as JObject).ToObject<ClientsHistory>();
-				Debug.WriteLine(clientsHistory.clients.ToString());
+				Debug.WriteLine("Clients: " + String.Join(", ", clientsHistory.clients));
             }
             else if (type == typeof(HealthData))
 			{
