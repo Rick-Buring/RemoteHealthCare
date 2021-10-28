@@ -54,6 +54,7 @@ namespace Server
             listener.Start();
             listener.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
 
+            DataManager.initFoldersAndFilePath();
             Console.Read();
         }
 

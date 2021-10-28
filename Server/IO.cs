@@ -6,9 +6,10 @@ namespace Server
 {
     public class IO
     {
-        public IO()
+        private string filePath;
+        public IO(string filePath)
         {
-
+            this.filePath = filePath;
         }
 
         /// <summary>
@@ -18,7 +19,7 @@ namespace Server
         /// <param name="data">the data to write</param>
         internal void writeToFile(string client, HealthData data)
         {
-            StreamWriter writer = File.AppendText($"{Environment.CurrentDirectory}/{client}.txt");
+            StreamWriter writer = File.AppendText($"{filePath}/{client}.txt");
             try
             {
                 writer.WriteLine(data.ToString());  
@@ -40,5 +41,6 @@ namespace Server
         {
             return File.ReadAllText($"{Environment.CurrentDirectory}/{clientName}.txt");
         }
+
     }
 }

@@ -76,7 +76,7 @@ namespace Server
         {
             this.server.OnDisconnect(this);
             this.active = false;
-            this.rw.terminate();
+            this.rw.Dispose();
         }
 
         internal void send(Root message)
@@ -171,24 +171,7 @@ namespace Server
 
                 ClientsHistory data = new ClientsHistory();
 
-                string esketit = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName +
-                                 @"\ClientsInfo";
-
-                String[] filesInDirectory = Directory.GetFiles(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + @"\ClientsInfo");
-                List<String> fileNameHolder = new List<string>();
-                foreach (var directoryFile in filesInDirectory)
-                {
-                    //TODO change
-                    if (directoryFile.EndsWith(".txt"))
-                    {
-                        string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\"));
-                        fileNameHolder.Add(file.Remove(directoryFile.Length - 4));
-
-                            
-                    }
-                }
-
-                data.clients = fileNameHolder.ToArray();
+                data.clients = DataManager.ReturnClientsFromInfoFolder();
                 root.Data = data;
 
             }

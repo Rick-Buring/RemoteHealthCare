@@ -191,7 +191,7 @@ namespace VR_Project
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
                 { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "henk", Target = "server" })));
-                this.rw.terminate();
+                this.rw.Dispose();
             }
         }
 

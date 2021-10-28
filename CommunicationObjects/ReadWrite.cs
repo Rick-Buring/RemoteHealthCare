@@ -9,12 +9,9 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class ReadWrite
+    public class ReadWrite : IDisposable
     {
         public const string certificateName = "testCertificaat";
-
-
-        // __CR__ [PSMG] Streams e.d. worden nooit gedisposed. Implementeer IDisposable en implementeer daarin de disposing 
         private SslStream stream;
 
         public ReadWrite(SslStream stream)
@@ -86,13 +83,10 @@ namespace CommunicationObjects
         }
 
 
-        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
-        public void terminate()
+        public void Dispose()
         {
             this.stream.Close();
             this.stream.Dispose();
         }
-
-       
     }
 }
