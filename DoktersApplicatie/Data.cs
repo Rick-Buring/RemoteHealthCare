@@ -21,6 +21,8 @@ namespace DoktersApplicatie
         public ObservableCollection<Client> clients { get; set; }
         public ObservableCollection<Message> messages { get; set; }
 
+        private Dictionary<string, Client> clientsDictionary { get; }
+
         public Func<double, string> Formatter { get; set; }
         public SeriesCollection Series { get; set; }
 
@@ -31,6 +33,7 @@ namespace DoktersApplicatie
             clients = new ObservableCollection<Client>();
             messages = new ObservableCollection<Message>();
             this.dispatcher = Dispatcher.CurrentDispatcher;
+            this.clientsDictionary = new Dictionary<string, Client>();
             //clients.Add(new Client { Name = "Kapil Malhotra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 50 });
             //clients.Add(new Client { Name = "Raj Kundra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 20 });
             //clients.Add(new Client { Name = "Amitabh Bachan", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 30 });
@@ -44,6 +47,8 @@ namespace DoktersApplicatie
             if (!clients.Contains(client))
             {
                 //this.clients.Add(client); 
+                
+                this.clientsDictionary.Add(client.Name, client);
 
                 this.dispatcher.Invoke(() =>
                 {
@@ -55,12 +60,9 @@ namespace DoktersApplicatie
         }
 
 
-        public void UpdateClient(Client client, HealthData healthData) {
-            foreach(Client c in clients) {
-                if (client.Name.Equals(c.Name)) {
-                    c.Update(healthData);
-                }
-            }
+        public void UpdateClient(string client, HealthData healthData) {
+
+            clientsDictionary[client].Update(healthData);
         }
 
     }

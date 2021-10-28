@@ -163,8 +163,7 @@ namespace DoktersApplicatie
             else if (type == typeof(HealthData))
             {
                 HealthData healthData = (root.Data as JObject).ToObject<HealthData>();
-                this.updateClient(new Client(root.Sender), healthData);
-
+                this.updateClient(root.Sender, healthData);
             }
             else if (type == typeof(Selection))
             {
@@ -258,6 +257,17 @@ namespace DoktersApplicatie
             }
         }
 
+        public void StartStopSession(Client client)
+        {
+            Root emergencyRoot = new Root
+            {
+                Sender = name,
+                Target = client.Name,
+                Type = typeof(Session).FullName,
+                Data = new Session()
+            };
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+        }
     }
 }
 

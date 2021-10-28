@@ -35,7 +35,7 @@ namespace DoktersApplicatie.ViewModels
         public Client SelectedClient { get; set; }
         public delegate void ClientReceived(Client client);
         public ClientReceived clientReceived;
-        public delegate void UpdateClient(Client client, HealthData healthData);
+        public delegate void UpdateClient(string clientName, HealthData healthData);
         public UpdateClient updateClient;
         public delegate void UpdateHistory(History history);
         public UpdateHistory updateHistory;
@@ -82,14 +82,22 @@ namespace DoktersApplicatie.ViewModels
         //TODO Send message to server
         public void StartStopSession()
         {
-            if (SessionButtonText.Equals("Start Session"))
+            if (SelectedClient != null)
             {
-                SessionButtonText = "Stop Session";
+                this.clientHandler.StartStopSession(SelectedClient);
+
+                if (SessionButtonText.Equals("Start Session"))
+                {
+                    
+                    SessionButtonText = "Stop Session";
+                    
+                }
+                else
+                {
+                    SessionButtonText = "Start Session";
+                }
             }
-            else
-            {
-                SessionButtonText = "Start Session";
-            }
+
             Debug.WriteLine("Started/Stopped session");
         }
 
@@ -160,6 +168,7 @@ namespace DoktersApplicatie.ViewModels
 
         private void SendSingleMessage()
         {
+            if (SelectedClient != null)
             SendMessage(TextToSend, SelectedClient.Name);
         }
 

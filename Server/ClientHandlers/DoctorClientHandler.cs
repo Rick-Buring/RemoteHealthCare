@@ -153,6 +153,14 @@ namespace Server
                     errorFound = true;
                 }
             }
+            else if (type == typeof(Session))
+            {
+                if (root.Sender == root.Target)
+                {
+                    this.server.SendAcknowledge(root, 409, "sender can't be target");
+                    errorFound = true;
+                }
+            }
 
             if (this.active && !errorFound) this.server.send(root);
         }

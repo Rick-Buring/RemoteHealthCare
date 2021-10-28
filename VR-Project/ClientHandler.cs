@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Media;
@@ -14,6 +15,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using System.Windows.Documents;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
 
@@ -25,13 +27,13 @@ namespace VR_Project
         private TcpClient client;
 		private bool active;
 		private bool connected;
-		private bool isSessionRunning;
-		public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
+        public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
         public ConnectedVM.SendChatMessage sendChat { get; set; }
 
         public ClientHandler()
         {
             ViewModel.updater += Update;
+            this.sessionTargets = new List<string>();
         }
 
 		public string PatientName { get; set; } = "Patient Name";
@@ -107,16 +109,6 @@ namespace VR_Project
             {
                 Setting data = (root.Data as JObject).ToObject<Setting>();
 
-                //TODO notify vrclient dat de session start of stopt 
-                if (data.sesionchange == SessionType.START)
-                {
-                    this.isSessionRunning = true;
-                }
-                else if (data.sesionchange == SessionType.STOP)
-                {
-                    this.isSessionRunning = false;
-                }
-
                 if (data.emergencystop)
                 {
                     this.resistanceUpdater(0);
@@ -155,7 +147,6 @@ namespace VR_Project
                 Type ackType = Type.GetType(ack.subtype);
                 if (ackType == typeof(Connection))
                 {
-                    this.isSessionRunning = !this.isSessionRunning;
                     this.connected = !this.connected;
                     if (!this.connected)
                     {
@@ -164,14 +155,30 @@ namespace VR_Project
                 }
 
             }
-
-
+            else if (type == typeof(Session))
+            {
+                changeSessionClients(root.Sender);
+            }
         }
+
+        private void changeSessionClients(string client)
+        {
+            if (sessionTargets.Contains(client))
+            {
+                sessionTargets.Remove(client);
+            }
+            else
+            {
+                sessionTargets.Add(client);
+            }
+        }
+
+        private List<String> sessionTargets;
 		private bool isLocked = false;
 		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 			
-			if (this.client != null && this.isSessionRunning && !this.isLocked)
+			if (this.client != null && this.sessionTargets.Count > 0 && !this.isLocked)
 			{
 				this.isLocked = true;
 				ErgometerData data = ergometer.GetErgometerData();
@@ -188,10 +195,14 @@ namespace VR_Project
 						ElapsedTime = data.ElapsedTime,
 						DistanceTraveled = data.DistanceTraveled
 					},
-					Sender = "henk",
-					Target = "hank"
-				};
-				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+					Sender = this.PatientName
+                };
+                foreach (string target in sessionTargets)
+                {
+                    healthData.Target = target;
+                    this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                }
+				
 				this.isLocked = false;
             }
         }
