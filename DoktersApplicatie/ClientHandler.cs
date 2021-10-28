@@ -54,6 +54,7 @@ namespace DoktersApplicatie
 
         public async Task<bool> Login(string name, string password)
         {
+            this.name = name;
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true, password = password }, Sender = name, Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Root r = JsonConvert.DeserializeObject<Root>(await this.rw.Read());

@@ -57,6 +57,7 @@ namespace Server
                             Target = this.Name,
                             Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
                         });
+                        authorized = true;
                     }
                 }
                 else
