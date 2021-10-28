@@ -36,46 +36,11 @@ namespace Server
 		{
 			//new Test();
 			new Server();
-
 		}
-
-#if DEBUG
-        public void CreateFile()
-		{
-			if (!File.Exists(Authorization.PASSWORDFILE))
-			{
-				File.WriteAllText(Authorization.PASSWORDFILE, "Hank test");
-				//StreamWriter writer = File.AppendText(Authorization.PASSWORDFILE);
-				//try
-				//{
-				//	writer.WriteLine("Hank test");
-				//}
-				//catch (FileNotFoundException e)
-				//{
-				//	Console.WriteLine(e.StackTrace);
-				//}
-				//finally
-				//{
-				//	writer.Close();
-				//}
-				
-			}
-		}
-#else
-		public void CreateFile()
-		{
-
-		}
-#endif
-
-
-
-
 
 		public Server()
 		{
-			CreateFile();
-			this.clients = new Dictionary<string, ClientHandlerBase>();
+            this.clients = new Dictionary<string, ClientHandlerBase>();
 			// __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
 
 			this.manager = new DataManager();
@@ -99,7 +64,7 @@ namespace Server
 			this.doctorListener.BeginAcceptTcpClient((ar) => OnConnect(ar, false), null);
 			Console.WriteLine($"Listening for Doctor connections on port: 6006");
 
-
+            DataManager.initFoldersAndFilePath();
 
 			Console.Read();
 		}

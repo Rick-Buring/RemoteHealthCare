@@ -6,9 +6,10 @@ namespace Server
 {
     public class IO
     {
-        public IO()
+        private string filePath;
+        public IO(string filePath)
         {
-
+            this.filePath = filePath;
         }
 
         /// <summary>
@@ -18,12 +19,12 @@ namespace Server
         /// <param name="data">the data to write</param>
         public void writeToFile(string client, HealthData data)
         {
-            if (File.Exists($"{Environment.CurrentDirectory}/{client}.txt") && lastSesionTime(client) > data.ElapsedTime)
+            if (File.Exists($"{filePath}/{client}.txt") && lastSesionTime(client) > data.ElapsedTime)
             {
-                File.WriteAllText($"{Environment.CurrentDirectory}/{client}.txt", "");
+                File.WriteAllText($"{filePath}/{client}.txt", "");
             }
 
-            StreamWriter writer = File.AppendText($"{Environment.CurrentDirectory}/{client}.txt");
+            StreamWriter writer = File.AppendText($"{filePath}/{client}.txt");
             try
             {
                 writer.WriteLine(data.ToString());  
@@ -43,12 +44,12 @@ namespace Server
         /// <returns>the text in the file</returns>
         public string getText(string client)
         {
-            return File.ReadAllText($"{Environment.CurrentDirectory}/{client}.txt");
+            return File.ReadAllText($"{filePath}/{client}.txt");
         }
 
         private int lastSesionTime(string client)
         {
-            string[] content = File.ReadAllLines($"{Environment.CurrentDirectory}/{client}.txt");
+            string[] content = File.ReadAllLines($"{filePath}/{client}.txt");
             string[] lastInput = content[content.Length - 1].Split(",");
             int result;
             if (int.TryParse(lastInput[5], out result)) return result;

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataObjects\ClientsHistory.cs" />
     <Compile Include="..\CommunicationObjects\ReadWrite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Acknowledge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObjects\Chat.cs" />
