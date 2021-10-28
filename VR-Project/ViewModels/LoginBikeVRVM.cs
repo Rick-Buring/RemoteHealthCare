@@ -45,20 +45,15 @@ namespace VR_Project.ViewModels
         private async void GetOnlineEngines()
         {
             this.isRefresheble = false;
-            try
+            this.Engines.Clear();
+            List<Data> list = await vr.GetEngineData();
+            if (list != null) 
             {
-                this.Engines.Clear();
-                this.Engines.AddRange(await vr.GetEngineData());
-                this.SelectClient = this.Engines.LastOrDefault((Client) => Client.clientinfo.host == Environment.MachineName);
+            this.Engines.AddRange(list);
+            this.SelectClient = this.Engines.LastOrDefault((Client) => Client.clientinfo.host == Environment.MachineName);
             }
-            catch (ArgumentNullException ex)
-            {
-                Debug.WriteLine("Engines where null");
-            }
-            finally
-            {
-                this.isRefresheble = true;
-            }
+            this.isRefresheble = true;
+                
         }
 
         private async void engageEngine()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,5 +19,15 @@ namespace DoktersApplicatie
         {
             InitializeComponent();
         }
+
+        private void UIElement_OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var chart = (LiveCharts.Wpf.CartesianChart) sender;
+            HistoryData.HistoryValueTimeChart currentChart = (HistoryData.HistoryValueTimeChart) chart.DataContext;
+
+            currentChart.OnMouseWheelScroll(e);
+        }
+
+
     }
 }

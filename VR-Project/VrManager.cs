@@ -83,12 +83,13 @@ namespace VR_Project
             EngineRoot = JsonConvert.DeserializeObject<EngineRoot>(test);
 
             List<Data> OnlineEngines = new List<Data>();
-            
+            if (EngineRoot != null)
+            {
+                foreach (Data d in EngineRoot.data)
+                    OnlineEngines.Add(d);
 
-            foreach (Data d in EngineRoot?.data)
-                OnlineEngines.Add(d);
-
-            return OnlineEngines;
+                return OnlineEngines;
+            } return null;
         }
         public async Task ConnectToTunnel(string tunnelID)
         {

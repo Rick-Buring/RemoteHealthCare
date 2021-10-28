@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
+using CommunicationObjects.DataObjects;
 using CommunicationObjects.DataObjects;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
+using Prism.Mvvm;
 
 namespace DoktersApplicatie
 {
-    class Data
+    public class Data : BindableBase, INotifyPropertyChanged
     {
 
         public ObservableCollection<Client> clients { get; set; }
@@ -21,22 +25,50 @@ namespace DoktersApplicatie
         public Func<double, string> Formatter { get; set; }
         public SeriesCollection Series { get; set; }
 
+        private Dispatcher dispatcher;
+
         public Data()
         {
             clients = new ObservableCollection<Client>();
             messages = new ObservableCollection<Message>();
-
-            clients.Add(new Client { Name = "Kapil Malhotra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 50 });
-            clients.Add(new Client { Name = "Raj Kundra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 20 });
-            clients.Add(new Client { Name = "Amitabh Bachan", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 30 });
-            clients.Add(new Client { Name = "Deepak Khanna", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
+            this.dispatcher = Dispatcher.CurrentDispatcher;
+            //clients.Add(new Client { Name = "Kapil Malhotra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 50 });
+            //clients.Add(new Client { Name = "Raj Kundra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 20 });
+            //clients.Add(new Client { Name = "Amitabh Bachan", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 30 });
+            clients.Add(new Client ("Henk") { BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
         }
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public void AddClient(Client client) {
+            if (!clients.Contains(client)) 
+            {
+                //this.clients.Add(client); 
+
+                this.dispatcher.Invoke(() =>
+                {
+                    this.clients.Add(client);
+                    Debug.WriteLine($"Adding new client: {client.Name}");
+                });
+            
+                
+            }
+		}
+
+
+        public void UpdateClient(Client client, HealthData healthData) {
+            foreach(Client c in clients) {
+                if (client.Name.Equals(c.Name)) {
+                    c.Update(healthData);
+				}
+			}
+		}
 
     }
 
 
 
-    public class Client
+    public class Client : IComparable<string>, INotifyPropertyChanged
     {
         public string Name { get; set; }
         public int BPM { get; set; }
@@ -48,13 +80,32 @@ namespace DoktersApplicatie
         public int SessionTime { get; set; }
         public int Resistance { get; set; }
 
+        public int TempResistance { get; set; } = 50;
+
         public ValueTimeChart WattChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart BpmChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart RpmChart { get; set; } = new ValueTimeChart();
         public ValueTimeChart KmhChart { get; set; } = new ValueTimeChart();
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        public Client(string name) => this.Name = name;
 
-        public class ValueTimeChart : INotifyPropertyChanged
+        public void Update (HealthData healthData) {
+            this.BPM = healthData.Heartbeat;
+            this.RPM = healthData.RPM;
+            this.KMH = healthData.Speed;
+            this.CurrWatt = healthData.CurWatt;
+            this.AccWatt = healthData.AccWatt;
+            this.Distance = healthData.DistanceTraveled;
+            this.SessionTime = healthData.ElapsedTime;
+		}
+
+        public int CompareTo(string other)
+		{
+            return this.Name.CompareTo(other);
+		}
+
+		public class ValueTimeChart : INotifyPropertyChanged
         {
             public Func<double, string> Formatter { get; set; }
             public ChartValues<ValueTime> Values { get; set; }

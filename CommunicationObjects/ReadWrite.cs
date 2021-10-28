@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects
 {
-    public class ReadWrite
+    public class ReadWrite : IDisposable
     {
         public const string certificateName = "testCertificaat";
 
@@ -85,14 +85,10 @@ namespace CommunicationObjects
             return Encoding.ASCII.GetString(received);
         }
 
-
-        // __CR__ [PSMG] Dit hoort dus in de dispose methode via IDisposable interface
-        public void terminate()
+        public void Dispose()
         {
             this.stream.Close();
             this.stream.Dispose();
         }
-
-       
     }
 }

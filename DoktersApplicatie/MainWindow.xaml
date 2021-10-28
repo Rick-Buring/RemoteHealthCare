@@ -14,7 +14,7 @@
         ResizeMode="CanMinimize">
 
     <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
-        <ListView x:Name="MainListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True">
+        <ListView x:Name="MainListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" MinWidth="415">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border x:Name="ListViewSeperator" BorderThickness="1,1,1,1" BorderBrush="Black">
@@ -58,17 +58,16 @@
                 </RibbonSplitButton>
                 <Button x:Name="SessionButton" Command="{Binding cStartStopSession}" Content="{Binding SessionButtonText}" Margin="5,0,0,0"/>
                 <TextBlock Text="Resistance: " Margin="5,0,0,0"/>
-                <TextBlock Text="{Binding SelectedClient.Resistance}" Width="20"/>
-                <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding SelectedClient.Resistance}" Width="200" Margin="5,0,0,0" />
+                <TextBlock Text="{Binding SelectedClient.TempResistance}" Width="20"/>
+                <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding SelectedClient.TempResistance}" Width="200" Margin="5,0,0,0" />
                 <Button x:Name="ResistanceButton" Command="{Binding cSetResistance}" Content="Set Resistance" Margin="5,0,0,0"/>
                 <Button x:Name="HistoryButton" Command="{Binding cOpenHistory}" Content="History" Margin="5,0,5,0"/>
             </StackPanel>
-            <Grid>
+            <Label FontWeight="Bold" Content="{Binding SelectedClient.Name}" FontSize="24"></Label>
+            <Grid HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="250"/>
+                    <ColumnDefinition Width="Auto" MinWidth="250"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -76,7 +75,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <lvc:CartesianChart Grid.Row="0" Grid.Column="0" DataContext="{Binding SelectedClient.BpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                <lvc:CartesianChart Grid.Row="0" Grid.Column="0" DataContext="{Binding SelectedClient.BpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5" Grid.ColumnSpan="2" HorizontalAlignment="Left">
                     <lvc:CartesianChart.Series>
                         <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
                     </lvc:CartesianChart.Series>
@@ -106,7 +105,7 @@
                         <lvc:Axis Title="rpm" MinValue="0" MaxValue="200"/>
                     </lvc:CartesianChart.AxisY>
                 </lvc:CartesianChart>
-                <lvc:CartesianChart Grid.Row="1" Grid.Column="0" DataContext="{Binding SelectedClient.KmhChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
+                <lvc:CartesianChart Grid.Row="1" Grid.Column="0" DataContext="{Binding SelectedClient.KmhChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5" Grid.ColumnSpan="2" HorizontalAlignment="Left">
                     <lvc:CartesianChart.Series>
                         <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
                     </lvc:CartesianChart.Series>
@@ -140,7 +139,7 @@
                     <TextBlock Text="Accumulated Watt:" Margin="5,0,0,0"/>
                     <TextBlock Text="{Binding SelectedClient.AccWatt}" Margin="5,0,0,0"/>
                 </StackPanel>
-                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Distance:" Margin="5,0,0,0"/>
                     <TextBlock Text="{Binding SelectedClient.Distance}" Margin="5,0,0,0"/>
                 </StackPanel>
@@ -148,7 +147,7 @@
                     <TextBlock Text="Session time:" Margin="5,0,0,0"/>
                     <TextBlock Text="{Binding SelectedClient.SessionTime}" Margin="5,0,0,0"/>
                 </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Resistance:" Margin="5,0,0,0"/>
                     <TextBlock Text="{Binding SelectedClient.Resistance}" Margin="5,0,0,0"/>
                 </StackPanel>
