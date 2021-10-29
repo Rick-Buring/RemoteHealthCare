@@ -20,7 +20,7 @@ namespace DoktersApplicatie
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ElapsedTime { get; set; }
+        public double ElapsedTime { get; set; }
         public int DistanceTraveled { get; set; }
         public int AccWatt { get; set; }
 
@@ -65,21 +65,20 @@ namespace DoktersApplicatie
 
             string[] array = history.clientHistory.Split("\n");
 
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < array.Length - 1; i++)
             {
-                string[] data = array[i].Split(",");
+                string[] data = array[i].Split(".");
                 int hb = int.Parse(data[0]);
                 int rpm = int.Parse(data[1]);
                 double speed = double.Parse(data[2]);
                 int currWatt = int.Parse(data[3]);
                 int accWatt = int.Parse(data[4]);
-                int time = int.Parse(data[5]);
+                double time = double.Parse(data[5]);
                 int distance = 0;
                 string d = data[6];
                 if (d.Contains("\r"))
                 {
-                    int distanceLenght = d.Length - d.IndexOf("\r");
-                    distance = int.Parse(d.Substring(0, distanceLenght));
+                    distance = int.Parse(d.Substring(0, d.IndexOf("\r")));
                 }
                 else
                 {
@@ -116,6 +115,7 @@ namespace DoktersApplicatie
             public double To { get; set; }
 
             private double maxValue { get; set; }
+            private double minValue { get; set; }
 
             public int Step { get; set; }
 
@@ -128,10 +128,21 @@ namespace DoktersApplicatie
                 Charting.For<ValueTime>(dayConfig);
                 this.Values = new ChartValues<ValueTime>(chart);
 
-                this.From = 0;
-                this.To = 30;
+                this.minValue = chart[0].SecondsSinceStart;
+                this.From = this.minValue;
 
-                this.Step = 10;
+                double lastTimeValue = chart[^1].SecondsSinceStart;
+                if (30 < lastTimeValue)
+                {
+                    this.To = 30;
+                }
+                else
+                {
+
+                    this.To = lastTimeValue;
+                }
+
+                updateStep();
 
                 this.maxValue = this.Values[^1].SecondsSinceStart;
 
@@ -151,27 +162,42 @@ namespace DoktersApplicatie
                 double changeValue = e.Delta / 20.00;
                 if (Keyboard.IsKeyDown(Key.LeftShift))
                 {
-                    if (this.To - changeValue > maxValue)
+                    double ToChangeValue = this.To - changeValue / 10.0;
+                    if (ToChangeValue < maxValue && ToChangeValue > 0 && ToChangeValue - this.From > 1)
                     {
-                        this.To -= e.Delta / 20.00;
-                    } else {
-                        this.To = 0;
+                        this.To -= changeValue / 10.0;
+                    }
+                    else if (ToChangeValue < maxValue)
+                    {
+                        this.To = maxValue;
                     }
                     this.updateStep();
-                } else {
-                    if (this.To - changeValue > maxValue)
+                }
+                else
+                {
+                    double range = this.To - this.From;
+                    if (this.To - changeValue < maxValue)
                     {
-                        this.To -= e.Delta / 20.00;
-                    } else {
-                        this.To = 0;
+                        this.To -= changeValue;
+                    }
+                    else
+                    {
+                        
+                        this.To = maxValue;
+                        this.From = maxValue - range;
+                        return;
+                       
                     }
 
-                    if (this.From - changeValue < 0)
-                    {
-                        this.From -= e.Delta / 20.00;
-                    } else {
-                        this.From = maxValue;
-                    }
+                    if (this.From - changeValue > 0)
+                        {
+                            this.From -= changeValue;
+                        }
+                        else
+                        {
+                            this.From = this.minValue;
+                            this.To = this.minValue + range;
+                        }
 
                 }
             }
@@ -182,7 +208,7 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, int elapsedTime)
+                public ValueTime(double value, double elapsedTime)
                 {
                     SecondsSinceStart = elapsedTime;
                     //Debug.WriteLine(SecondsSinceStart);
