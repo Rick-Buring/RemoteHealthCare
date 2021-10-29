@@ -18,6 +18,7 @@ using System.Timers;
 using System.Windows.Documents;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
+using Timer = System.Threading.Timer;
 
 namespace VR_Project
 {
@@ -66,8 +67,7 @@ namespace VR_Project
         {
             this.active = true;
 
-            //await this.rw.Read();
-            //this.isSessionRunning = true;
+            Timer timer = new Timer(TimerCallback, null, 0, 1000);
             while (active)
             {
                 try
@@ -150,36 +150,50 @@ namespace VR_Project
             else if (type == typeof(Session))
             {
                 this.sessionIsActive = !this.sessionIsActive;
-                this.timeOffset = -1;
+                this.AccumulatedPowerOffset = -1;
+                this.sessionTime = 0;
             }
         }
 
+        public void TimerCallback(object o)
+        {
+            this.sessionTime += 1;
+            if (!DataIsAllowed)
+            {
+                DataIsAllowed = true;
+            }
+        }
 
         private bool sessionIsActive = false;
 		private bool isLocked = false;
-        private int timeOffset = -1;
-		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
+		private bool DataIsAllowed = false;
+        private int AccumulatedPowerOffset;
+        private double sessionTime;
+        public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 			
-			if (this.client != null && this.sessionIsActive && !this.isLocked)
-			{
-				this.isLocked = true;
-				ErgometerData data = ergometer.GetErgometerData();
-                if (this.timeOffset == -1)
+			if (this.client != null && this.sessionIsActive && !this.isLocked && this.DataIsAllowed)
+            {
+                this.DataIsAllowed = false;
+                ErgometerData data = ergometer.GetErgometerData();
+                this.isLocked = true;
+
+                if (this.AccumulatedPowerOffset == -1)
                 {
-                    this.timeOffset = data.ElapsedTime;
+                    this.AccumulatedPowerOffset = data.AccumulatedPower;
                 }
-				Root healthData = new Root()
+
+                Root healthData = new Root()
 				{
 					Type = typeof(HealthData).FullName,
 					Data = new HealthData()
 					{
 						RPM = data.Cadence,
-						AccWatt = data.AccumulatedPower,
+						AccWatt = data.AccumulatedPower - AccumulatedPowerOffset,
 						CurWatt = data.InstantaneousPower,
 						Speed = data.InstantaneousSpeed,
 						Heartbeat = heartBeatMonitor.GetHeartBeat(),
-						ElapsedTime = data.ElapsedTime - timeOffset,
+						ElapsedTime = sessionTime,
 						DistanceTraveled = data.DistanceTraveled
 					},
 					Sender = this.PatientName,

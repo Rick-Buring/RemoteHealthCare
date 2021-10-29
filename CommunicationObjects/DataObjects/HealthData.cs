@@ -13,7 +13,7 @@ namespace CommunicationObjects.DataObjects
         public double Speed { get; set; }
         public int CurWatt { get; set; }
         public int AccWatt { get; set; }
-        public int ElapsedTime { get; set; }
+        public double ElapsedTime { get; set; }
         public int DistanceTraveled { get; set; }
 
         public override string ToString()
