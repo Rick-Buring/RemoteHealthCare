@@ -19,7 +19,6 @@
             <Button Content="Retrieve history" Margin="5,0,0,0" Command="{Binding cRetrieveHistory}"/>
         </StackPanel>
         <StackPanel>
-            <TextBlock Text="{Binding SelectedClientHistory[SelectedClientHistory.Count-1].Heartbeat}" Margin="5,0,0,0" FontWeight="Bold" FontSize="20"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Session Time in seconds: " Margin="5,0,0,0" FontWeight="Bold"/>
                 <TextBlock Text="{Binding HistoryData.ElapsedTime}"/>
