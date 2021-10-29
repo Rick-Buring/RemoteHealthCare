@@ -31,7 +31,6 @@ namespace DoktersApplicatie.ViewModels
         public ObservableCollection<Message> Messages { get; private set; }
 
         public string TextToSend { get; set; }
-        public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
         public delegate void ClientReceived(List<Client> clients);
         public ClientReceived clientReceived;
@@ -60,8 +59,6 @@ namespace DoktersApplicatie.ViewModels
                 SelectedClient = Clients[0];
             }
 
-            SessionButtonText = "Start Session";
-
             cStartStopSession = new DelegateCommand(StartStopSession);
             cSoloEmergencyStop = new DelegateCommand(SoloEmergencyStop);
             cGlobalEmergencyStop = new DelegateCommand(GlobalEmergencyStop);
@@ -71,7 +68,6 @@ namespace DoktersApplicatie.ViewModels
             cOpenHistory = new DelegateCommand(OpenHistory);
 
             //SelectedClient = Clients[0];
-            SessionButtonText = "Start Session";
 
             this.clientReceived += this.data.AddClients;
             this.updateClient += this.data.UpdateClient;
@@ -88,20 +84,11 @@ namespace DoktersApplicatie.ViewModels
             if (SelectedClient != null)
             {
                 this.clientHandler.StartStopSession(SelectedClient);
+                this.SelectedClient.StartStopSession();
+                Debug.WriteLine("Started/Stopped session");
 
-                if (SessionButtonText.Equals("Start Session"))
-                {
-                    
-                    SessionButtonText = "Stop Session";
-                    
-                }
-                else
-                {
-                    SessionButtonText = "Start Session";
-                }
             }
 
-            Debug.WriteLine("Started/Stopped session");
         }
 
         public void RemoveClients(List<Client> list)

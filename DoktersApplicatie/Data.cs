@@ -108,6 +108,7 @@ namespace DoktersApplicatie
         public int AccWatt { get; set; }
         public int SessionTime { get; set; }
         public int Resistance { get; set; }
+        public string StartStopSessionText { get; set; } = "Start Session";
 
         public int TempResistance { get; set; } = 50;
 
@@ -145,6 +146,22 @@ namespace DoktersApplicatie
         public int CompareTo(string other)
         {
             return this.Name.CompareTo(other);
+        }
+
+        public void StartStopSession()
+        {
+
+            if (StartStopSessionText.Equals("Start Session"))
+            {
+
+                StartStopSessionText = "Stop Session";
+
+            }
+            else
+            {
+                StartStopSessionText = "Start Session";
+            }
+
         }
 
         public class ValueTimeChart : INotifyPropertyChanged

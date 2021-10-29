@@ -21,11 +21,8 @@ namespace DoktersApplicatie.ViewModels
         public AsyncLoginCommand<HomeVM> LoginCommand { get; }
         public string ServerAddres { get; set; } = "Localhost:6006";
 
-        private NavigateDelegate navigate;
-
         public LoginVM(NavigateDelegate navigate)
         {
-            this.navigate = navigate;
             this.LoginCommand = new AsyncLoginCommand<HomeVM>(navigate, this, (ex) => Console.WriteLine(ex.Message));
         }
 

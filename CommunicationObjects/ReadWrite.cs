@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CommunicationObjects.DataObjects;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -52,7 +54,11 @@ namespace CommunicationObjects
                 stream.Write(WrapMessage(message));
                 stream.Flush();
                 // __CR__ [PSMG] Probeer niet alle exceptions te catchen
-            } catch (Exception e)
+                //Fixed, Exception => IOException
+            } catch (IOException e)
+            {
+                Debug.WriteLine(e.Message);
+            } catch (NotSupportedException e)
             {
                 Debug.WriteLine(e.Message);
             }
@@ -64,6 +70,7 @@ namespace CommunicationObjects
         /// <returns>message in form of a string</returns>
         public async Task<string> Read()
         {
+
             byte[] length = new byte[4];
             this.stream.Read(length, 0, 4);
 
