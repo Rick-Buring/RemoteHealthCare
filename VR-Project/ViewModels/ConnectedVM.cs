@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Threading;
 using Vr_Project.RemoteHealthcare;
@@ -40,11 +41,19 @@ namespace VR_Project.ViewModels
             this.Client.resistanceUpdater += VrManager.RequestResistance;
             this.Client.sendChat += VrManager.SetChatMessage;
             Equipment = equipment;
+            this.Equipment.OnBluetoothError += BluetoothErrorHandler;
+        }
+
+        private void BluetoothErrorHandler(Exception e)
+        {
+            Debug.WriteLine(e.Message);
+            Disconnect();
         }
 
         private void Disconnect()
         {
             Console.WriteLine("TODOOO Disconnect client and bike");
+            Dispose();
             navigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain(), navigate));
         }
 

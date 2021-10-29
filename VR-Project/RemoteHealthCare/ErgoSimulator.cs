@@ -49,11 +49,10 @@ namespace Vr_Project.RemoteHealthcare
         }
 
         //Rolt elke seconde een random waarde en verandert de baseline gebaseerd op die waarde met +10 of -10.
+        bool running = true;
+
         private void rollBaseline()
         {
-
-            bool running = true;
-
             while(running)
             {
                 Random random = new Random();
@@ -119,5 +118,9 @@ namespace Vr_Project.RemoteHealthcare
             return base.ergometerData;
         }
 
+        public override void Dispose()
+        {
+            this.running = false;
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace Vr_Project.RemoteHealthcare
             return null;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             this.bleHeart.CloseDevice();
             this.bleHeart.Dispose();
