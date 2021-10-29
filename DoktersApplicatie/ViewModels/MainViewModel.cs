@@ -25,11 +25,14 @@ namespace DoktersApplicatie.ViewModels
         public void Window_Closed(object sender, EventArgs e)
         {
             //CurrentPageViewModel.Dispose();
-            
+            CurrentUserControl.Dispose();
             Debug.WriteLine("Closing and disposing client.");
         }
 
-        
+		public override void Dispose()
+		{
 
-    }
+			//throw new NotImplementedException();
+		}
+	}
 }

@@ -190,7 +190,10 @@ namespace DoktersApplicatie.ViewModels
             await this.clientHandler.RequestClientsHistory();
         }
 
-
-
-    }
+		public override void Dispose()
+		{
+            this.clientHandler.Dispose();
+			//throw new NotImplementedException();
+		}
+	}
 }

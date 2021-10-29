@@ -29,5 +29,9 @@ namespace DoktersApplicatie.ViewModels
             this.LoginCommand = new AsyncLoginCommand<HomeVM>(navigate, this, (ex) => Console.WriteLine(ex.Message));
         }
 
-    }
+		public override void Dispose()
+		{
+            
+		}
+	}
 }
