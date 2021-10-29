@@ -84,12 +84,7 @@ namespace Server
 
             bool errorFound = false;
 
-            if (type == typeof(HealthData))
-            {
-                HealthData data = (root.Data as JObject).ToObject<HealthData>();
-                this.server.manager.write(root.Sender, data);
-            }
-            else if (type == typeof(Selection))
+            if (type == typeof(Selection))
             {
                 this.server.ReceiveClients(ref root);
             }

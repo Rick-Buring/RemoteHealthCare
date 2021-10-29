@@ -76,7 +76,7 @@ namespace DoktersApplicatie
         public int CurrWatt { get; set; }
         public double Distance { get; set; }
         public int AccWatt { get; set; }
-        public int SessionTime { get; set; }
+        public double SessionTime { get; set; }
         public int Resistance { get; set; }
 
         public int TempResistance { get; set; } = 50;
@@ -148,9 +148,11 @@ namespace DoktersApplicatie
             {
                 this.Values.Clear();
                 time = DateTime.Now;
+                this.MinValue = 0;
+                this.MaxValue = 30;
             }
 
-            public void add(double value, int elapsedTime)
+            public void add(double value, double elapsedTime)
             {
                 ValueTime valueTime = new ValueTime(value, elapsedTime);
                 if (elapsedTime > 30)
@@ -158,7 +160,7 @@ namespace DoktersApplicatie
                     this.MinValue = elapsedTime - 30;
                     this.MaxValue = elapsedTime;
                 }
-                if (Values.Count > 305) Values.RemoveAt(0);
+                if (Values.Count > 35) Values.RemoveAt(0);
 
                 this.Values.Add(valueTime);
 
@@ -169,9 +171,9 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, int startTime)
+                public ValueTime(double value, double startTime)
                 {
-                    SecondsSinceStart = (double) startTime;
+                    SecondsSinceStart = startTime;
                     //Debug.WriteLine(SecondsSinceStart);
                     Value = value;
                 }

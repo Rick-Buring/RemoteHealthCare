@@ -9,7 +9,7 @@ namespace Server
         private string filePath;
         public IO(string filePath)
         {
-            this.filePath = filePath;
+            this.filePath = $"{filePath}/clientsInfo";
         }
 
         /// <summary>
@@ -19,12 +19,13 @@ namespace Server
         /// <param name="data">the data to write</param>
         public void writeToFile(string client, HealthData data)
         {
-            if (File.Exists($"{filePath}/{client}.txt") && lastSesionTime(client) > data.ElapsedTime)
+            string filepath = $"{filePath}/{client}.txt";
+            if (File.Exists(filepath) && lastSesionTime(client) > data.ElapsedTime)
             {
-                File.WriteAllText($"{filePath}/{client}.txt", "");
+                File.Delete(filepath);
             }
 
-            StreamWriter writer = File.AppendText($"{filePath}/{client}.txt");
+            StreamWriter writer = File.AppendText(filepath);
             try
             {
                 writer.WriteLine(data.ToString());  
@@ -50,7 +51,7 @@ namespace Server
         private int lastSesionTime(string client)
         {
             string[] content = File.ReadAllLines($"{filePath}/{client}.txt");
-            string[] lastInput = content[content.Length - 1].Split(",");
+            string[] lastInput = content[content.Length - 1].Split(".");
             int result;
             if (int.TryParse(lastInput[5], out result)) return result;
             else return -1;

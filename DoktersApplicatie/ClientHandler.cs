@@ -96,12 +96,12 @@ namespace DoktersApplicatie
                 try
                 {
                     string result = await rw.Read();
-                    Console.WriteLine(result);
+                    Debug.WriteLine(result);
                     Parse(result);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Debug.WriteLine(e.StackTrace);
                     //todo disconnect client
                     this.active = false;
 
