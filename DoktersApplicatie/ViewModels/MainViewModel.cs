@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 
 namespace DoktersApplicatie.ViewModels
@@ -21,6 +22,17 @@ namespace DoktersApplicatie.ViewModels
         {
             this.CurrentUserControl = navigateTo;
         }
+        public void Window_Closed(object sender, EventArgs e)
+        {
+            //CurrentPageViewModel.Dispose();
+            CurrentUserControl.Dispose();
+            Debug.WriteLine("Closing and disposing client.");
+        }
 
-    }
+		public override void Dispose()
+		{
+
+			//throw new NotImplementedException();
+		}
+	}
 }

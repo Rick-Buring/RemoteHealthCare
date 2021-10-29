@@ -50,7 +50,7 @@
                 <RibbonSplitButton Label="Emergency Stop" Command="{Binding cSoloEmergencyStop}" BorderBrush="#FF707070" Background="#FFDDDDDD" FocusedBackground="#BEE6FD" FocusedBorderBrush="#FF666666" MouseOverBackground="#BEE6FD" MouseOverBorderBrush="#FF4F4F4F" PressedBackground="#CBE8F6" PressedBorderBrush="#FF4F4F4F" CheckedBackground="#FFC1C1C1" CheckedBorderBrush="#FF4F4F4F" Margin="5,0,0,0">
 					<Button x:Name="GlobalEmergencyStopButton" Command="{Binding cGlobalEmergencyStop}" Content="Global Emergency Stop"/>
 				</RibbonSplitButton>
-				<Button x:Name="SessionButton" Command="{Binding cStartStopSession}" Content="{Binding SessionButtonText}" Margin="5,0,0,0"/>
+                <Button x:Name="SessionButton" Command="{Binding cStartStopSession}" Content="{Binding SelectedClient.StartStopSessionText}" Margin="5,0,0,0"/>
 				<TextBlock Text="Resistance: " Margin="5,0,0,0"/>
 				<TextBlock Text="{Binding SelectedClient.TempResistance}" Width="20"/>
 				<Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding SelectedClient.TempResistance}" Width="200" Margin="5,0,0,0" />

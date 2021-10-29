@@ -31,14 +31,15 @@ namespace DoktersApplicatie.ViewModels
         public ObservableCollection<Message> Messages { get; private set; }
 
         public string TextToSend { get; set; }
-        public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
-        public delegate void ClientReceived(Client client);
+        public delegate void ClientReceived(List<Client> clients);
         public ClientReceived clientReceived;
         public delegate void UpdateClient(string clientName, HealthData healthData);
         public UpdateClient updateClient;
         public delegate void UpdateHistory(History history);
         public UpdateHistory updateHistory;
+        public delegate void RemovedClients(List<Client> list);
+        public RemovedClients removeClients;
 
         private ClientHandler clientHandler;
         private Thread clientThread;
@@ -48,7 +49,8 @@ namespace DoktersApplicatie.ViewModels
 
         public HomeVM(MainViewModel.NavigateDelegate navigate, ClientHandler clientHandler)
         {
-            this.data = new Data();
+            this.removeClients += RemoveClients;
+            this.data = new Data(this.removeClients);
             this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Clients = data.clients;
             this.Messages = data.messages;
@@ -56,8 +58,6 @@ namespace DoktersApplicatie.ViewModels
             {
                 SelectedClient = Clients[0];
             }
-
-            SessionButtonText = "Start Session";
 
             cStartStopSession = new DelegateCommand(StartStopSession);
             cSoloEmergencyStop = new DelegateCommand(SoloEmergencyStop);
@@ -68,9 +68,8 @@ namespace DoktersApplicatie.ViewModels
             cOpenHistory = new DelegateCommand(OpenHistory);
 
             //SelectedClient = Clients[0];
-            SessionButtonText = "Start Session";
 
-            this.clientReceived += this.data.AddClient;
+            this.clientReceived += this.data.AddClients;
             this.updateClient += this.data.UpdateClient;
             this.clientHandler = clientHandler;
             this.clientHandler.addDelegates(clientReceived, updateClient, updateHistory);
@@ -85,32 +84,17 @@ namespace DoktersApplicatie.ViewModels
             if (SelectedClient != null)
             {
                 this.clientHandler.StartStopSession(SelectedClient);
+                this.SelectedClient.StartStopSession();
+                Debug.WriteLine("Started/Stopped session");
 
-                if (SessionButtonText.Equals("Start Session"))
-                {
-                    
-                    SessionButtonText = "Stop Session";
-                    
-                }
-                else
-                {
-                    SessionButtonText = "Start Session";
-                }
-            }
-
-            Debug.WriteLine("Started/Stopped session");
-        }
-
-        //TODO Send message to server
-        public void EmergencyStop(List<Client> emergencyClients)
-        {
-
-            foreach (Client client in emergencyClients)
-            {
-                Debug.WriteLine($"Emergency Stopped {client.Name}.");
             }
 
         }
+
+        public void RemoveClients(List<Client> list)
+		{
+            if (list.Contains(SelectedClient)) SelectedClient = null;
+		}
 
         public void SoloEmergencyStop()
         {
@@ -121,6 +105,7 @@ namespace DoktersApplicatie.ViewModels
 			//EmergencyStop(EmergencyList);
 
 			this.clientHandler.EmergencyStop(false, SelectedClient);
+            
         }
 
         public void GlobalEmergencyStop()
@@ -130,7 +115,9 @@ namespace DoktersApplicatie.ViewModels
             //EmergencyStop(EmergencyList);
 
             this.clientHandler.EmergencyStop(true, null);
+            SendMessage("EMERGENCY STOP, STOP NOW", "All");
         }
+
         public void SendMessage(string text, string receiver)
         {
             if (!string.IsNullOrEmpty(text))
@@ -182,7 +169,10 @@ namespace DoktersApplicatie.ViewModels
             await this.clientHandler.RequestClientsHistory();
         }
 
-
-
-    }
+		public override void Dispose()
+		{
+            this.clientHandler.Dispose();
+			//throw new NotImplementedException();
+		}
+	}
 }

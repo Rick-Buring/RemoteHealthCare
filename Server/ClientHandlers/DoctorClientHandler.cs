@@ -26,46 +26,46 @@ namespace Server
         {
             string name = "";
             bool authorized = false;
-            do
+
+            string message = await rw.Read();
+            Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
+
+            if (jsonObject.Type == typeof(Connection).FullName &&
+                (jsonObject.Data as JObject).ToObject<Connection>().connect)
             {
-
-                string message = await rw.Read();
-                Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
-
-                if (jsonObject.Type == typeof(Connection).FullName &&
-                    (jsonObject.Data as JObject).ToObject<Connection>().connect)
+                Connection Data = (jsonObject.Data as JObject).ToObject<Connection>();
+                name = jsonObject.Sender;
+                Name = name;
+                if (!Authorization.Authorized(name, Data.password))
                 {
-                    Connection Data = (jsonObject.Data as JObject).ToObject<Connection>();
-                    name = jsonObject.Sender;
-                    Name = name;
-                    if (!Authorization.Authorized(name, Data.password))
+                    send(new Root
                     {
-                        send(new Root
-                        {
-                            Type = typeof(Acknowledge).FullName,
-                            Sender = "server",
-                            Target = this.Name,
-                            Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 405, statusmessage = "Not Authorized." }
-                        });
-                    }
-                    else
-                    {
-                        this.addToList(this);
-                        send(new Root
-                        {
-                            Type = typeof(Acknowledge).FullName,
-                            Sender = "server",
-                            Target = this.Name,
-                            Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
-                        });
-                        authorized = true;
-                    }
+                        Type = typeof(Acknowledge).FullName,
+                        Sender = "server",
+                        Target = this.Name,
+                        Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 405, statusmessage = "Not Authorized." }
+                    });
+
+                    disconnect();
+
                 }
                 else
                 {
-                    disconnect();
+                    this.addToList(this);
+                    send(new Root
+                    {
+                        Type = typeof(Acknowledge).FullName,
+                        Sender = "server",
+                        Target = this.Name,
+                        Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+                    });
+                    authorized = true;
                 }
-            } while (!authorized && active);
+            }
+            else
+            {
+                disconnect();
+            }
 
             return name;
         }
@@ -168,9 +168,12 @@ namespace Server
             {
                 Console.WriteLine("Doctor Failed to authorize");
                 return;
+            } else
+            {
+                Console.WriteLine("Doctor authorized");
+                new Thread(base.Run).Start();
             }
-            Console.WriteLine("Doctor authorized");
-            new Thread(base.Run).Start();
+
         }
     }
 }

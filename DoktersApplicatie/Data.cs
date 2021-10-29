@@ -4,10 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CommunicationObjects.DataObjects;
+using DoktersApplicatie.ViewModels;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -28,8 +30,11 @@ namespace DoktersApplicatie
 
         private Dispatcher dispatcher;
 
-        public Data()
+        private HomeVM.RemovedClients removeClients;
+
+        public Data(HomeVM.RemovedClients removeClients)
         {
+            this.removeClients = removeClients;
             clients = new ObservableCollection<Client>();
             messages = new ObservableCollection<Message>();
             this.dispatcher = Dispatcher.CurrentDispatcher;
@@ -42,20 +47,46 @@ namespace DoktersApplicatie
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void AddClient(Client client)
+        public void AddClients(List<Client> client)
         {
-            if (!clients.Contains(client))
+            
+            
+            foreach (Client c in client)
             {
-                //this.clients.Add(client); 
-                
-                this.clientsDictionary.Add(client.Name, client);
 
-                this.dispatcher.Invoke(() =>
+                if (!clients.Contains(c))
                 {
-                    this.clients.Add(client);
-                    Debug.WriteLine($"Adding new client: {client.Name}");
-                });
+                    this.clientsDictionary.Add(c.Name, c);
 
+                    this.dispatcher.Invoke(() =>
+                    {
+                        this.clients.Add(c);
+                        Debug.WriteLine($"Adding new client: {c.Name}");
+                    });
+                }
+            }
+            List<Client> removedClients = new List<Client>();
+
+            foreach(Client c in clients)
+            {
+                if (!client.Contains(c))
+                {
+                    this.clientsDictionary.Remove(c.Name);
+                    removedClients.Add(c);
+
+                }
+            }
+            this.dispatcher.Invoke(() =>
+            {
+                foreach (Client c in removedClients)
+                {
+                    this.clients.Remove(c);
+                    Debug.WriteLine($"Removing client: {c.Name}");
+                }
+            });
+            if (this.removeClients != null)
+            {
+                this.removeClients(removedClients);
             }
         }
 
@@ -67,7 +98,7 @@ namespace DoktersApplicatie
 
     }
 
-    public class Client : IComparable<string>, INotifyPropertyChanged
+    public class Client : IComparable<string>, INotifyPropertyChanged, IEquatable<Client>
     {
         public string Name { get; set; }
         public int BPM { get; set; }
@@ -78,6 +109,7 @@ namespace DoktersApplicatie
         public int AccWatt { get; set; }
         public double SessionTime { get; set; }
         public int Resistance { get; set; }
+        public string StartStopSessionText { get; set; } = "Start Session";
 
         public int TempResistance { get; set; } = 50;
 
@@ -115,6 +147,34 @@ namespace DoktersApplicatie
         public int CompareTo(string other)
         {
             return this.Name.CompareTo(other);
+        }
+
+        public void StartStopSession()
+        {
+
+            if (StartStopSessionText.Equals("Start Session"))
+            {
+
+                StartStopSessionText = "Stop Session";
+
+            }
+            else
+            {
+                StartStopSessionText = "Start Session";
+            }
+
+        }
+
+        public bool Equals(Client other)
+        {
+            if (this.Name == other.Name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public class ValueTimeChart : INotifyPropertyChanged
