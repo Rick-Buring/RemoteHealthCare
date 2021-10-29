@@ -18,8 +18,7 @@ namespace VR_Project.ViewModels
 		private EquipmentMain eq;
 		private ViewModel.NavigateViewModel navigateView;
 		public DelegateCommand ConnectToServer { get; }
-		public static RequestResistance requestResistance;
-		public delegate void RequestResistance(float resistance);
+		
 
 		public ConnectToServerVM(ClientHandler client, EquipmentMain equipment, VrManager vr, ViewModel.NavigateViewModel navigate)
 		{

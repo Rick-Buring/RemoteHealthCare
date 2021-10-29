@@ -52,6 +52,11 @@ namespace Server
         {
             Root root = JsonConvert.DeserializeObject<Root>(toParse);
 
+            if (root == null)
+            {
+                return;
+            }
+
             Type type = Type.GetType(root.Type);
 
             bool errorFound = false;
@@ -63,7 +68,7 @@ namespace Server
             }
             else if (type == typeof(Selection))
             {
-                this.server.recieveClients(ref root);
+                this.server.ReceiveClients(ref root);
             }
             else if (type == typeof(Connection))
             {

@@ -36,49 +36,14 @@ namespace Server
 		{
 			//new Test();
 			new Server();
-
 		}
-
-#if DEBUG
-        public void CreateFile()
-		{
-			if (!File.Exists(Authorization.PASSWORDFILE))
-			{
-				File.WriteAllText(Authorization.PASSWORDFILE, "Hank test");
-				//StreamWriter writer = File.AppendText(Authorization.PASSWORDFILE);
-				//try
-				//{
-				//	writer.WriteLine("Hank test");
-				//}
-				//catch (FileNotFoundException e)
-				//{
-				//	Console.WriteLine(e.StackTrace);
-				//}
-				//finally
-				//{
-				//	writer.Close();
-				//}
-				
-			}
-		}
-#else
-		public void CreateFile()
-		{
-
-		}
-#endif
-
-
-
-
 
 		public Server()
 		{
-			CreateFile();
-			this.clients = new Dictionary<string, ClientHandlerBase>();
+            this.clients = new Dictionary<string, ClientHandlerBase>();
 			// __CR__ [PSMG] Zou je de poort niet als een constant in het shared project zetten
-
-			this.manager = new DataManager();
+            DataManager.initFoldersAndFilePath();
+            this.manager = new DataManager();
 			this.addToList += AddClient;
 			this.removeFromList += RemoveClient;
 			var builder = new ConfigurationBuilder()
@@ -99,7 +64,7 @@ namespace Server
 			this.doctorListener.BeginAcceptTcpClient((ar) => OnConnect(ar, false), null);
 			Console.WriteLine($"Listening for Doctor connections on port: 6006");
 
-
+            
 
 			Console.Read();
 		}
@@ -107,7 +72,22 @@ namespace Server
 		public void AddClient(ClientHandlerBase client)
 		{
 			if (!this.clients.ContainsKey(client.Name))
+			{
 				this.clients.Add(client.Name, client);
+				if (client.GetType() == typeof(PatientClientHandler))
+				{
+					Root root = new Root { Target = "all", Sender = "server", Type = typeof(Selection).FullName};
+					ReceiveClients(ref root);
+					if (root == null) return;
+					foreach (ClientHandlerBase c in clients.Values)
+					{
+						if (c is DoctorClientHandler)
+						{
+							c.send(root);
+						}
+					}
+				}
+			}
 		}
 
 		public void RemoveClient(ClientHandlerBase client)
@@ -179,17 +159,17 @@ namespace Server
 			}
 		}
 
-		public void recieveClients(ref Root root)
+		public void ReceiveClients(ref Root root)
 		{
 			List<string> clients = new List<string>();
 			foreach (ClientHandlerBase client in this.clients.Values)
 			{
 				if (client is DoctorClientHandler)
 					continue;
-				if (client.Name != root.Sender)
-				{
+				//if (client.Name != root.Sender)
+				//{
 					clients.Add(client.Name);
-				}
+				//}
 			}
 			root.Data = new Selection() { selection = clients };
 		}

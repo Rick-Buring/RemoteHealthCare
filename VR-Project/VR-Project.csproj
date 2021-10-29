@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>VR_Project</RootNamespace>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>heartbeat.ico</ApplicationIcon>
+    <Win32Resource />
   </PropertyGroup>
     <ItemGroup>
 <Compile Remove="Models\**" />
@@ -16,6 +18,9 @@
     <Page Remove="Models\**" />
     <Page Remove="viewModel\**" />
   </ItemGroup>
+    <ItemGroup>
+      <None Remove="heartbeat.ico" />
+    </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -28,6 +33,12 @@
     <Reference Include="BLELibrary">
       <HintPath>..\RemoteHealthCare\lib\BLELibrary.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="heartbeat.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <Import Project="..\CommunicationObjects\CommunicationObjects.projitems" Label="Shared" />

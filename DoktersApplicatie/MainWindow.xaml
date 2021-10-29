@@ -4,176 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoktersApplicatie"
+        xmlns:vm="clr-namespace:DoktersApplicatie.ViewModels"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Icon="stethoscope.ico"
         mc:Ignorable="d"
-        MinHeight="470"
-        MinWidth="850"
         Title="Doctor Application"
         Height="550"
         Width="1345"
-        ResizeMode="CanMinimize">
 
-    <StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch">
-        <ListView x:Name="MainListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" MinWidth="415">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border x:Name="ListViewSeperator" BorderThickness="1,1,1,1" BorderBrush="Black">
-                        <StackPanel x:Name="LVIStackPanel" Orientation="Horizontal">
-                            <Border x:Name="ListViewItemSeperator" BorderBrush="Black" Height="100" Width="400">
-                                <StackPanel x:Name="NameInfoBox" Margin="0,0,-302,-2" Width="400" HorizontalAlignment="Left">
-                                    <TextBlock x:Name="NameBox" TextWrapping="Wrap" Text="{Binding Name}" FontSize="20" Margin="5,5,0,5"/>
-                                    <Border x:Name="TextBoxSeperator" BorderThickness="0,1,0,0" BorderBrush="Black">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="BPM:" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BPM}" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Current Wattage:" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding CurrWatt}" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Session time:" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SessionTime}" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Km/h:" Margin="5,0,0,0"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding KMH}" Margin="5,0,0,0"/>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <StackPanel x:Name="ClientPanel" Orientation="Vertical" >
-            <StackPanel Orientation="Horizontal">
-                <RibbonSplitButton Label="Emergency Stop" Command="{Binding cSoloEmergencyStop}" BorderBrush="#FF707070" Background="#FFC1C1C1" FocusedBackground="#FF999999" FocusedBorderBrush="#FF666666" MouseOverBackground="#FFC1C1C1" MouseOverBorderBrush="#FF4F4F4F" PressedBackground="#FF999999" PressedBorderBrush="#FF4F4F4F" CheckedBackground="#FFC1C1C1" CheckedBorderBrush="#FF4F4F4F" Margin="5,0,0,0">
-                    <Button x:Name="GlobalEmergencyStopButton" Command="{Binding cGlobalEmergencyStop}" Content="Global Emergency Stop"/>
-                </RibbonSplitButton>
-                <Button x:Name="SessionButton" Command="{Binding cStartStopSession}" Content="{Binding SessionButtonText}" Margin="5,0,0,0"/>
-                <TextBlock Text="Resistance: " Margin="5,0,0,0"/>
-                <TextBlock Text="{Binding SelectedClient.TempResistance}" Width="20"/>
-                <Slider x:Name="ResistanceSlider" Maximum="100" Minimum="0" Value="{Binding SelectedClient.TempResistance}" Width="200" Margin="5,0,0,0" />
-                <Button x:Name="ResistanceButton" Command="{Binding cSetResistance}" Content="Set Resistance" Margin="5,0,0,0"/>
-                <Button x:Name="HistoryButton" Command="{Binding cOpenHistory}" Content="History" Margin="5,0,5,0"/>
-            </StackPanel>
-            <Label FontWeight="Bold" Content="{Binding SelectedClient.Name}" FontSize="24"></Label>
-            <Grid HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="250"/>
-                    <ColumnDefinition Width="Auto" MinWidth="250"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <lvc:CartesianChart Grid.Row="0" Grid.Column="0" DataContext="{Binding SelectedClient.BpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Step="10"/>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="bpm" MinValue="0" MaxValue="220"/>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-                <lvc:CartesianChart Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedClient.RpmChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Step="10"/>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="rpm" MinValue="0" MaxValue="200"/>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-                <lvc:CartesianChart Grid.Row="1" Grid.Column="0" DataContext="{Binding SelectedClient.KmhChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Step="10"/>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="km/h" MinValue="0" MaxValue="60"/>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-                <lvc:CartesianChart Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedClient.WattChart}" Height="200" Width="250" AnimationsSpeed="0:0:0.5">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding Values}" PointGeometry="{x:Null}"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Seconds since start" MinValue="{Binding MinValue}" MaxValue="{Binding MaxValue}" LabelFormatter="{Binding Formatter}">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Step="10"/>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="Watt" MinValue="0" MaxValue="800"/>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Accumulated Watt:" Margin="5,0,0,0"/>
-                    <TextBlock Text="{Binding SelectedClient.AccWatt}" Margin="5,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Distance:" Margin="5,0,0,0"/>
-                    <TextBlock Text="{Binding SelectedClient.Distance}" Margin="5,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Session time:" Margin="5,0,0,0"/>
-                    <TextBlock Text="{Binding SelectedClient.SessionTime}" Margin="5,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Resistance:" Margin="5,0,0,0"/>
-                    <TextBlock Text="{Binding SelectedClient.Resistance}" Margin="5,0,0,0"/>
-                </StackPanel>
-            </Grid>
-        </StackPanel>
-        <StackPanel x:Name="ChatStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ListView x:Name="ChatListView" MinHeight="475" ItemsSource="{Binding Messages}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxHeight="475">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Sender}" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Text}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <StackPanel x:Name="ChatMessagePanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5,5,5,0">
-                <TextBox x:Name="MessageBox" Text="{Binding TextToSend}" TextWrapping="Wrap" FontSize="15" MinWidth="185">
-                    <!--TODO Press Enter to send message
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding cSendMessage}"/>
-                    </TextBox.InputBindings>-->
-                </TextBox>
-                <Button x:Name="MessageButton" Command="{Binding cSendMessage}" Content="Send" Margin="5,0,0,0" MinWidth="36"/>
-                <Button x:Name="MessageAllButton" Command="{Binding cSendAllMessage}" Content="Send All" Margin="5,0,0,0" MinWidth="36"/>
-            </StackPanel>
-        </StackPanel>
-    </StackPanel>
+        ResizeMode="CanMinimize">
+	<Window.DataContext>
+		<vm:MainViewModel />
+	</Window.DataContext>
+
+	<UserControl Content="{Binding CurrentUserControl}"></UserControl>
+
 </Window>

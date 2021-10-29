@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Media;
@@ -14,6 +15,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using System.Windows.Documents;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
 
@@ -25,8 +27,8 @@ namespace VR_Project
         private TcpClient client;
 		private bool active;
 		private bool connected;
-		private bool isSessionRunning;
-		public ConnectToServerVM.RequestResistance resistanceUpdater { get; set; }
+        public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
+        public ConnectedVM.SendChatMessage sendChat { get; set; }
 
         public ClientHandler()
         {
@@ -51,19 +53,12 @@ namespace VR_Project
 
             this.rw = new ReadWrite(stream);
 
-            this.resistanceUpdater = ConnectToServerVM.requestResistance;
-            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = "Henk", Target = "server" };
+            
+            Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-            Parse(await this.rw.Read());
-
-            if (this.active)
-            {
-                Run();
-            }
-            else
-            {
-
-            }
+            Run();
+            
+            
 
         }
 
@@ -106,16 +101,6 @@ namespace VR_Project
             {
                 Setting data = (root.Data as JObject).ToObject<Setting>();
 
-                //TODO notify vrclient dat de session start of stopt 
-                if (data.sesionchange == SessionType.START)
-                {
-                    this.isSessionRunning = true;
-                }
-                else if (data.sesionchange == SessionType.STOP)
-                {
-                    this.isSessionRunning = false;
-                }
-
                 if (data.emergencystop)
                 {
                     this.resistanceUpdater(0);
@@ -145,7 +130,8 @@ namespace VR_Project
             {
                 Chat data = (root.Data as JObject).ToObject<Chat>();
                 string message = data.message;
-                ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
+                this.sendChat(message);
+                //ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
             }
             else if (type == typeof(Acknowledge))
             {
@@ -153,7 +139,6 @@ namespace VR_Project
                 Type ackType = Type.GetType(ack.subtype);
                 if (ackType == typeof(Connection))
                 {
-                    this.isSessionRunning = !this.isSessionRunning;
                     this.connected = !this.connected;
                     if (!this.connected)
                     {
@@ -162,17 +147,28 @@ namespace VR_Project
                 }
 
             }
-
-
+            else if (type == typeof(Session))
+            {
+                this.sessionIsActive = !this.sessionIsActive;
+                this.timeOffset = -1;
+            }
         }
+
+
+        private bool sessionIsActive = false;
 		private bool isLocked = false;
+        private int timeOffset = -1;
 		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 			
-			if (this.client != null && this.isSessionRunning && !this.isLocked)
+			if (this.client != null && this.sessionIsActive && !this.isLocked)
 			{
 				this.isLocked = true;
 				ErgometerData data = ergometer.GetErgometerData();
+                if (this.timeOffset == -1)
+                {
+                    this.timeOffset = data.ElapsedTime;
+                }
 				Root healthData = new Root()
 				{
 					Type = typeof(HealthData).FullName,
@@ -183,14 +179,14 @@ namespace VR_Project
 						CurWatt = data.InstantaneousPower,
 						Speed = data.InstantaneousSpeed,
 						Heartbeat = heartBeatMonitor.GetHeartBeat(),
-						ElapsedTime = data.ElapsedTime,
+						ElapsedTime = data.ElapsedTime - timeOffset,
 						DistanceTraveled = data.DistanceTraveled
 					},
-					Sender = "henk",
-					Target = "hank"
-				};
-				this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
-				this.isLocked = false;
+					Sender = this.PatientName,
+                    Target = "all"
+                };
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                this.isLocked = false;
             }
         }
         public void Stop()
