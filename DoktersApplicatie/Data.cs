@@ -52,10 +52,10 @@ namespace DoktersApplicatie
             
             
             foreach (Client c in client)
-			{
+            {
 
                 if (!clients.Contains(c))
-				{
+                {
                     this.clientsDictionary.Add(c.Name, c);
 
                     this.dispatcher.Invoke(() =>
@@ -64,18 +64,18 @@ namespace DoktersApplicatie
                         Debug.WriteLine($"Adding new client: {c.Name}");
                     });
                 }
-			}
+            }
             List<Client> removedClients = new List<Client>();
-            
+
             foreach(Client c in clients)
-			{
+            {
                 if (!client.Contains(c))
-				{
+                {
                     this.clientsDictionary.Remove(c.Name);
                     removedClients.Add(c);
-                    
-				}
-			}
+
+                }
+            }
             this.dispatcher.Invoke(() =>
             {
                 foreach (Client c in removedClients)
@@ -84,9 +84,10 @@ namespace DoktersApplicatie
                     Debug.WriteLine($"Removing client: {c.Name}");
                 }
             });
-            if (this.removeClients != null) this.removeClients(removedClients);
-
-           
+            if (this.removeClients != null)
+            {
+                this.removeClients(removedClients);
+            }
         }
 
 

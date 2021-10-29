@@ -96,17 +96,6 @@ namespace DoktersApplicatie.ViewModels
             if (list.Contains(SelectedClient)) SelectedClient = null;
 		}
 
-        //TODO Send message to server
-        public void EmergencyStop(List<Client> emergencyClients)
-        {
-
-            foreach (Client client in emergencyClients)
-            {
-                Debug.WriteLine($"Emergency Stopped {client.Name}.");
-            }
-
-        }
-
         public void SoloEmergencyStop()
         {
             if (SelectedClient == null) return;
@@ -116,6 +105,8 @@ namespace DoktersApplicatie.ViewModels
 			//EmergencyStop(EmergencyList);
 
 			this.clientHandler.EmergencyStop(false, SelectedClient);
+            if (SelectedClient != null)
+                SendMessage("EMERGENCY STOP, STOP NOW", SelectedClient.Name);
         }
 
         public void GlobalEmergencyStop()
@@ -125,7 +116,9 @@ namespace DoktersApplicatie.ViewModels
             //EmergencyStop(EmergencyList);
 
             this.clientHandler.EmergencyStop(true, null);
+            SendMessage("EMERGENCY STOP, STOP NOW", "All");
         }
+
         public void SendMessage(string text, string receiver)
         {
             if (!string.IsNullOrEmpty(text))
