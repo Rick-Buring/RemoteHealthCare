@@ -98,11 +98,18 @@ namespace DoktersApplicatie
             AccWatt = healthData.AccWatt;
             Distance = healthData.DistanceTraveled;
             SessionTime = healthData.ElapsedTime;
+            if (SessionTime == 0)
+            {
+                WattChart.resetChart();
+                BpmChart.resetChart();
+                RpmChart.resetChart();
+                KmhChart.resetChart();
+            }
 
-            WattChart.add(CurrWatt);
-            BpmChart.add(BPM);
-            RpmChart.add(RPM);
-            KmhChart.add(KMH);
+            WattChart.add(CurrWatt, SessionTime);
+            BpmChart.add(BPM, SessionTime);
+            RpmChart.add(RPM, SessionTime);
+            KmhChart.add(KMH, SessionTime);
         }
 
         public int CompareTo(string other)
@@ -114,7 +121,7 @@ namespace DoktersApplicatie
         {
             public Func<double, string> Formatter { get; set; }
             public ChartValues<ValueTime> Values { get; set; }
-            public DateTime time { get; set; } = DateTime.Now;
+            public DateTime time { get; set; } 
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -124,6 +131,7 @@ namespace DoktersApplicatie
 
             public ValueTimeChart()
             {
+                time = DateTime.Now;
                 var dayConfig = new CartesianMapper<ValueTime>()
                 .X(dayModel => dayModel.SecondsSinceStart)
                 .Y(dayModel => dayModel.Value);
@@ -136,15 +144,21 @@ namespace DoktersApplicatie
 
             }
 
-            public void add(double value)
+            public void resetChart()
             {
-                ValueTime valueTime = new ValueTime(value, time);
-                if (valueTime.SecondsSinceStart > 30)
+                this.Values.Clear();
+                time = DateTime.Now;
+            }
+
+            public void add(double value, int elapsedTime)
+            {
+                ValueTime valueTime = new ValueTime(value, elapsedTime);
+                if (elapsedTime > 30)
                 {
-                    this.MinValue = valueTime.SecondsSinceStart - 30;
-                    this.MaxValue = valueTime.SecondsSinceStart;
+                    this.MinValue = elapsedTime - 30;
+                    this.MaxValue = elapsedTime;
                 }
-                if (Values.Count > 65) Values.RemoveAt(0);
+                if (Values.Count > 305) Values.RemoveAt(0);
 
                 this.Values.Add(valueTime);
 
@@ -155,9 +169,9 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, DateTime startTime)
+                public ValueTime(double value, int startTime)
                 {
-                    SecondsSinceStart = ((double)DateTime.Now.Ticks - startTime.Ticks) / TimeSpan.TicksPerSecond;
+                    SecondsSinceStart = (double) startTime;
                     //Debug.WriteLine(SecondsSinceStart);
                     Value = value;
                 }

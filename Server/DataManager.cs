@@ -8,33 +8,41 @@ namespace Server
     public class DataManager
     {
         private IO io;
-        private static string appDataFolder;
+        public static string appDataHealthCareDirectory;
 
         public DataManager()
         {
-            this.io = new IO(appDataFolder);
+            this.io = new IO(appDataHealthCareDirectory);
         }
 
         public static void initFoldersAndFilePath()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            appDataFolder = appDataPath + @"\RemoteHealthCare\ClientsInfo";
+            
 
-            string appDataHealthCareDirectory = appDataPath + @"\RemoteHealthCare";
+            appDataHealthCareDirectory = appDataPath + @"\RemoteHealthCare";
             if (!Directory.Exists(appDataHealthCareDirectory))
             {
                 Directory.CreateDirectory(appDataHealthCareDirectory);
             }
+            string appDataPasswordFolder = appDataHealthCareDirectory + @"\Passwords";
 
-            if (!Directory.Exists(appDataFolder))
+            if (!Directory.Exists(appDataPasswordFolder))
             {
-                Directory.CreateDirectory(appDataFolder);
+                Directory.CreateDirectory(appDataPasswordFolder);
+            }
+
+            string appDataClientsinfo = appDataHealthCareDirectory + @"\ClientsInfo";
+
+            if (!Directory.Exists(appDataClientsinfo))
+            {
+                Directory.CreateDirectory(appDataClientsinfo);
             }
         }
 
         public static string[] ReturnClientsFromInfoFolder()
         {
-            String[] filesInDirectory = Directory.GetFiles(appDataFolder);
+            String[] filesInDirectory = Directory.GetFiles(appDataHealthCareDirectory);
             List<String> fileNameHolder = new List<string>();
             foreach (var directoryFile in filesInDirectory)
             {
