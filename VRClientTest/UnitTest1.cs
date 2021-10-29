@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Vr_Project.RemoteHealthcare;
 
 namespace VRClientTest
 {
@@ -48,7 +49,14 @@ namespace VRClientTest
 				return ("Three");
 			}
 		}
-		
-	
+
+		[TestMethod]
+		public void testCheckSum()
+		{
+			//fake resistance massage
+			byte checksum = Ergometer.checksum(new byte[] { 0xa4, 0x09, 0x4e, 0x05, 0x30, 0, 0, 0, 0, 0x05, 0 });
+
+			Assert.AreEqual(0xd3, checksum);
+		}
 	}
 }
