@@ -108,6 +108,8 @@ namespace VR_Project
 
             this.dest = JObject.FromObject(JObject.Parse(tunnelOpen).GetValue("data")).GetValue("id").ToString();
 
+            await ResetScene();
+
             await ChangeSkyBoxTime(15);
 
             await DeleteGroundPlane();
@@ -121,6 +123,15 @@ namespace VR_Project
             this.oldPos = await getPosition();
             this.ready = true;
         }
+
+        private async Task ResetScene()
+        {
+            string request = @"{ ""id"" : ""scene/reset"" }";
+
+            JObject sceneResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request));
+            Debug.WriteLine(sceneResponse.ToString());
+        }
+
         public async Task<string> MakeBikeObject()
         {
 
@@ -135,7 +146,7 @@ namespace VR_Project
         {
             string request = @"{ ""id"" : ""scene/get"" }";
             JObject sceneResponse = await SendMessageResponseToJsonArray(client, WrapJsonMessage(dest, request));
-            //Debug.WriteLine(sceneResponse.ToString());
+            Debug.WriteLine(sceneResponse.ToString());
             return sceneResponse.ToString();
         }
         public async Task<string> GetCamera()
