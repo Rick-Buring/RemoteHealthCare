@@ -1,14 +1,60 @@
 ﻿using CommunicationObjects.DataObjects;
 using System;
+using System.Collections.Generic;
+using System.IO;
+
 namespace Server
 {
     public class DataManager
     {
         private IO io;
+        public static string appDataHealthCareDirectory;
 
         public DataManager()
         {
-            this.io = new IO();
+            this.io = new IO(appDataHealthCareDirectory);
+        }
+
+        public static void initFoldersAndFilePath()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            
+
+            appDataHealthCareDirectory = appDataPath + @"\RemoteHealthCare";
+            if (!Directory.Exists(appDataHealthCareDirectory))
+            {
+                Directory.CreateDirectory(appDataHealthCareDirectory);
+            }
+            string appDataPasswordFolder = appDataHealthCareDirectory + @"\Passwords";
+
+            if (!Directory.Exists(appDataPasswordFolder))
+            {
+                Directory.CreateDirectory(appDataPasswordFolder);
+            }
+
+            string appDataClientsinfo = appDataHealthCareDirectory + @"\ClientsInfo";
+
+            if (!Directory.Exists(appDataClientsinfo))
+            {
+                Directory.CreateDirectory(appDataClientsinfo);
+            }
+        }
+
+        public static string[] ReturnClientsFromInfoFolder()
+        {
+            String[] filesInDirectory = Directory.GetFiles(appDataHealthCareDirectory);
+            List<String> fileNameHolder = new List<string>();
+            foreach (var directoryFile in filesInDirectory)
+            {
+                //TODO change
+                if (directoryFile.EndsWith(".txt"))
+                {
+                    string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\") + 1);
+                    fileNameHolder.Add(file.Remove(file.Length - 4));
+                }
+            }
+
+            return fileNameHolder.ToArray();
         }
 
         /// <summary>
@@ -30,5 +76,7 @@ namespace Server
         {
             return this.io.getText(clientName);
         }
+
+
     }
 }

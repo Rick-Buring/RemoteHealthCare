@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CommunicationObjects.DataObjects;
-using CommunicationObjects.DataObjects;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -22,6 +21,8 @@ namespace DoktersApplicatie
         public ObservableCollection<Client> clients { get; set; }
         public ObservableCollection<Message> messages { get; set; }
 
+        private Dictionary<string, Client> clientsDictionary { get; }
+
         public Func<double, string> Formatter { get; set; }
         public SeriesCollection Series { get; set; }
 
@@ -32,41 +33,39 @@ namespace DoktersApplicatie
             clients = new ObservableCollection<Client>();
             messages = new ObservableCollection<Message>();
             this.dispatcher = Dispatcher.CurrentDispatcher;
+            this.clientsDictionary = new Dictionary<string, Client>();
             //clients.Add(new Client { Name = "Kapil Malhotra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 50 });
             //clients.Add(new Client { Name = "Raj Kundra", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 20 });
             //clients.Add(new Client { Name = "Amitabh Bachan", BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 30 });
-            clients.Add(new Client ("Henk") { BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
+            //clients.Add(new Client ("Henk") { BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
         }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		public void AddClient(Client client) {
-            if (!clients.Contains(client)) 
+        public void AddClient(Client client)
+        {
+            if (!clients.Contains(client))
             {
                 //this.clients.Add(client); 
+                
+                this.clientsDictionary.Add(client.Name, client);
 
                 this.dispatcher.Invoke(() =>
                 {
                     this.clients.Add(client);
                     Debug.WriteLine($"Adding new client: {client.Name}");
                 });
-            
-                
+
             }
-		}
+        }
 
 
-        public void UpdateClient(Client client, HealthData healthData) {
-            foreach(Client c in clients) {
-                if (client.Name.Equals(c.Name)) {
-                    c.Update(healthData);
-				}
-			}
-		}
+        public void UpdateClient(string client, HealthData healthData) {
+
+            clientsDictionary[client].Update(healthData);
+        }
 
     }
-
-
 
     public class Client : IComparable<string>, INotifyPropertyChanged
     {
@@ -88,28 +87,41 @@ namespace DoktersApplicatie
         public ValueTimeChart KmhChart { get; set; } = new ValueTimeChart();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public Client(string name) => this.Name = name;
 
         public void Update (HealthData healthData) {
-            this.BPM = healthData.Heartbeat;
-            this.RPM = healthData.RPM;
-            this.KMH = healthData.Speed;
-            this.CurrWatt = healthData.CurWatt;
-            this.AccWatt = healthData.AccWatt;
-            this.Distance = healthData.DistanceTraveled;
-            this.SessionTime = healthData.ElapsedTime;
-		}
+            BPM = healthData.Heartbeat;
+            RPM = healthData.RPM;
+            KMH = Math.Round(healthData.Speed, 2);
+            CurrWatt = healthData.CurWatt;
+            AccWatt = healthData.AccWatt;
+            Distance = healthData.DistanceTraveled;
+            SessionTime = healthData.ElapsedTime;
+            if (SessionTime == 0)
+            {
+                WattChart.resetChart();
+                BpmChart.resetChart();
+                RpmChart.resetChart();
+                KmhChart.resetChart();
+            }
+
+            WattChart.add(CurrWatt, SessionTime);
+            BpmChart.add(BPM, SessionTime);
+            RpmChart.add(RPM, SessionTime);
+            KmhChart.add(KMH, SessionTime);
+        }
 
         public int CompareTo(string other)
-		{
+        {
             return this.Name.CompareTo(other);
-		}
+        }
 
-		public class ValueTimeChart : INotifyPropertyChanged
+        public class ValueTimeChart : INotifyPropertyChanged
         {
             public Func<double, string> Formatter { get; set; }
             public ChartValues<ValueTime> Values { get; set; }
-            public DateTime time { get; set; } = DateTime.Now;
+            public DateTime time { get; set; } 
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -119,6 +131,7 @@ namespace DoktersApplicatie
 
             public ValueTimeChart()
             {
+                time = DateTime.Now;
                 var dayConfig = new CartesianMapper<ValueTime>()
                 .X(dayModel => dayModel.SecondsSinceStart)
                 .Y(dayModel => dayModel.Value);
@@ -127,31 +140,25 @@ namespace DoktersApplicatie
                 this.Values = new ChartValues<ValueTime>();
                 Charting.For<ValueTime>(dayConfig);
 
-                Random random = new Random();
-
-                new Thread(async () =>
-                {
-                    while (true)
-                    {
-                        ValueTime dayModel = new ValueTime(random.NextDouble() * 400, time);
-                        add(dayModel);
-
-                        await Task.Delay(500);
-                    }
-                }).Start();
-
                 Formatter = value => new System.DateTime((long)(value * TimeSpan.FromSeconds(1).Ticks)).ToString("mm:ss");
 
             }
 
-            public void add(ValueTime valueTime)
+            public void resetChart()
             {
-                if (valueTime.SecondsSinceStart > 30)
+                this.Values.Clear();
+                time = DateTime.Now;
+            }
+
+            public void add(double value, int elapsedTime)
+            {
+                ValueTime valueTime = new ValueTime(value, elapsedTime);
+                if (elapsedTime > 30)
                 {
-                    this.MinValue = valueTime.SecondsSinceStart - 30;
-                    this.MaxValue = valueTime.SecondsSinceStart;
+                    this.MinValue = elapsedTime - 30;
+                    this.MaxValue = elapsedTime;
                 }
-                if (Values.Count > 65) Values.RemoveAt(0);
+                if (Values.Count > 305) Values.RemoveAt(0);
 
                 this.Values.Add(valueTime);
 
@@ -162,9 +169,9 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, DateTime startTime)
+                public ValueTime(double value, int startTime)
                 {
-                    SecondsSinceStart = ((double)DateTime.Now.Ticks - startTime.Ticks) / TimeSpan.TicksPerSecond;
+                    SecondsSinceStart = (double) startTime;
                     //Debug.WriteLine(SecondsSinceStart);
                     Value = value;
                 }
