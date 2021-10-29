@@ -87,12 +87,13 @@ namespace DoktersApplicatie
         public ValueTimeChart KmhChart { get; set; } = new ValueTimeChart();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public Client(string name) => this.Name = name;
 
         public void Update (HealthData healthData) {
             BPM = healthData.Heartbeat;
             RPM = healthData.RPM;
-            KMH = healthData.Speed;
+            KMH = Math.Round(healthData.Speed, 2);
             CurrWatt = healthData.CurWatt;
             AccWatt = healthData.AccWatt;
             Distance = healthData.DistanceTraveled;
@@ -102,7 +103,6 @@ namespace DoktersApplicatie
             BpmChart.add(BPM);
             RpmChart.add(RPM);
             KmhChart.add(KMH);
-
         }
 
         public int CompareTo(string other)
