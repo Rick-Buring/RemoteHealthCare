@@ -20,7 +20,7 @@ namespace DoktersApplicatie
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ElapsedTime { get; set; }
+        public double ElapsedTime { get; set; }
         public int DistanceTraveled { get; set; }
         public int AccWatt { get; set; }
 
@@ -182,7 +182,7 @@ namespace DoktersApplicatie
                 public double SecondsSinceStart { get; set; }
                 public double Value { get; set; }
 
-                public ValueTime(double value, int elapsedTime)
+                public ValueTime(double value, double elapsedTime)
                 {
                     SecondsSinceStart = elapsedTime;
                     //Debug.WriteLine(SecondsSinceStart);
