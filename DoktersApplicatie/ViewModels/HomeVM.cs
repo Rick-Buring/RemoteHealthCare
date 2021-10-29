@@ -105,8 +105,7 @@ namespace DoktersApplicatie.ViewModels
 			//EmergencyStop(EmergencyList);
 
 			this.clientHandler.EmergencyStop(false, SelectedClient);
-            if (SelectedClient != null)
-                SendMessage("EMERGENCY STOP, STOP NOW", SelectedClient.Name);
+            
         }
 
         public void GlobalEmergencyStop()

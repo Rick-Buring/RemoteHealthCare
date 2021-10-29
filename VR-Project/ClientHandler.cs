@@ -116,6 +116,7 @@ namespace VR_Project
                         timer.Enabled = true;
                         timer.Start();
                     }).Start();
+                    this.sendChat("STOP!!!!");
                     //TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
                 }
                 else
