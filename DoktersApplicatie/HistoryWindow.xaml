@@ -51,23 +51,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <wpf:CartesianChart Grid.Row="0" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.WattHistoryChart}"  AnimationsSpeed="0:0:0.5">
-                <wpf:CartesianChart.Series>
-                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
-                </wpf:CartesianChart.Series>
-                <wpf:CartesianChart.AxisX>
-                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
-                        <wpf:Axis.Separator>
-                            <wpf:Separator Step="{Binding Step}"/>
-                        </wpf:Axis.Separator>
-                    </wpf:Axis>
-                </wpf:CartesianChart.AxisX>
-                <wpf:CartesianChart.AxisY>
-                    <wpf:Axis Title="Watt" MinValue="0" MaxValue="1000"/>
-                </wpf:CartesianChart.AxisY>
-            </wpf:CartesianChart>
 
-            <wpf:CartesianChart Grid.Row="0" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.BpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
+            <wpf:CartesianChart Grid.Row="0" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.BpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
                 <wpf:CartesianChart.Series>
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
@@ -83,7 +68,25 @@
                 </wpf:CartesianChart.AxisY>
             </wpf:CartesianChart>
 
-            <wpf:CartesianChart Grid.Row="1" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.RpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
+            <wpf:CartesianChart Grid.Row="1" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.WattHistoryChart}"  AnimationsSpeed="0:0:0.5">
+                <wpf:CartesianChart.Series>
+                    <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
+                </wpf:CartesianChart.Series>
+                <wpf:CartesianChart.AxisX>
+                    <wpf:Axis Title="Seconds since start" MinValue="{Binding From}" MaxValue="{Binding To}" LabelFormatter="{Binding Formatter}">
+                        <wpf:Axis.Separator>
+                            <wpf:Separator Step="{Binding Step}"/>
+                        </wpf:Axis.Separator>
+                    </wpf:Axis>
+                </wpf:CartesianChart.AxisX>
+                <wpf:CartesianChart.AxisY>
+                    <wpf:Axis Title="Watt" MinValue="0" MaxValue="1000"/>
+                </wpf:CartesianChart.AxisY>
+            </wpf:CartesianChart>
+
+            
+
+            <wpf:CartesianChart Grid.Row="0" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.RpmHistoryChart}"  AnimationsSpeed="0:0:0.5">
                 <wpf:CartesianChart.Series>
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
@@ -99,7 +102,7 @@
                 </wpf:CartesianChart.AxisY>
             </wpf:CartesianChart>
 
-            <wpf:CartesianChart Grid.Row="1" Grid.Column="1"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.KmhHistoryChart}"  AnimationsSpeed="0:0:0.5">
+            <wpf:CartesianChart Grid.Row="1" Grid.Column="0"  Height="200" Width="250" MouseWheel="UIElement_OnMouseWheel"  DataContext="{Binding HistoryData.KmhHistoryChart}"  AnimationsSpeed="0:0:0.5">
                 <wpf:CartesianChart.Series>
                     <wpf:LineSeries  Values="{Binding Values }" PointGeometry="{x:Null}"/>
                 </wpf:CartesianChart.Series>
