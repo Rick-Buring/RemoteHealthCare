@@ -154,11 +154,22 @@ namespace VR_Project
             if (this.ready && !this.running)
             {
                 this.running = true;
-                await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
-                await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
-                float r = await getHeightDependantResistance();
+                try
+                {
+                    if (this.stream.CanRead && this.stream.CanWrite)
+                    {
+                        await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
+                        if (this.stream.CanRead && this.stream.CanWrite)
+                            await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
+                    }
+                    
+                    float r = await getHeightDependantResistance();
 
-                ViewModel.resistanceUpdater(CalculateResistance(r));
+                    ViewModel.resistanceUpdater(CalculateResistance(r));
+                } catch (IOException e)
+                {
+
+                }
 
                 this.running = false;
             }
