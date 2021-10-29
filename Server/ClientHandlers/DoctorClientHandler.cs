@@ -28,6 +28,7 @@ namespace Server
             bool authorized = false;
             do
             {
+
                 string message = await rw.Read();
                 Root jsonObject = JsonConvert.DeserializeObject<Root>(message);
 
