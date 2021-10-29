@@ -60,8 +60,9 @@ namespace VR_Project.ViewModels
         public override void Dispose()
         {
             this.Client.Dispose();
-            this.VrManager.Dispose();
             this.Equipment.Dispose();
+            this.VrManager.Dispose();
+
             ViewModel.resistanceUpdater = null;
             ViewModel.updater = null;
         }

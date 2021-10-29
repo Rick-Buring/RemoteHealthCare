@@ -168,7 +168,7 @@ namespace VR_Project
                     ViewModel.resistanceUpdater(CalculateResistance(r));
                 } catch (IOException e)
                 {
-
+                    Debug.WriteLine(e.StackTrace);
                 }
 
                 this.running = false;
@@ -437,7 +437,9 @@ namespace VR_Project
 
         public void Dispose()
         {
+            this.stream.Close();
             this.stream.Dispose();
+            this.client.Close();
             this.client.Dispose();
         }
     }

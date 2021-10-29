@@ -53,6 +53,8 @@ namespace Vr_Project.RemoteHealthcare
         {
             if (Ergometer != null)
                 Ergometer.Dispose();
+            if (HeartBeatMonitor != null)
+                HeartBeatMonitor.Dispose();
 
         }
     }
