@@ -22,7 +22,7 @@ namespace DoktersApplicatie
         private TcpClient client;
         private bool connected;
         private bool active;
-        private HomeVM.ClientReceived addClient;
+        private HomeVM.ClientReceived addClients;
         private HomeVM.UpdateClient updateClient;
         private HomeVM.UpdateHistory updateHistory;
         private bool loggedIn;
@@ -39,7 +39,7 @@ namespace DoktersApplicatie
         {
             this.connected = false;
             this.active = false;
-            this.addClient = addClient;
+            this.addClients = addClient;
             this.updateClient = updateClient;
             this.updateHistory = updateHistory;
         }
@@ -168,7 +168,9 @@ namespace DoktersApplicatie
             else if (type == typeof(Selection))
             {
                 Selection selection = (root.Data as JObject).ToObject<Selection>();
-                foreach (string s in selection.selection) this.addClient(new Client(s));
+                List<Client> list = new List<Client>();
+                foreach (string s in selection.selection) list.Add(new Client(s));
+                this.addClients(list);
             }
         }
 

@@ -35,6 +35,13 @@ namespace Server
                 name = jsonObject.Sender;
                 Name = name;
                 this.addToList(this);
+                send(new Root
+                {
+                    Type = typeof(Acknowledge).FullName,
+                    Sender = "server",
+                    Target = this.Name,
+                    Data = new Acknowledge { subtype = typeof(Connection).FullName, status = 200, statusmessage = "Connection succesfull." }
+                });
             }
             else
             {

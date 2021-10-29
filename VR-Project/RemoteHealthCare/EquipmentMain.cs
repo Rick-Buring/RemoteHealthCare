@@ -41,7 +41,7 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="data">Data in de vorm van IData.</param>
         public void notify(IData data)
         {
-            if (HeartBeatMonitor != null)
+            if (HeartBeatMonitor != null && ViewModel.updater != null)
             {
                 //Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
                 ViewModel.updater.Invoke(Ergometer, HeartBeatMonitor);

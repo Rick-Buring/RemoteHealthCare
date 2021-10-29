@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -42,21 +43,39 @@ namespace DoktersApplicatie
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void AddClient(Client client)
+        public void AddClients(List<Client> client)
         {
-            if (!clients.Contains(client))
-            {
-                //this.clients.Add(client); 
-                
-                this.clientsDictionary.Add(client.Name, client);
+            
+            
+            foreach (Client c in client)
+			{
 
-                this.dispatcher.Invoke(() =>
-                {
-                    this.clients.Add(client);
-                    Debug.WriteLine($"Adding new client: {client.Name}");
-                });
+                if (!clients.Contains(c))
+				{
+                    this.clientsDictionary.Add(c.Name, c);
 
-            }
+                    this.dispatcher.Invoke(() =>
+                    {
+                        this.clients.Add(c);
+                        Debug.WriteLine($"Adding new client: {c.Name}");
+                    });
+                }
+			}
+
+            foreach(Client c in clients)
+			{
+                if (!client.Contains(c))
+				{
+                    this.clientsDictionary.Remove(c.Name);
+                    this.dispatcher.Invoke(() =>
+                    {
+                        this.clients.Remove(c);
+                        Debug.WriteLine($"Removing client: {c.Name}");
+                    });
+				}
+			}
+
+           
         }
 
 

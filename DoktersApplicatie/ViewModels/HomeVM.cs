@@ -33,7 +33,7 @@ namespace DoktersApplicatie.ViewModels
         public string TextToSend { get; set; }
         public string SessionButtonText { get; set; }
         public Client SelectedClient { get; set; }
-        public delegate void ClientReceived(Client client);
+        public delegate void ClientReceived(List<Client> clients);
         public ClientReceived clientReceived;
         public delegate void UpdateClient(string clientName, HealthData healthData);
         public UpdateClient updateClient;
@@ -70,7 +70,7 @@ namespace DoktersApplicatie.ViewModels
             //SelectedClient = Clients[0];
             SessionButtonText = "Start Session";
 
-            this.clientReceived += this.data.AddClient;
+            this.clientReceived += this.data.AddClients;
             this.updateClient += this.data.UpdateClient;
             this.clientHandler = clientHandler;
             this.clientHandler.addDelegates(clientReceived, updateClient, updateHistory);

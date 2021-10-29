@@ -93,6 +93,16 @@ namespace Server
 		public void RemoveClient(ClientHandlerBase client)
 		{
 			this.clients.Remove(client.Name);
+			Root root = new Root { Target = "all", Sender = "server", Type = typeof(Selection).FullName };
+			ReceiveClients(ref root);
+			if (root == null) return;
+			foreach (ClientHandlerBase c in clients.Values)
+			{
+				if (c is DoctorClientHandler)
+				{
+					c.send(root);
+				}
+			}
 		}
 
 		private void OnConnect(IAsyncResult ar, bool isPatient)
