@@ -30,5 +30,13 @@ namespace ServerTest
 			int result = comparer.Compare(new PriortyQueueMessage(null, Priority.LOW), new PriortyQueueMessage(null, Priority.HIGH));
 			Assert.AreEqual(-1, result);
 		}
+
+		[TestMethod]
+		public void testWrapper()
+        {
+			ReadWrite readWrite = new ReadWrite(null);
+			byte[] result = ReadWrite.WrapMessage(new byte[] { 1, 2, 3 });
+			CollectionAssert.AreEqual(new byte[] { 3, 0, 0, 0, 1, 2, 3 }, result);
+		}
 	}
 }
