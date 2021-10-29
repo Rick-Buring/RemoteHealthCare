@@ -101,7 +101,7 @@ namespace DoktersApplicatie
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(e.StackTrace);
                     //todo disconnect client
                     this.active = false;
 

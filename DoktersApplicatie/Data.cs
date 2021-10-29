@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CommunicationObjects.DataObjects;
+using DoktersApplicatie.ViewModels;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
@@ -29,8 +30,11 @@ namespace DoktersApplicatie
 
         private Dispatcher dispatcher;
 
-        public Data()
+        private HomeVM.RemovedClients removeClients;
+
+        public Data(HomeVM.RemovedClients removeClients)
         {
+            this.removeClients = removeClients;
             clients = new ObservableCollection<Client>();
             messages = new ObservableCollection<Message>();
             this.dispatcher = Dispatcher.CurrentDispatcher;
@@ -61,19 +65,26 @@ namespace DoktersApplicatie
                     });
                 }
 			}
-
+            List<Client> removedClients = new List<Client>();
+            
             foreach(Client c in clients)
 			{
                 if (!client.Contains(c))
 				{
                     this.clientsDictionary.Remove(c.Name);
-                    this.dispatcher.Invoke(() =>
-                    {
-                        this.clients.Remove(c);
-                        Debug.WriteLine($"Removing client: {c.Name}");
-                    });
+                    removedClients.Add(c);
+                    
 				}
 			}
+            this.dispatcher.Invoke(() =>
+            {
+                foreach (Client c in removedClients)
+                {
+                    this.clients.Remove(c);
+                    Debug.WriteLine($"Removing client: {c.Name}");
+                }
+            });
+            if (this.removeClients != null) this.removeClients(removedClients);
 
            
         }

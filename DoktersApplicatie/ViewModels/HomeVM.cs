@@ -39,6 +39,8 @@ namespace DoktersApplicatie.ViewModels
         public UpdateClient updateClient;
         public delegate void UpdateHistory(History history);
         public UpdateHistory updateHistory;
+        public delegate void RemovedClients(List<Client> list);
+        public RemovedClients removeClients;
 
         private ClientHandler clientHandler;
         private Thread clientThread;
@@ -48,7 +50,8 @@ namespace DoktersApplicatie.ViewModels
 
         public HomeVM(MainViewModel.NavigateDelegate navigate, ClientHandler clientHandler)
         {
-            this.data = new Data();
+            this.removeClients += RemoveClients;
+            this.data = new Data(this.removeClients);
             this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Clients = data.clients;
             this.Messages = data.messages;
@@ -100,6 +103,11 @@ namespace DoktersApplicatie.ViewModels
 
             Debug.WriteLine("Started/Stopped session");
         }
+
+        public void RemoveClients(List<Client> list)
+		{
+            if (list.Contains(SelectedClient)) SelectedClient = null;
+		}
 
         //TODO Send message to server
         public void EmergencyStop(List<Client> emergencyClients)
