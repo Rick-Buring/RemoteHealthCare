@@ -42,7 +42,7 @@ namespace Server
 
         public static string[] ReturnClientsFromInfoFolder()
         {
-            String[] filesInDirectory = Directory.GetFiles(appDataHealthCareDirectory);
+            String[] filesInDirectory = Directory.GetFiles(appDataHealthCareDirectory + @"\ClientsInfo");
             List<String> fileNameHolder = new List<string>();
             foreach (var directoryFile in filesInDirectory)
             {

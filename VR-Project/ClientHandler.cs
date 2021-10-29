@@ -157,7 +157,7 @@ namespace VR_Project
 
         public void TimerCallback(object o)
         {
-            this.sessionTime += 1;
+            this.sessionTime ++;
             if (!DataIsAllowed)
             {
                 DataIsAllowed = true;
