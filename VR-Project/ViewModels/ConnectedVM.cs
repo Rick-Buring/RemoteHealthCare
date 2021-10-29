@@ -19,8 +19,6 @@ namespace VR_Project.ViewModels
 
         public DelegateCommand DisconnectCommand { get; set; }
 
-        private ViewModel.NavigateViewModel navigate;
-
         public ObservableCollection<Message> Messages { get; private set; }
         private Dispatcher dispatcher;
 
@@ -29,12 +27,11 @@ namespace VR_Project.ViewModels
         public delegate void SendChatMessage(string message);
         public static SendChatMessage sendChat;
 
-        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment, ViewModel.NavigateViewModel navigateView)
+        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
         {
             this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Messages = new ObservableCollection<Message>();
             this.DisconnectCommand = new DelegateCommand(Disconnect);
-            this.navigate = navigateView;
             AddMessage = addMessage;
             Client = client;
             VrManager = vrManager;
@@ -54,7 +51,7 @@ namespace VR_Project.ViewModels
         {
             Console.WriteLine("TODOOO Disconnect client and bike");
             Dispose();
-            navigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain(), navigate));
+            RaiseOnNavigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain()));
         }
 
         public ClientHandler Client { get; }

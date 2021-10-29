@@ -13,27 +13,30 @@ using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
 
-namespace VR_Project
+namespace VR_Project.ViewModels
 {
-    public class ViewModel : BindableBase, INotifyPropertyChanged
+    public class ViewModel : BaseViewModel
     {
         public delegate void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor);
         public delegate void SendResistance(float resistance);
-        public delegate void NavigateViewModel(BaseViewModel vm);
         public static Update updater;
         public static SendResistance resistanceUpdater;
-        
+
 
         public BaseViewModel CurrentPageViewModel { get; private set; }
 
         private void ChangeViewModel(BaseViewModel viewModel)
         {
+            if (CurrentPageViewModel != null)
+                CurrentPageViewModel.NavigateEvent -= ChangeViewModel;
+
             CurrentPageViewModel = viewModel;
+            CurrentPageViewModel.NavigateEvent += ChangeViewModel;
         }
 
         public ViewModel()
         {
-            ChangeViewModel(new LoginBikeVRVM(new VrManager(), new EquipmentMain(), ChangeViewModel));
+            ChangeViewModel(new LoginBikeVRVM(new VrManager(), new EquipmentMain()));
             //ChangeViewModel(new LoginBikeVRVM(vrManager, equipment));
         }
 
@@ -42,6 +45,11 @@ namespace VR_Project
             CurrentPageViewModel.Dispose();
 
             Debug.WriteLine("Closing and disposing client.");
+        }
+
+        public override void Dispose()
+        {
+            CurrentPageViewModel.Dispose();
         }
     }
 

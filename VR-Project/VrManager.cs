@@ -14,7 +14,8 @@ using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Objects;
 using VR_Project.Objects.Node;
-using static VR_Project.ViewModel;
+using static VR_Project.ViewModels.ViewModel;
+using VR_Project.ViewModels;
 
 namespace VR_Project
 {
