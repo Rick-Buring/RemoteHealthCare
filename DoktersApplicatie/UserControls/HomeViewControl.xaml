@@ -126,7 +126,7 @@
 						</lvc:Axis>
 					</lvc:CartesianChart.AxisX>
 					<lvc:CartesianChart.AxisY>
-						<lvc:Axis Title="Watt" MinValue="0" MaxValue="800"/>
+						<lvc:Axis Title="Watt" MinValue="0" MaxValue="1000"/>
 					</lvc:CartesianChart.AxisY>
 				</lvc:CartesianChart>
 				<StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
