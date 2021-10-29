@@ -182,22 +182,22 @@ namespace DoktersApplicatie
                     }
                     else
                     {
-                        
+
                         this.To = maxValue;
                         this.From = maxValue - range;
                         return;
-                       
+
                     }
 
                     if (this.From - changeValue > 0)
-                        {
-                            this.From -= changeValue;
-                        }
-                        else
-                        {
-                            this.From = this.minValue;
-                            this.To = this.minValue + range;
-                        }
+                    {
+                        this.From -= changeValue;
+                    }
+                    else
+                    {
+                        this.From = this.minValue;
+                        this.To = this.minValue + range;
+                    }
 
                 }
             }
