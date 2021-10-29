@@ -12,7 +12,7 @@ namespace Server
         internal static readonly string PASSWORDFILE = "Passwords.txt";
         public static bool Authorized(string userName, string password)
         {
-            foreach (string line in File.ReadLines(PASSWORDFILE))
+            foreach (string line in File.ReadLines(DataManager.appDataHealthCareDirectory +@"\Passwords\" + PASSWORDFILE))
             {
                 if (line.StartsWith(userName));
                 {

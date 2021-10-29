@@ -33,7 +33,6 @@ namespace VR_Project
         public ClientHandler()
         {
             ViewModel.updater += Update;
-            this.sessionTargets = new List<string>();
         }
 
 		public string PatientName { get; set; } = "Patient Name";
@@ -57,16 +56,9 @@ namespace VR_Project
             
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
-            Parse(await this.rw.Read());
-
-            if (this.active)
-            {
-                Run();
-            }
-            else
-            {
-
-            }
+            Run();
+            
+            
 
         }
 
@@ -157,31 +149,26 @@ namespace VR_Project
             }
             else if (type == typeof(Session))
             {
-                changeSessionClients(root.Sender);
+                this.sessionIsActive = !this.sessionIsActive;
+                this.timeOffset = -1;
             }
         }
 
-        private void changeSessionClients(string client)
-        {
-            if (sessionTargets.Contains(client))
-            {
-                sessionTargets.Remove(client);
-            }
-            else
-            {
-                sessionTargets.Add(client);
-            }
-        }
 
-        private List<String> sessionTargets;
+        private bool sessionIsActive = false;
 		private bool isLocked = false;
+        private int timeOffset = -1;
 		public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
 		{
 			
-			if (this.client != null && this.sessionTargets.Count > 0 && !this.isLocked)
+			if (this.client != null && this.sessionIsActive && !this.isLocked)
 			{
 				this.isLocked = true;
 				ErgometerData data = ergometer.GetErgometerData();
+                if (this.timeOffset == -1)
+                {
+                    this.timeOffset = data.ElapsedTime;
+                }
 				Root healthData = new Root()
 				{
 					Type = typeof(HealthData).FullName,
@@ -192,18 +179,14 @@ namespace VR_Project
 						CurWatt = data.InstantaneousPower,
 						Speed = data.InstantaneousSpeed,
 						Heartbeat = heartBeatMonitor.GetHeartBeat(),
-						ElapsedTime = data.ElapsedTime,
+						ElapsedTime = data.ElapsedTime - timeOffset,
 						DistanceTraveled = data.DistanceTraveled
 					},
-					Sender = this.PatientName
+					Sender = this.PatientName,
+                    Target = "all"
                 };
-                foreach (string target in sessionTargets)
-                {
-                    healthData.Target = target;
-                    this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
-                }
-				
-				this.isLocked = false;
+                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                this.isLocked = false;
             }
         }
         public void Stop()
