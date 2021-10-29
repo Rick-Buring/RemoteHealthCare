@@ -97,7 +97,7 @@ namespace DoktersApplicatie
 
     }
 
-    public class Client : IComparable<string>, INotifyPropertyChanged
+    public class Client : IComparable<string>, INotifyPropertyChanged, IEquatable<Client>
     {
         public string Name { get; set; }
         public int BPM { get; set; }
@@ -162,6 +162,18 @@ namespace DoktersApplicatie
                 StartStopSessionText = "Start Session";
             }
 
+        }
+
+        public bool Equals(Client other)
+        {
+            if (this.Name == other.Name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public class ValueTimeChart : INotifyPropertyChanged
