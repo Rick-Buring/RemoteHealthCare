@@ -27,12 +27,17 @@
     <Folder Include="ClientsInfo\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="unknown.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Server.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
   <Import Project="..\CommunicationObjects\CommunicationObjects.projitems" Label="Shared" />
+  <ItemGroup>
+    <_DeploymentManifestIconFile Remove="unknown.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="unknown.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
