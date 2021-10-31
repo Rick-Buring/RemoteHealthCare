@@ -22,7 +22,6 @@
       <None Remove="heartbeat.ico" />
     </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ConcurrentDataStructures" Version="0.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />

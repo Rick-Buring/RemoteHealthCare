@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using CommunicationObjects.DataObjects;
@@ -48,6 +49,7 @@ namespace DoktersApplicatie.Commands
 
             }catch(Exception ex)
             {
+                Debug.WriteLine(ex);
                 viewModel.Message = "Server not found";
                 viewModel.MessageIsError = true;
                 return;

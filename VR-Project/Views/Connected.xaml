@@ -12,11 +12,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
         <Label Grid.Row="0" Content="{Binding Client.PatientName}" />
         <Grid Grid.Row="1" Margin="10, 10, 5, 10">
             <Border BorderBrush="Black" BorderThickness="1">
@@ -53,17 +48,6 @@
             </Border>
         </Grid>
         <Button Content="Disconnect" Command="{Binding DisconnectCommand}" Grid.Row="2" Grid.ColumnSpan="2"/>
-        <ListView Grid.Row="1" Grid.Column="1" BorderBrush="Black" BorderThickness="1" 
-                      x:Name="ChatListView" MinHeight="475" ItemsSource="{Binding Messages}" 
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxHeight="475">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Sender}" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Text}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+        
     </Grid>
 </UserControl>

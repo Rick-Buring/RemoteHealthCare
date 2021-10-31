@@ -46,7 +46,8 @@ namespace DoktersApplicatie
 
         public async Task StartConnection(string ip, int port)
         {
-            this.client = new TcpClient(ip, port);
+            this.client = new TcpClient();
+            await this.client.ConnectAsync(ip, port);
             SslStream stream = new SslStream(
                 this.client.GetStream(),
                 false,
@@ -67,7 +68,7 @@ namespace DoktersApplicatie
                 Sender = name,
                 Target = "server"
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Root r = JsonConvert.DeserializeObject<Root>(await this.rw.Read());
             this.loggedIn = (r.Data as JObject).ToObject<Acknowledge>().status == 200;
 
@@ -87,7 +88,7 @@ namespace DoktersApplicatie
                 Type = typeof(Selection).FullName,
                 Data = new Selection()
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
+            await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
 
             //await this.rw.Read();
             //this.isSessionRunning = true;
@@ -186,7 +187,7 @@ namespace DoktersApplicatie
             }
         }
 
-        public void SetResistance(Client client, int resistance)
+        public async Task SetResistance(Client client, int resistance)
         {
             Root resistanceRoot = new Root
             {
@@ -195,10 +196,10 @@ namespace DoktersApplicatie
                 Type = typeof(Setting).FullName,
                 Data = new Setting { res = resistance }
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
+            await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(resistanceRoot)));
         }
 
-        public void RequestHistory(History client)
+        public async Task RequestHistory(History client)
         {
             Root historyRoot = new Root
             {
@@ -207,7 +208,7 @@ namespace DoktersApplicatie
                 Type = typeof(History).FullName,
                 Data = client
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
+           await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(historyRoot)));
         }
 
         public async Task RequestClientsHistory()
@@ -219,10 +220,10 @@ namespace DoktersApplicatie
                 Type = typeof(ClientsHistory).FullName,
                 Data = new ClientsHistory()
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(clientsHistory)));
+          await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(clientsHistory)));
         }
 
-        public void SendChat(bool all, string message, Client client = null)
+        public async void SendChat(bool all, string message, Client client = null)
         {
             Root chatRoot = new Root
             {
@@ -241,10 +242,10 @@ namespace DoktersApplicatie
                 chatRoot.Target = client.Name;
             }
 
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(chatRoot)));
+           await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(chatRoot)));
         }
 
-        public void EmergencyStop(bool all, Client client = null)
+        public async void EmergencyStop(bool all, Client client = null)
         {
             if (all)
             {
@@ -256,7 +257,7 @@ namespace DoktersApplicatie
                     Type = typeof(Setting).FullName,
                     Data = new Setting { res = 0, emergencystop = true }
                 };
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+              await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
             }
             else
             {
@@ -267,11 +268,11 @@ namespace DoktersApplicatie
                     Type = typeof(Setting).FullName,
                     Data = new Setting { res = 0, emergencystop = true }
                 };
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+               await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
             }
         }
 
-        public void StartStopSession(Client client)
+        public async void StartStopSession(Client client)
         {
             Root emergencyRoot = new Root
             {
@@ -280,13 +281,12 @@ namespace DoktersApplicatie
                 Type = typeof(Session).FullName,
                 Data = new Session()
             };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
+           await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
         }
 
-        public void Stop()
+        public async void Stop()
         {
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root { Sender = name, Target = "server", Type = typeof(Connection).FullName, Data = new Connection { connect = false } })));
-
+          await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root { Sender = name, Target = "server", Type = typeof(Connection).FullName, Data = new Connection { connect = false } })));
         }
 
 		public void Dispose()

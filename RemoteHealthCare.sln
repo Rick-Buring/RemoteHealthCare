@@ -9,15 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommunicationObjects", "CommunicationObjects\CommunicationObjects.shproj", "{8F1B13F2-FB29-4486-BAA9-8E1EA1636D6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTest", "ServerTest\ServerTest.csproj", "{0E41145C-AFD4-4F2F-AC7B-122CA07A7EC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerTest", "ServerTest\ServerTest.csproj", "{0E41145C-AFD4-4F2F-AC7B-122CA07A7EC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRClientTest", "VRClientTest\VRClientTest.csproj", "{27B76235-AF55-45C9-9C5C-3F6E6A93D740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRClientTest", "VRClientTest\VRClientTest.csproj", "{27B76235-AF55-45C9-9C5C-3F6E6A93D740}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoktersApplicatie", "DoktersApplicatie\DoktersApplicatie.csproj", "{055815A7-1527-4AFC-B026-69B858EAB39C}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		CommunicationObjects\CommunicationObjects.projitems*{0e41145c-afd4-4f2f-ac7b-122ca07a7ec9}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{055815a7-1527-4afc-b026-69b858eab39c}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{7745af08-f623-47d7-9fad-99da95d59c84}*SharedItemsImports = 5
 		CommunicationObjects\CommunicationObjects.projitems*{8ef3f2b6-f14d-42f2-ac72-79cfed410c9f}*SharedItemsImports = 5

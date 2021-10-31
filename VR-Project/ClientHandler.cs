@@ -1,12 +1,10 @@
 ﻿
 using CommunicationObjects;
 using CommunicationObjects.DataObjects;
-using DataStructures;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Media;
@@ -15,14 +13,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using System.Windows.Documents;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.ViewModels;
 using Timer = System.Threading.Timer;
 
 namespace VR_Project
 {
-	public class ClientHandler : BindableBase, INotifyPropertyChanged, IDisposable
+    public class ClientHandler : BindableBase, INotifyPropertyChanged, IDisposable
     {
         private ReadWrite rw;
         private TcpClient client;
@@ -37,7 +34,6 @@ namespace VR_Project
         }
 
 		public string PatientName { get; set; } = "Patient Name";
-        private PriorityQueue<CommunicationObjects.util.PriortyQueueMessage> queue;
         public async void StartConnection(string ip, int port)
         {
             if (this.client != null)
@@ -56,7 +52,7 @@ namespace VR_Project
 
             
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
-            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Parse(await this.rw.Read());
             Run();
             
@@ -105,7 +101,7 @@ namespace VR_Project
                 if (data.emergencystop)
                 {
                     this.resistanceUpdater(0);
-                    new Thread(async () =>
+                    new Thread(() =>
                     {
                         soundPlayer.Load();
                         soundPlayer.PlayLooping();
@@ -206,16 +202,16 @@ namespace VR_Project
 					Sender = this.PatientName,
                     Target = "all"
                 };
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
+                await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
                 this.isLocked = false;
             }
         }
-        public void Stop()
+        public async void Stop()
         {
             //TODO nullpointer afhandelen.
             if (this.rw != null)
             {
-                this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
+                await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
                 { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = PatientName, Target = "server" })));
                 
             }

@@ -45,8 +45,6 @@ namespace DoktersApplicatie
             //clients.Add(new Client ("Henk") { BPM = 52, RPM = 60, KMH = 35.0, CurrWatt = 200, Distance = 2.5, AccWatt = 400, SessionTime = 100, Resistance = 40 });
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public void AddClients(List<Client> client)
         {
             

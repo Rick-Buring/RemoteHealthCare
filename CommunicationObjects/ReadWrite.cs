@@ -47,11 +47,11 @@ namespace CommunicationObjects
         /// send messages to the client
         /// </summary>
         /// <param name="message">message to be sent to the client</param>
-        public void Write(byte[] message)
+        public async Task Write(byte[] message)
         {
             try
             {
-                stream.Write(WrapMessage(message));
+                await stream.WriteAsync(WrapMessage(message));
                 stream.Flush();
                 // __CR__ [PSMG] Probeer niet alle exceptions te catchen
                 //Fixed, Exception => IOException
