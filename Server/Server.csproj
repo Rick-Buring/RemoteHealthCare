@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>ddb63e8f-dfd8-40c0-a4d3-848254f04c7c</UserSecretsId>
+    <ApplicationIcon>unknown.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
