@@ -107,6 +107,7 @@ namespace DoktersApplicatie
         public int AccWatt { get; set; }
         public double SessionTime { get; set; }
         public int Resistance { get; set; }
+        public bool InSession { get; set; }
         public string StartStopSessionText { get; set; } = "Start Session";
 
         public int TempResistance { get; set; } = 50;
@@ -154,11 +155,13 @@ namespace DoktersApplicatie
             {
 
                 StartStopSessionText = "Stop Session";
+                this.InSession = true;
 
             }
             else
             {
                 StartStopSessionText = "Start Session";
+                this.InSession = false;
             }
 
         }

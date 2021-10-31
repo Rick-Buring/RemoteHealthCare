@@ -7,6 +7,9 @@
 			 xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="1345">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
 	<StackPanel x:Name="MainPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Background="White">
 		<ListView x:Name="MainListView" ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" MinWidth="415">
 			<ListView.ItemTemplate>
@@ -14,9 +17,12 @@
 					<Border x:Name="ListViewSeperator" BorderThickness="1,1,1,1" BorderBrush="Black">
 						<StackPanel x:Name="LVIStackPanel" Orientation="Horizontal">
 							<Border x:Name="ListViewItemSeperator" BorderBrush="Black" Height="100" Width="400">
-								<StackPanel x:Name="NameInfoBox" Margin="0,0,-302,-2" Width="400" HorizontalAlignment="Left">
-									<TextBlock x:Name="NameBox" TextWrapping="Wrap" Text="{Binding Name}" FontSize="20" Margin="5,5,0,5"/>
-									<Border x:Name="TextBoxSeperator" BorderThickness="0,1,0,0" BorderBrush="Black">
+                                <StackPanel x:Name="NameInfoBox" Margin="0,0,-302,-2" Width="400" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="NameBox" TextWrapping="Wrap" Text="{Binding Name}" FontSize="20" Margin="5,5,0,5"/>
+                                    <Border Background="Red" Width="20" Height="20" Visibility="{Binding InSession, Converter={StaticResource BoolToVis}}" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <Border x:Name="TextBoxSeperator" BorderThickness="0,1,0,0" BorderBrush="Black">
 										<Grid>
 											<Grid.ColumnDefinitions>
 												<ColumnDefinition Width="Auto"/>
