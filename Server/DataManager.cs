@@ -46,7 +46,6 @@ namespace Server
             List<String> fileNameHolder = new List<string>();
             foreach (var directoryFile in filesInDirectory)
             {
-                //TODO change
                 if (directoryFile.EndsWith(".txt"))
                 {
                     string file = directoryFile.Substring(directoryFile.LastIndexOf(@"\") + 1);

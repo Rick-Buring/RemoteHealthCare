@@ -54,8 +54,5 @@ public class Panel
         this.data = new Data() { id = id, text = text, position = position, size = size, color = color, font = font };
 
     }
-    //public void image(string id, string image, double[] position, )
-    //{
-
-    //}
+    
 }

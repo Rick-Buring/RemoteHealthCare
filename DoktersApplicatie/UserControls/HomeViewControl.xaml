@@ -165,12 +165,8 @@
 				</ListView.ItemTemplate>
 			</ListView>
 			<StackPanel x:Name="ChatMessagePanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5,5,5,0">
-				<TextBox x:Name="MessageBox" Text="{Binding TextToSend}" TextWrapping="Wrap" FontSize="15" MinWidth="185">
-					<!--TODO Press Enter to send message
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding cSendMessage}"/>
-                    </TextBox.InputBindings>-->
-				</TextBox>
+                <TextBox x:Name="MessageBox" Text="{Binding TextToSend}" TextWrapping="Wrap" FontSize="15" MinWidth="185">
+                </TextBox>
 				<Button x:Name="MessageButton" Command="{Binding cSendMessage}" Content="Send" Margin="5,0,0,0" MinWidth="36"/>
 				<Button x:Name="MessageAllButton" Command="{Binding cSendAllMessage}" Content="Send All" Margin="5,0,0,0" MinWidth="36"/>
 			</StackPanel>

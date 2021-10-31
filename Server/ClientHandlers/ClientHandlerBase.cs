@@ -45,18 +45,17 @@ namespace Server
             Dispose();
         }
 
-        internal void send(Root message)
+        internal async void send(Root message)
         {
             byte[] toSend = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(message));
-            rw.Write(toSend);
+            await rw.Write(toSend);
         }
 
         /// <summary>
         /// function to handle incoming messages
         /// </summary>
         internal async void Run()
-        {   //Temporary doctor command
-            //send(new Root { Type = typeof(Setting).FullName, Sender = "server", Target = this.Name, Data = new Setting { emergencystop = false, res = 50, sesionchange = SessionType.START } });
+        {
             while (active)
             {
                 try

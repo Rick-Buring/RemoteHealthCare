@@ -16,7 +16,6 @@ namespace VR_Project
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            //base.OnStartup(e);
             MainWindow window = new MainWindow();
             ViewModel VM = new ViewModel();
             window.DataContext = VM;

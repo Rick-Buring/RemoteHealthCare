@@ -90,8 +90,6 @@ namespace DoktersApplicatie
             };
             await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(selectionRoot)));
 
-            //await this.rw.Read();
-            //this.isSessionRunning = true;
             while (active)
             {
                 try
@@ -103,9 +101,7 @@ namespace DoktersApplicatie
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.StackTrace);
-                    //todo disconnect client
                     this.active = false;
-
 
                 }
             }
@@ -146,13 +142,6 @@ namespace DoktersApplicatie
                         }
                         Debug.WriteLine("Connected to server!!");
                     }
-                    //this.addClient(new Client {Name = });
-                    //this.isSessionRunning = !this.isSessionRunning;
-                    //this.connected = !this.connected;
-                    //if (!this.connected)
-                    //{
-                    //	this.active = false;
-                    //}
                 }
 
 
@@ -292,7 +281,6 @@ namespace DoktersApplicatie
 		public void Dispose()
 		{
             Stop();
-			//throw new NotImplementedException();
 		}
 	}
 }

@@ -23,8 +23,12 @@
                     <StackPanel  Margin="10">
                         <Button Margin="10" Content="Refresh" Command="{Binding Refresh}" IsEnabled="{Binding isRefresheble}"/>
                         <ComboBox Margin="10" Width="150" ItemsSource="{Binding Engines}" DisplayMemberPath="clientinfo.host" SelectedItem="{Binding SelectClient}"/>
-						<CheckBox Name ="Simulation" IsChecked="{Binding SimulationChecked}"/>
-					</StackPanel>
+                        <Label Content="gebruik Simulator" HorizontalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox Content="Fiets" IsChecked="{Binding ErgoSimChecked}" Margin="0, 0, 5, 0"/>
+                            <CheckBox Content="Heartslag" IsChecked="{Binding HeartBeatSimChecked}" Margin="5, 0, 0, 0"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

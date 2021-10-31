@@ -53,8 +53,6 @@ namespace CommunicationObjects
             {
                 await stream.WriteAsync(WrapMessage(message));
                 stream.Flush();
-                // __CR__ [PSMG] Probeer niet alle exceptions te catchen
-                //Fixed, Exception => IOException
             } catch (IOException e)
             {
                 Debug.WriteLine(e.Message);

@@ -71,7 +71,6 @@ public class Terrain
 			{
 				Color pixel = img.GetPixel(i, j);
 				list.Add(pixel.GetBrightness() * 10f);
-				//Console.WriteLine("Adding : " + number + " : " + pixel.GetBrightness());
 				number++;
 			}
 		}

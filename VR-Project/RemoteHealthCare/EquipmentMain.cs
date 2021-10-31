@@ -12,7 +12,6 @@ namespace Vr_Project.RemoteHealthcare
 {
     public class EquipmentMain : BindableBase, INotifyPropertyChanged, IDataListener, System.IDisposable
     {
-        private DataIO dataIO;
 
         public Ergometer Ergometer { get; private set; }
         public HeartBeatMonitor HeartBeatMonitor { get; private set; }
@@ -21,19 +20,21 @@ namespace Vr_Project.RemoteHealthcare
         public event ErorDelegate OnBluetoothError;
 
         // starts the application
-        public async Task start(string bikeName, bool simulationChecked)
+        public async Task start(string bikeName, bool ErgoSimulatorCheck, bool HeartBeatSimulatorCheck)
         {
-            dataIO = new DataIO();
-            if (!simulationChecked)
-                Ergometer = new Ergometer(bikeName, this, dataIO);
+            if (!ErgoSimulatorCheck)
+                Ergometer = new Ergometer(bikeName, this);
             else
                 Ergometer = new ErgoSimulator(this);
             ViewModel.resistanceUpdater += Ergometer.SendResistance;
-          
+
             Task ergoConnect = Ergometer.Connect();
 
-            //heartBeatMonitor = new HeartBeatMonitor(this, dataIO);
-            HeartBeatMonitor = new HBSimulator(this);
+            if (!HeartBeatSimulatorCheck)
+                HeartBeatMonitor = new HeartBeatMonitor(this);
+            else
+                HeartBeatMonitor = new HBSimulator(this);
+
             Task heartBeatConnect = HeartBeatMonitor.Connect();
 
             await Task.WhenAll(ergoConnect, heartBeatConnect);

@@ -67,8 +67,6 @@ namespace DoktersApplicatie.ViewModels
             cSetResistance = new DelegateCommand(SetResistance);
             cOpenHistory = new DelegateCommand(OpenHistory);
 
-            //SelectedClient = Clients[0];
-
             this.clientReceived += this.data.AddClients;
             this.updateClient += this.data.UpdateClient;
             this.clientHandler = clientHandler;
@@ -78,7 +76,6 @@ namespace DoktersApplicatie.ViewModels
             clientThread.Start();
         }
 
-        //TODO Send message to server
         public void StartStopSession()
         {
             if (SelectedClient != null)
@@ -100,9 +97,6 @@ namespace DoktersApplicatie.ViewModels
         {
             if (SelectedClient == null) return;
 			Debug.WriteLine("Solo Emergency Stop");
-			//List<Client> EmergencyList = new List<Client>();
-			//EmergencyList.Add(SelectedClient);
-			//EmergencyStop(EmergencyList);
 
 			this.clientHandler.EmergencyStop(false, SelectedClient);
             
@@ -111,8 +105,6 @@ namespace DoktersApplicatie.ViewModels
         public void GlobalEmergencyStop()
         {
             Debug.WriteLine("Global Emergency Stop");
-            //List<Client> EmergencyList = new List<Client>(Clients);
-            //EmergencyStop(EmergencyList);
 
             this.clientHandler.EmergencyStop(true, null);
             SendMessage("EMERGENCY STOP, STOP NOW", "All");
@@ -123,7 +115,6 @@ namespace DoktersApplicatie.ViewModels
             if (!string.IsNullOrEmpty(text))
             {
 
-                //Use ^.*(?=(\ =>)) with regex to only get sender
                 if (receiver == "All")
                 {
                     Messages.Add(new Message { Sender = "Doctor => All", Text = text, Receiver = receiver });

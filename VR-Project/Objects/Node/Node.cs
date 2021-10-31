@@ -22,21 +22,6 @@ public class Node
 
 
         nodeData.components.terrain = new Data.Terrain();
-        // nodeData.components.terrain.smoothnormals = smoothNormals;
-        /*
-        nodeData.components.model = new Data.Model();
-        nodeData.components.model.file = "data/NetworkEngine/textures/terrain/grass_autumn_red_d.jpg";
-        nodeData.components.model.cullbackfaces = false;
-        nodeData.components.model.animated = false;
-        
-
-        /*
-        nodeData.components.panel = new Panel();
-        nodeData.components.panel.size = new int[2] { 1, 1 };
-        nodeData.components.panel.resolution = new int[2] { 512, 512 };
-        nodeData.components.panel.background = new int[4] { 1, 1, 1, 1 };
-        nodeData.components.panel.castShadow = true;
-        */
         this.data = nodeData;
     }
 

@@ -37,7 +37,6 @@ namespace VR_Project.ViewModels
         public ViewModel()
         {
             ChangeViewModel(new LoginBikeVRVM(new VrManager(), new EquipmentMain()));
-            //ChangeViewModel(new LoginBikeVRVM(vrManager, equipment));
         }
 
         public void Window_Closed(object sender, EventArgs e)

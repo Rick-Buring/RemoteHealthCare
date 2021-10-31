@@ -78,7 +78,6 @@ namespace Vr_Project.RemoteHealthcare
                 errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             }
             this.connected = true;
-            //bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", ResistanceMessage(70));
         }
 
         //event voor binnenkomende data notificeren van de classes

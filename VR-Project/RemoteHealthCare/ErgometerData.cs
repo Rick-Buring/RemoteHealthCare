@@ -57,14 +57,6 @@ namespace Vr_Project.RemoteHealthcare
             int instantaneousPowerMSB = (data[10] & 0x0f) << 8;
             InstantaneousPower = (instantaneousPowerMSB | instantaneousPowerLSB);
 
-            // is the current trainer status
-            ///*trainerStatus*/ = data[10] >> 4;
-
-            // is for setting flags like target power limits
-            //flagsField = data[11] & 0x0f;
-
-            // is for the state is the fitness equipment
-            //feStateField = data[11] >> 4;
         }
 
         /// <summary>
@@ -73,7 +65,6 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="data"></param>
         private void decodeGeneralData(byte[] data)
         {
-            //this.equipmentType = data[5];
             int newTime = data[6] / 4;
             if (newTime < this.oldTime) this.timeRollovers++;
             this.oldTime = newTime;
@@ -89,9 +80,6 @@ namespace Vr_Project.RemoteHealthcare
             int speedMSB = data[9];
             this.InstantaneousSpeed = ((speedMSB << 8 | speedLSB) / 1000.0 ) * 3.6;
 
-
-            //this.capabilities = data[10] & 0x0f;
-            //this.FEState = data[10] >> 4;
         }
 
         internal string GetString()

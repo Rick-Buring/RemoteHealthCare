@@ -19,7 +19,8 @@ namespace VR_Project.ViewModels
         public ObservableCollection<Data> Engines { get; }
         public DelegateCommand SelectEngine { get; }
         public string BikeName { get; set; } = "Tacx Flux 01249";
-        public bool SimulationChecked { get; set; }
+        public bool ErgoSimChecked { get; set; }
+        public bool HeartBeatSimChecked { get; set; }
 
         private VrManager vr;
         private EquipmentMain eq;
@@ -57,7 +58,7 @@ namespace VR_Project.ViewModels
         private async void engageEngine()
         {
             isConnecting = true;
-            Task equipment = this.eq.start(BikeName, this.SimulationChecked);
+            Task equipment = this.eq.start(BikeName, this.ErgoSimChecked, this.HeartBeatSimChecked);
             Task virtualReality = vr.ConnectToTunnel(SelectClient.id);
 
             await Task.WhenAll(equipment, virtualReality);

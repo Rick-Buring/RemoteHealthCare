@@ -52,9 +52,7 @@ namespace VR_Project
             {
                 id = "session/list"
             };
-            //string message = @"{""id"" : ""session/list""}";
             string message = JsonConvert.SerializeObject(EngineRoot);
-            //Debug.WriteLine(message);
             byte[] messageArray = Encoding.ASCII.GetBytes(message);
             var messageToSend = WrapMessage(messageArray);
             await this.stream.WriteAsync(messageToSend, 0, messageToSend.Length);
@@ -64,7 +62,6 @@ namespace VR_Project
 
             await client.GetStream().ReadAsync(array, 0, 4);
 
-            //int line = reader.Read();
             int size = BitConverter.ToInt32(array);
             if (size == 0)
                 return null;
@@ -80,10 +77,8 @@ namespace VR_Project
                 Console.WriteLine("ReadMessage: " + read);
             }
 
-            //client.GetStream().Read(received, 0, size);
 
             string test = Encoding.ASCII.GetString(received);
-            //Debug.WriteLine(test);
             EngineRoot = JsonConvert.DeserializeObject<EngineRoot>(test);
 
             List<Data> OnlineEngines = new List<Data>();
@@ -197,7 +192,7 @@ namespace VR_Project
         }
         public async Task UpdateSpeed(double speed)
         {
-            //Debug.WriteLine("updating speed");
+            
             Route r = new Route();
             Route.RouteObject rObject = r.UpdateFollowSpeed(this.bikeUuid, (float)speed);
             await SendMessage(this.client, WrapJsonMessage<Route.RouteObject>(this.dest, rObject));
@@ -229,13 +224,7 @@ namespace VR_Project
         {
             if (this.panelUuid != null && ergometerData != null)
             {
-
-                //TODO kijken om er een task van maken.
-                //TODO senden en ontvangen async maken.
-
-
                 Panel panel = new Panel();
-                //Debug.WriteLine("writing to panel");
                 panel.Clear(this.panelUuid);
                 await SendMessage(client, WrapJsonMessage<Panel>(this.dest, panel));
                 panel.drawText(this.panelUuid, "RPM : " + ergometerData.Cadence, new double[] { 10d, 40d }, fontSize, new int[] { 0, 0, 0, 1 }, font);
@@ -376,7 +365,6 @@ namespace VR_Project
         {
             Terrain t = new Terrain("scene/terrain/getheight", position);
             JObject terrainResponce = await SendMessageResponseToJsonArray(client, WrapJsonMessage<Terrain>(dest, t));
-            //Debug.WriteLine(terrainResponce.ToString());
             return terrainResponce.Value<JObject>("data").Value<JObject>("data").Value<JObject>("data").Value<float>("height");
         }
         public static string WrapJsonMessage<T>(string dest, T t)
@@ -420,8 +408,6 @@ namespace VR_Project
         }
         public async Task<byte[]> ReadMessage(TcpClient client)
         {
-
-            //Console.WriteLine(reader.ReadToEnd());
             byte[] array = new byte[4];
             await stream.ReadAsync(array, 0, 4);
 
@@ -434,7 +420,6 @@ namespace VR_Project
             {
                 int read = await this.stream.ReadAsync(received, bytesRead, received.Length - bytesRead);
                 bytesRead += read;
-                //Console.WriteLine("ReadMessage: " + read);
             }
 
 

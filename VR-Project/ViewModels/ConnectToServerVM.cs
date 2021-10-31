@@ -25,7 +25,6 @@ namespace VR_Project.ViewModels
 			this.Client = client;
 			this.eq = equipment;
 			this.ConnectToServer = new DelegateCommand(EngageConnection);
-			//requestResistance += this.eq.ergometer.SendResistance;
 		}
 
 		public string PortNumber { get; set; } = "5005";

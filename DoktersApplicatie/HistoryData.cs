@@ -211,7 +211,6 @@ namespace DoktersApplicatie
                 public ValueTime(double value, double elapsedTime)
                 {
                     SecondsSinceStart = elapsedTime;
-                    //Debug.WriteLine(SecondsSinceStart);
                     Value = value;
                 }
             }

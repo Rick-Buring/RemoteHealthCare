@@ -23,8 +23,8 @@ namespace VR_Project
     {
         private ReadWrite rw;
         private TcpClient client;
-		private bool active;
-		private bool connected;
+        private bool active;
+        private bool connected;
         public ConnectedVM.RequestResistance resistanceUpdater { get; set; }
         public ConnectedVM.SendChatMessage sendChat { get; set; }
 
@@ -33,7 +33,7 @@ namespace VR_Project
             ViewModel.updater += Update;
         }
 
-		public string PatientName { get; set; } = "Patient Name";
+        public string PatientName { get; set; } = "Patient Name";
         public async void StartConnection(string ip, int port)
         {
             if (this.client != null)
@@ -50,13 +50,13 @@ namespace VR_Project
 
             this.rw = new ReadWrite(stream);
 
-            
+
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
             await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
             Parse(await this.rw.Read());
             Run();
-            
-            
+
+
 
         }
 
@@ -76,7 +76,6 @@ namespace VR_Project
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    //todo disconnect client
                     this.active = false;
 
                 }
@@ -113,7 +112,6 @@ namespace VR_Project
                         timer.Start();
                     }).Start();
                     this.sendChat("STOP!!!!");
-                    //TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
                 }
                 else
                 {
@@ -129,7 +127,6 @@ namespace VR_Project
                 Chat data = (root.Data as JObject).ToObject<Chat>();
                 string message = data.message;
                 this.sendChat(message);
-                //ViewModels.ConnectedVM.AddMessage(new CommunicationObjects.DataObjects.Message() { Receiver = root.Target, Sender = root.Sender, Text = data.message });
             }
             else if (type == typeof(Acknowledge))
             {
@@ -160,7 +157,7 @@ namespace VR_Project
 
         public void TimerCallback(object o)
         {
-            this.sessionTime ++;
+            this.sessionTime++;
             if (!DataIsAllowed)
             {
                 DataIsAllowed = true;
@@ -168,14 +165,14 @@ namespace VR_Project
         }
 
         private bool sessionIsActive = false;
-		private bool isLocked = false;
-		private bool DataIsAllowed = false;
+        private bool isLocked = false;
+        private bool DataIsAllowed = false;
         private int AccumulatedPowerOffset;
         private double sessionTime;
         public async void Update(Ergometer ergometer, HeartBeatMonitor heartBeatMonitor)
-		{
-			
-			if (this.client != null && this.sessionIsActive && !this.isLocked && this.DataIsAllowed)
+        {
+
+            if (this.client != null && this.sessionIsActive && !this.isLocked && this.DataIsAllowed)
             {
                 this.DataIsAllowed = false;
                 ErgometerData data = ergometer.GetErgometerData();
@@ -187,19 +184,19 @@ namespace VR_Project
                 }
 
                 Root healthData = new Root()
-				{
-					Type = typeof(HealthData).FullName,
-					Data = new HealthData()
-					{
-						RPM = data.Cadence,
-						AccWatt = data.AccumulatedPower - AccumulatedPowerOffset,
-						CurWatt = data.InstantaneousPower,
-						Speed = data.InstantaneousSpeed,
-						Heartbeat = heartBeatMonitor.GetHeartBeat(),
-						ElapsedTime = sessionTime,
-						DistanceTraveled = data.DistanceTraveled
-					},
-					Sender = this.PatientName,
+                {
+                    Type = typeof(HealthData).FullName,
+                    Data = new HealthData()
+                    {
+                        RPM = data.Cadence,
+                        AccWatt = data.AccumulatedPower - AccumulatedPowerOffset,
+                        CurWatt = data.InstantaneousPower,
+                        Speed = data.InstantaneousSpeed,
+                        Heartbeat = heartBeatMonitor.GetHeartBeat(),
+                        ElapsedTime = sessionTime,
+                        DistanceTraveled = data.DistanceTraveled
+                    },
+                    Sender = this.PatientName,
                     Target = "all"
                 };
                 await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(healthData)));
@@ -208,12 +205,11 @@ namespace VR_Project
         }
         public async void Stop()
         {
-            //TODO nullpointer afhandelen.
             if (this.rw != null)
             {
                 await this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
                 { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = PatientName, Target = "server" })));
-                
+
             }
         }
 

@@ -49,7 +49,6 @@ namespace VR_Project.ViewModels
 
         private void Disconnect()
         {
-            Console.WriteLine("TODOOO Disconnect client and bike");
             Dispose();
             RaiseOnNavigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain()));
         }
