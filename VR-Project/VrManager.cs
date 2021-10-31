@@ -14,7 +14,8 @@ using System.Windows;
 using Vr_Project.RemoteHealthcare;
 using VR_Project.Objects;
 using VR_Project.Objects.Node;
-using static VR_Project.ViewModel;
+using static VR_Project.ViewModels.ViewModel;
+using VR_Project.ViewModels;
 
 namespace VR_Project
 {
@@ -165,11 +166,22 @@ namespace VR_Project
             if (this.ready && !this.running)
             {
                 this.running = true;
-                await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
-                await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
-                float r = await getHeightDependantResistance();
+                try
+                {
+                    if (this.stream.CanRead && this.stream.CanWrite)
+                    {
+                        await UpdateSpeed(ergometer.GetErgometerData().Cadence / 13);
+                        if (this.stream.CanRead && this.stream.CanWrite)
+                            await WriteToPanel(ergometer.GetErgometerData(), heartBeatMonitor.GetHeartBeat());
+                    }
+                    
+                    float r = await getHeightDependantResistance();
 
-                ViewModel.resistanceUpdater(CalculateResistance(r));
+                    ViewModel.resistanceUpdater(CalculateResistance(r));
+                } catch (IOException e)
+                {
+                    Debug.WriteLine(e.StackTrace);
+                }
 
                 this.running = false;
             }
@@ -437,7 +449,9 @@ namespace VR_Project
 
         public void Dispose()
         {
+            this.stream.Close();
             this.stream.Dispose();
+            this.client.Close();
             this.client.Dispose();
         }
     }

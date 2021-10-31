@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Threading;
 using Vr_Project.RemoteHealthcare;
@@ -18,8 +19,6 @@ namespace VR_Project.ViewModels
 
         public DelegateCommand DisconnectCommand { get; set; }
 
-        private ViewModel.NavigateViewModel navigate;
-
         public ObservableCollection<Message> Messages { get; private set; }
         private Dispatcher dispatcher;
 
@@ -28,24 +27,31 @@ namespace VR_Project.ViewModels
         public delegate void SendChatMessage(string message);
         public static SendChatMessage sendChat;
 
-        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment, ViewModel.NavigateViewModel navigateView)
+        public ConnectedVM(ClientHandler client, VrManager vrManager, EquipmentMain equipment)
         {
             this.dispatcher = Dispatcher.CurrentDispatcher;
             this.Messages = new ObservableCollection<Message>();
             this.DisconnectCommand = new DelegateCommand(Disconnect);
-            this.navigate = navigateView;
             AddMessage = addMessage;
             Client = client;
             VrManager = vrManager;
             this.Client.resistanceUpdater += VrManager.RequestResistance;
             this.Client.sendChat += VrManager.SetChatMessage;
             Equipment = equipment;
+            this.Equipment.OnBluetoothError += BluetoothErrorHandler;
+        }
+
+        private void BluetoothErrorHandler(Exception e)
+        {
+            Debug.WriteLine(e.Message);
+            Disconnect();
         }
 
         private void Disconnect()
         {
             Console.WriteLine("TODOOO Disconnect client and bike");
-            navigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain(), navigate));
+            Dispose();
+            RaiseOnNavigate(new LoginBikeVRVM(new VrManager(), new EquipmentMain()));
         }
 
         public ClientHandler Client { get; }
@@ -60,8 +66,9 @@ namespace VR_Project.ViewModels
         public override void Dispose()
         {
             this.Client.Dispose();
-            this.VrManager.Dispose();
             this.Equipment.Dispose();
+            this.VrManager.Dispose();
+
             ViewModel.resistanceUpdater = null;
             ViewModel.updater = null;
         }

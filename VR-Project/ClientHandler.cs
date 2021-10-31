@@ -57,6 +57,7 @@ namespace VR_Project
             
             Root connectRoot = new Root() { Type = typeof(Connection).FullName, Data = new Connection() { connect = true }, Sender = PatientName, Target = "server" };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(connectRoot)));
+            Parse(await this.rw.Read());
             Run();
             
             
@@ -115,6 +116,7 @@ namespace VR_Project
                         timer.Enabled = true;
                         timer.Start();
                     }).Start();
+                    this.sendChat("STOP!!!!");
                     //TODO stop bericht laten zien in chat en een geluid afspelen met SoundPlayer.
                 }
                 else
@@ -143,6 +145,11 @@ namespace VR_Project
                     if (!this.connected)
                     {
                         this.active = false;
+                        this.rw.Dispose();
+                        this.client.GetStream().Close();
+                        this.client.GetStream().Dispose();
+                        this.client.Close();
+                        this.client.Dispose();
                     }
                 }
 
@@ -209,15 +216,14 @@ namespace VR_Project
             if (this.rw != null)
             {
                 this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root()
-                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = "henk", Target = "server" })));
-                this.rw.Dispose();
+                { Type = typeof(Connection).FullName, Data = new Connection() { connect = false }, Sender = PatientName, Target = "server" })));
+                
             }
         }
 
         public void Dispose()
         {
-            this.rw.Dispose();
-            this.client.Dispose();
+            Stop();
         }
     }
 }

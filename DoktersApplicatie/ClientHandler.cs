@@ -15,14 +15,14 @@ using System.Windows.Threading;
 
 namespace DoktersApplicatie
 {
-    public class ClientHandler
+    public class ClientHandler : IDisposable
     {
         private string name;
         private ReadWrite rw;
         private TcpClient client;
         private bool connected;
         private bool active;
-        private HomeVM.ClientReceived addClient;
+        private HomeVM.ClientReceived addClients;
         private HomeVM.UpdateClient updateClient;
         private HomeVM.UpdateHistory updateHistory;
         private bool loggedIn;
@@ -39,7 +39,7 @@ namespace DoktersApplicatie
         {
             this.connected = false;
             this.active = false;
-            this.addClient = addClient;
+            this.addClients = addClient;
             this.updateClient = updateClient;
             this.updateHistory = updateHistory;
         }
@@ -131,8 +131,20 @@ namespace DoktersApplicatie
                 Type ackType = Type.GetType(ack.subtype);
                 if (ackType == typeof(Connection))
                 {
-                    if (ack.status == 200) this.connected = !this.connected;
-                    Debug.WriteLine("Connected to server!!");
+                    if (ack.status == 200)
+                    {
+                        this.connected = !this.connected;
+                        if (!this.connected)
+						{
+                            this.active = false;
+                            this.rw.Dispose();
+                            this.client.GetStream().Close();
+                            this.client.GetStream().Dispose();
+                            this.client.Close();
+                            this.client.Dispose();
+                        }
+                        Debug.WriteLine("Connected to server!!");
+                    }
                     //this.addClient(new Client {Name = });
                     //this.isSessionRunning = !this.isSessionRunning;
                     //this.connected = !this.connected;
@@ -168,7 +180,9 @@ namespace DoktersApplicatie
             else if (type == typeof(Selection))
             {
                 Selection selection = (root.Data as JObject).ToObject<Selection>();
-                foreach (string s in selection.selection) this.addClient(new Client(s));
+                List<Client> list = new List<Client>();
+                foreach (string s in selection.selection) list.Add(new Client(s));
+                this.addClients(list);
             }
         }
 
@@ -268,7 +282,19 @@ namespace DoktersApplicatie
             };
             this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(emergencyRoot)));
         }
-    }
+
+        public void Stop()
+        {
+            this.rw.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Root { Sender = name, Target = "server", Type = typeof(Connection).FullName, Data = new Connection { connect = false } })));
+
+        }
+
+		public void Dispose()
+		{
+            Stop();
+			//throw new NotImplementedException();
+		}
+	}
 }
 
 

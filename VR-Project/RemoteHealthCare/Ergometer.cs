@@ -17,6 +17,9 @@ namespace Vr_Project.RemoteHealthcare
         public ErgometerData ergometerData { get; protected set; }
         private bool connected;
 
+        public delegate void BikeErrorDelegate(Exception Error);
+        public event BikeErrorDelegate BikeErrorEvent;
+
         /// <summary>
         /// constructor voor de fiets
         /// </summary>
@@ -91,6 +94,7 @@ namespace Vr_Project.RemoteHealthcare
             } else
             {
                 Debug.WriteLine("Checksum incorrect");
+                this.BikeErrorEvent?.Invoke(new ArgumentException("Checksum incorrect"));
             }
             
         }
@@ -125,7 +129,15 @@ namespace Vr_Project.RemoteHealthcare
             {
                 Debug.WriteLine("sending resistance");
                 byte[] toSend = ResistanceMessage(resistance);
-                int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+                try
+                {
+                    int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+                } catch(Exception e)
+				{
+                    Debug.WriteLine(e.StackTrace);
+                    this.BikeErrorEvent?.Invoke(e);
+                    this.connected = false;
+				}
             }
         }
 
@@ -167,7 +179,7 @@ namespace Vr_Project.RemoteHealthcare
             return this.ergometerData;
         }
         
-        public void Dispose()
+        public virtual void Dispose()
         {
             this.bleBike.CloseDevice();
             this.bleBike.Dispose();

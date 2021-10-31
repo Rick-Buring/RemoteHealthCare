@@ -21,7 +21,6 @@ namespace VR_Project.ViewModels
         public string BikeName { get; set; } = "Tacx Flux 01249";
         public bool SimulationChecked { get; set; }
 
-        private readonly ViewModel.NavigateViewModel navigate;
         private VrManager vr;
         private EquipmentMain eq;
         public bool isRefresheble { get; set; }
@@ -29,11 +28,10 @@ namespace VR_Project.ViewModels
         public bool selectedAClient => SelectClient != null ;
         public Data SelectClient { get; set; }
 
-        public LoginBikeVRVM(VrManager vr, EquipmentMain eq, ViewModel.NavigateViewModel changeViewModel)
+        public LoginBikeVRVM(VrManager vr, EquipmentMain eq)
         {
             this.vr = vr;
             this.eq = eq;
-            this.navigate = changeViewModel;
 
 
             this.Refresh = new DelegateCommand(GetOnlineEngines);
@@ -61,12 +59,13 @@ namespace VR_Project.ViewModels
             isConnecting = true;
             Task equipment = this.eq.start(BikeName, this.SimulationChecked);
             Task virtualReality = vr.ConnectToTunnel(SelectClient.id);
-            
-            await Task.WhenAll(equipment,virtualReality);
-            navigate(new ConnectToServerVM(new ClientHandler(), eq, vr, navigate));
+
+            await Task.WhenAll(equipment, virtualReality);
+            RaiseOnNavigate(new ConnectToServerVM(new ClientHandler(), eq, vr));
             isConnecting = false;
         }
 
+  
         public override void Dispose() { }
 
     }
