@@ -32,7 +32,7 @@ namespace CommunicationObjects
             return false;
         }
 
-        private static byte[] WrapMessage(byte[] message)
+        public static byte[] WrapMessage(byte[] message)
         {
             // Get the length prefix for the message
             byte[] lengthPrefix = BitConverter.GetBytes(message.Length);
@@ -42,7 +42,7 @@ namespace CommunicationObjects
             message.CopyTo(ret, lengthPrefix.Length);
             return ret;
         }
-
+           
         /// <summary>
         /// send messages to the client
         /// </summary>

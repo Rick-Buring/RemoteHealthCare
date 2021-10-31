@@ -147,7 +147,7 @@ namespace Vr_Project.RemoteHealthcare
         /// </summary>
         /// <param name="message"></param>
         /// <returns> de checksum</returns>
-        private static byte checksum(byte[] message)
+        public static byte checksum(byte[] message)
         {
             byte output = message[0];
 
