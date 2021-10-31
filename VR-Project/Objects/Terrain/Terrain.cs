@@ -16,6 +16,13 @@ public class Terrain
 		this.data = new TerrainData(size, localHeigths);
     }
 
+	public Terrain(string id, float[] position)
+	{
+		this.id = id;
+		this.data = new TerrainData(position);
+	}
+
+
 	public Terrain(string id, float[] position, float[][] positions)
 	{
 		this.id = id;
@@ -31,6 +38,11 @@ public class Terrain
             this.heights = heights;
         }
 
+		public TerrainData(float[] position)
+		{
+			this.position = position;
+		}
+
 		public TerrainData(float[] position, float[][] positions)
 		{
 			this.position = position;
@@ -39,8 +51,10 @@ public class Terrain
 
 		public int[] size { get; set; }
 		public float[] heights { get; set; }
+#nullable enable
 		public float[]? position { get; set; }
 		public float[][]? positions { get; set; }
+#nullable disable
 	}
 
 
@@ -57,7 +71,6 @@ public class Terrain
 			{
 				Color pixel = img.GetPixel(i, j);
 				list.Add(pixel.GetBrightness() * 10f);
-				//Console.WriteLine("Adding : " + number + " : " + pixel.GetBrightness());
 				number++;
 			}
 		}

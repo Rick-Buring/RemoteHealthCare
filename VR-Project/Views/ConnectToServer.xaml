@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="VR_Project.Views.ConnectToServer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VR_Project.Views"
+        mc:Ignorable="d">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border BorderBrush="Black" BorderThickness="1">
+
+                <StackPanel Orientation="Vertical" Margin="20">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                        <Label Content="Name:" Width="100"/>
+                        <TextBox Width="100" Text="{Binding Client.PatientName}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="100" Content="IP Address:"/>
+                        <TextBox Width="100" Text="{Binding IPAddress}" Margin="0,0,5,0"/>
+
+                        <Label Width="100" Content="Port nummer:" Margin="5,0,0,0"/>
+                        <TextBox Width="100" Text="{Binding PortNumber}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+            <Button Margin="10" Content="Connect to Server" Command="{Binding Path=ConnectToServer}"/>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

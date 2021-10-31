@@ -5,13 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VR_Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Icon="heartbeat.ico"
+        Title="Remote Healthcare" Height="450" Width="800">
     <Grid>
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="button" Content="Button" Command="{Binding Path=SelectEngine}"/>
-            <ComboBox Width="300" Height="100" ItemsSource="{Binding ob}" DisplayMemberPath="clientinfo.host" SelectedItem="{Binding SelectClient}"></ComboBox>
-            <Button x:Name="connectToServer" Content="Connect to Server" Command="{Binding Path=ConnectToServer}"/>
-
-        </StackPanel>
+        <ContentControl Content="{Binding CurrentPageViewModel}" />
     </Grid>
 </Window>

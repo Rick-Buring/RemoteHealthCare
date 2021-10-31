@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects.DataObjects
 {
+
     public class Chat
     {
         public string message { get; set; }

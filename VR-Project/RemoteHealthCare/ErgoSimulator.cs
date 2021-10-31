@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,8 +10,6 @@ namespace Vr_Project.RemoteHealthcare
 
     public class ErgoSimulator : Ergometer
     {
-
-        private string Name;
         private IDataListener listener;
 
         private int baseline;
@@ -32,8 +31,9 @@ namespace Vr_Project.RemoteHealthcare
             this.elapsedTime = 0;
             this.distanceTraveled = 0;
 
+            base.ergometerData = new ErgometerData();
+
             this.listener = listener[0];
-            this.Name = base.Name;
 
         }
 
@@ -49,11 +49,10 @@ namespace Vr_Project.RemoteHealthcare
         }
 
         //Rolt elke seconde een random waarde en verandert de baseline gebaseerd op die waarde met +10 of -10.
+        bool running = true;
+
         private void rollBaseline()
         {
-
-            bool running = true;
-
             while(running)
             {
                 Random random = new Random();
@@ -74,7 +73,7 @@ namespace Vr_Project.RemoteHealthcare
                 listener.notify(base.ergometerData);
                 Thread.Sleep(1000);
             }
-
+            
         }
 
         //Verandert de waardes in de data klasse met een random waarde rond de baseline plus een random waarde tussen 0 en een aantal % van de baseline.
@@ -119,5 +118,9 @@ namespace Vr_Project.RemoteHealthcare
             return base.ergometerData;
         }
 
+        public override void Dispose()
+        {
+            this.running = false;
+        }
     }
 }

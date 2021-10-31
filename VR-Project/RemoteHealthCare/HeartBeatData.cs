@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class HeartBeatData : IData
+    public class HeartBeatData : BindableBase, IData, INotifyPropertyChanged
     {
         public int HeartRate{ get; set; }
 

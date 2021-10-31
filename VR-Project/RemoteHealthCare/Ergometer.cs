@@ -1,29 +1,35 @@
 ﻿using Avans.TI.BLE;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class Ergometer : Sensor
+    public class Ergometer : Sensor, IDisposable
     {
         public string Name { get; }
 
         private IDataListener[] listeners;
         private BLE bleBike;
-        protected ErgometerData ergometerData;
+        public ErgometerData ergometerData { get; protected set; }
+        private bool connected;
+
+        public delegate void BikeErrorDelegate(Exception Error);
+        public event BikeErrorDelegate BikeErrorEvent;
 
         /// <summary>
         /// constructor voor de fiets
         /// </summary>
         /// <param name="name">de naam van de fiets waarmee word verbonden</param>
         /// <param name="listener"> een lijst met classes die genotificeert willen worden op nieuwe data</param>
-        public Ergometer(string name, params IDataListener[] listener)
+        public Ergometer(string bikeName, params IDataListener[] listener)
         {
+            this.Name = bikeName;
+            this.connected = false;
             this.ergometerData = new ErgometerData();
-            this.Name = name;
             this.bleBike = new BLE();
             this.listeners = listener;
 
@@ -71,15 +77,25 @@ namespace Vr_Project.RemoteHealthcare
             {
                 errorCode = await bleBike.SubscribeToCharacteristic("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e");
             }
-
-            bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", ResistanceMessage(70));
+            this.connected = true;
         }
 
         //event voor binnenkomende data notificeren van de classes
         public override void SubscriptionValueChanged(object sender, BLESubscriptionValueChangedEventArgs e)
         {
-            this.ergometerData.Update(e.Data);
-            notifyListeners();
+            byte[] data = new List<byte>(e.Data).GetRange(0, e.Data.Length).ToArray();
+
+            if (checksum(data) == e.Data[e.Data.Length - 1])
+            {
+                Debug.WriteLine("Checksum correct");
+                this.ergometerData.Update(e.Data);
+                notifyListeners();
+            } else
+            {
+                Debug.WriteLine("Checksum incorrect");
+                this.BikeErrorEvent?.Invoke(new ArgumentException("Checksum incorrect"));
+            }
+            
         }
 
         /// <summary>
@@ -87,7 +103,7 @@ namespace Vr_Project.RemoteHealthcare
         /// </summary>
         /// <param name="resistance">hoeveel weerstant de fiets moet bieden in hele procenten met een max van 100</param>
         /// <returns>een bye array die naar de fiets gestuurt kan worden</returns>
-        private static byte[] ResistanceMessage(float resistance)
+        public override byte[] ResistanceMessage(float resistance)
         {
             byte[] buff = new byte[13];
             //head
@@ -105,12 +121,32 @@ namespace Vr_Project.RemoteHealthcare
 
             return buff;
         }
+
+        public async override void SendResistance(float resistance)
+        {
+            if (this.connected)
+            {
+                Debug.WriteLine("sending resistance");
+                byte[] toSend = ResistanceMessage(resistance);
+                try
+                {
+                    int errorCode = await this.bleBike.WriteCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e", toSend);
+                } catch(Exception e)
+				{
+                    Debug.WriteLine(e.StackTrace);
+                    this.BikeErrorEvent?.Invoke(e);
+                    this.connected = false;
+				}
+            }
+        }
+
+       
         /// <summary>
         /// checksum berekenen
         /// </summary>
         /// <param name="message"></param>
         /// <returns> de checksum</returns>
-        private static byte checksum(byte[] message)
+        public static byte checksum(byte[] message)
         {
             byte output = message[0];
 
@@ -140,6 +176,12 @@ namespace Vr_Project.RemoteHealthcare
         public override ErgometerData GetErgometerData()
         {
             return this.ergometerData;
+        }
+        
+        public virtual void Dispose()
+        {
+            this.bleBike.CloseDevice();
+            this.bleBike.Dispose();
         }
     }
 }

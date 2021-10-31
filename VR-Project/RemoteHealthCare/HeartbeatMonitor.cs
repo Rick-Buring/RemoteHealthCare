@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class HeartBeatMonitor : Sensor
+    public class HeartBeatMonitor : Sensor, IDisposable
     {
         private BLE bleHeart;
-        protected HeartBeatData heartBeatData;
+        public HeartBeatData heartBeatData { get; protected set; }
         private IDataListener[] listeners;
 
         public HeartBeatMonitor(params IDataListener[] listener)
@@ -75,6 +75,22 @@ namespace Vr_Project.RemoteHealthcare
         public override ErgometerData GetErgometerData()
         {
             return null;
+        }
+
+        public virtual void Dispose()
+        {
+            this.bleHeart.CloseDevice();
+            this.bleHeart.Dispose();
+        }
+
+        public override byte[] ResistanceMessage(float resistance)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SendResistance(float resistance)
+        {
+            throw new NotImplementedException();
         }
     }
 }

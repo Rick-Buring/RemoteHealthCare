@@ -24,36 +24,42 @@ namespace VR_Project{
         public class Data
         {
             public string name { get; set; }
+#nullable enable
             public Components? components { get; set; }
-           
+#nullable disable
             public Data(string name, string file, int[] position)
             {
                 this.name = name;
 
-                this.components = new Components();
-                this.components.transform = new Transform(position, 1, new double[3] { Math.PI * 2.0, 0, 0 });
-                this.components.model = new Model(file);
+                this.components = new Components
+                {
+                    transform = new Transform(position, 1, new double[3] { 0, 0, 0 }),
+                    model = new Model(file)
+                };
             }
 
             public Data(string name, string file, int[] position, string animationFile)
             {
                 this.name = name;
 
-                this.components = new Components();
-                this.components.transform = new Transform(position, 1, new double[3] { 0, 0, 0 });
-                this.components.model = new Model(file, animationFile);
+                this.components = new Components
+                {
+                    transform = new Transform(position, 1, new double[3] { 0, 0, 0 }),
+                    model = new Model(file, animationFile)
+                };
             }
 
             public class Components
             {
+#nullable enable
                 public Transform? transform { get; set; }
                 public Model? model { get; set; }
-             
-
+#nullable disable
             }
 
             public class Transform
             {
+#nullable enable
                 public Transform(int[] position, int? scale, double[]? rotation)
                 {
                     this.position = position;
@@ -64,14 +70,17 @@ namespace VR_Project{
                 public int[]? position { get; set; }
                 public int? scale { get; set; }
                 public double[]? rotation { get; set; }
+#nullable disable
             }
 
             public class Model
             {
+#nullable enable
                 public string? file { get; set; }
                 public bool? cullbackfaces { get; set; }
                 public bool? animated { get; set; }
                 public string? animation { get; set; }
+#nullable disable
 
                 public Model(string file)
                 {

@@ -1,0 +1,19 @@
+﻿<Application x:Class="DoktersApplicatie.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="clr-namespace:DoktersApplicatie"
+			 xmlns:views="clr-namespace:DoktersApplicatie.UserControls"
+             xmlns:ViewModels="clr-namespace:DoktersApplicatie.ViewModels">
+	<Application.Resources>
+
+		<DataTemplate DataType="{x:Type ViewModels:LoginVM}">
+			<views:LoginControl/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type ViewModels:HomeVM}">
+			<views:MainViewControl/>
+		</DataTemplate>
+
+        <FontFamily x:Key="Password">pack://application:,,,/#password</FontFamily>
+
+    </Application.Resources>
+</Application>

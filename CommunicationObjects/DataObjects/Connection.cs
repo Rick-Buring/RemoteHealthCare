@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace CommunicationObjects.DataObjects
 {
-    class Connection
+    public class Connection
     {
         public bool connect { get; set; }
+        public string password { get; set; }
     }
 }

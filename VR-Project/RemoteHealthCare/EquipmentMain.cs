@@ -1,41 +1,49 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using VR_Project;
+using VR_Project.ViewModels;
 
 namespace Vr_Project.RemoteHealthcare
 {
-    public class EquipmentMain : IDataListener
+    public class EquipmentMain : BindableBase, INotifyPropertyChanged, IDataListener, System.IDisposable
     {
-        private DataIO dataIO;
-        
-        private Ergometer ergometer;
-        private HeartBeatMonitor heartBeatMonitor;
-        private GUI gui;
-        private ViewModel.Update updater;
 
-        public EquipmentMain (ViewModel.Update updater)
-        {
-            this.updater = updater;
-        }
+        public Ergometer Ergometer { get; private set; }
+        public HeartBeatMonitor HeartBeatMonitor { get; private set; }
+
+        public delegate void ErorDelegate(Exception ex);
+        public event ErorDelegate OnBluetoothError;
+
         // starts the application
-        public async Task start()
+        public async Task start(string bikeName, bool ErgoSimulatorCheck, bool HeartBeatSimulatorCheck)
         {
-            dataIO = new DataIO();
-            //ergometer = new Ergometer("Tacx Flux 01249", this, dataIO);
-            ergometer = new ErgoSimulator(this);
-            //this.gui = new GUI();
-            await ergometer.Connect();
-            
+            if (!ErgoSimulatorCheck)
+                Ergometer = new Ergometer(bikeName, this);
+            else
+                Ergometer = new ErgoSimulator(this);
+            ViewModel.resistanceUpdater += Ergometer.SendResistance;
 
-            //heartBeatMonitor = new HeartBeatMonitor(this, dataIO);
-            heartBeatMonitor = new HBSimulator(this);
-            await heartBeatMonitor.Connect();
+            Task ergoConnect = Ergometer.Connect();
 
+            if (!HeartBeatSimulatorCheck)
+                HeartBeatMonitor = new HeartBeatMonitor(this);
+            else
+                HeartBeatMonitor = new HBSimulator(this);
 
-            Console.Read();
+            Task heartBeatConnect = HeartBeatMonitor.Connect();
+
+            await Task.WhenAll(ergoConnect, heartBeatConnect);
+            Ergometer.BikeErrorEvent += ErrorHandler;
+        }
+
+        private void ErrorHandler(Exception Error)
+        {
+            OnBluetoothError?.Invoke(Error);
         }
 
         /// <summary>
@@ -44,13 +52,22 @@ namespace Vr_Project.RemoteHealthcare
         /// <param name="data">Data in de vorm van IData.</param>
         public void notify(IData data)
         {
-            if(heartBeatMonitor != null)
+            if (HeartBeatMonitor != null && ViewModel.updater != null)
             {
                 //Debug.WriteLine($"{ergometer.GetData()}\n{heartBeatMonitor.GetData()}");
-                this.updater(ergometer, heartBeatMonitor);
+                ViewModel.updater.Invoke(Ergometer, HeartBeatMonitor);
             }
-           
+
+        }
+
+        public void Dispose()
+        {
+            if (Ergometer != null)
+                Ergometer.Dispose();
+            if (HeartBeatMonitor != null)
+                HeartBeatMonitor.Dispose();
+
         }
     }
-    
+
 }

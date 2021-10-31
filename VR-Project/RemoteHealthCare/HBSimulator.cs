@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,14 +11,19 @@ namespace Vr_Project.RemoteHealthcare
     {
 
         private IDataListener listener;
-
         private int baseline;
 
         public HBSimulator(IDataListener listener) : base(listener)
         {
 
+            base.heartBeatData = new HeartBeatData();
             this.listener = listener;
 
+        }
+
+        public override int GetHeartBeat()
+        {
+            return this.heartBeatData.HeartRate;
         }
 
         //Methode voor het verbinden met de simulator.
@@ -31,10 +37,9 @@ namespace Vr_Project.RemoteHealthcare
         }
 
         //Rolt elke seconde een random waarde en verandert de baseline gebaseerd op die waarde met +10 of -10.
+        bool running = true;
         public void rollBaseline()
         {
-            bool running = true;
-
             while (running)
             {
                 Random random = new Random();
@@ -55,6 +60,7 @@ namespace Vr_Project.RemoteHealthcare
                 listener.notify(base.heartBeatData);
                 Thread.Sleep(1000);
             }
+            
         }
 
         //Verandert de data in de data klasse.
@@ -69,6 +75,11 @@ namespace Vr_Project.RemoteHealthcare
         public IData GetData()
         {
             return base.heartBeatData;
+        }
+
+        public override void Dispose()
+        {
+            this.running = false;
         }
 
     }
